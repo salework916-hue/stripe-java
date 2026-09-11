@@ -39,18 +39,19 @@ public class TaxIdCreateParams extends ApiRequestParams {
    * {@code ca_pst_mb}, {@code ca_pst_sk}, {@code ca_qst}, {@code cd_nif}, {@code ch_uid}, {@code
    * ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code cn_tin}, {@code co_nit}, {@code cr_tin}, {@code
    * cv_nif}, {@code de_stn}, {@code do_rcn}, {@code ec_ruc}, {@code eg_tin}, {@code es_cif}, {@code
-   * et_tin}, {@code eu_oss_vat}, {@code eu_vat}, {@code gb_vat}, {@code ge_vat}, {@code gn_nif},
-   * {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code id_npwp}, {@code il_vat}, {@code in_gst},
-   * {@code is_vat}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin},
-   * {@code kh_tin}, {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat},
-   * {@code ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc},
-   * {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code
-   * no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin},
-   * {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code sg_gst},
-   * {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code
-   * th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat}, {@code
-   * ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code
-   * vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
+   * et_tin}, {@code eu_oss_vat}, {@code eu_vat}, {@code fo_vat}, {@code gb_vat}, {@code ge_vat},
+   * {@code gi_tin}, {@code gn_nif}, {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code ic_nif},
+   * {@code id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code it_cf}, {@code jp_cn},
+   * {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn},
+   * {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code lk_vat}, {@code ma_vat},
+   * {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code my_frp},
+   * {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec}, {@code
+   * np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code pl_nip}, {@code
+   * py_ruc}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code
+   * sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit},
+   * {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat},
+   * {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code ve_rif},
+   * {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
    */
   @SerializedName("type")
   Type type;
@@ -156,19 +157,20 @@ public class TaxIdCreateParams extends ApiRequestParams {
      * ca_pst_bc}, {@code ca_pst_mb}, {@code ca_pst_sk}, {@code ca_qst}, {@code cd_nif}, {@code
      * ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code cn_tin}, {@code co_nit},
      * {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn}, {@code ec_ruc}, {@code
-     * eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code eu_vat}, {@code gb_vat},
-     * {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code
-     * id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code jp_cn}, {@code jp_rn},
-     * {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code
-     * kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code ma_vat}, {@code md_vat},
-     * {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code my_frp}, {@code
-     * my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec}, {@code np_pan},
-     * {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code ro_tin}, {@code
-     * rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code sg_gst}, {@code sg_uen},
-     * {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code th_vat}, {@code
-     * tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat}, {@code ug_tin},
-     * {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code
-     * vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
+     * eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code eu_vat}, {@code fo_vat},
+     * {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code gn_nif}, {@code hk_br}, {@code
+     * hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp}, {@code il_vat}, {@code in_gst},
+     * {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin},
+     * {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code
+     * li_uid}, {@code li_vat}, {@code lk_vat}, {@code ma_vat}, {@code md_vat}, {@code me_pib},
+     * {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code my_frp}, {@code my_itn}, {@code
+     * my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec}, {@code np_pan}, {@code nz_gst},
+     * {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code pl_nip}, {@code py_ruc}, {@code
+     * ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code sg_gst},
+     * {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code
+     * th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat},
+     * {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code
+     * ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
      */
     public Builder setType(TaxIdCreateParams.Type type) {
       this.type = type;
@@ -185,13 +187,20 @@ public class TaxIdCreateParams extends ApiRequestParams {
   @Getter
   @EqualsAndHashCode(callSuper = false)
   public static class Owner {
-    /** Account the tax ID belongs to. Required when {@code type=account} */
+    /** Connected Account the tax ID belongs to. Required when {@code type=account} */
     @SerializedName("account")
     String account;
 
     /** Customer the tax ID belongs to. Required when {@code type=customer} */
     @SerializedName("customer")
     String customer;
+
+    /**
+     * ID of the Account representing the customer that the tax ID belongs to. Can be used in place
+     * of {@code customer} when {@code type=customer}
+     */
+    @SerializedName("customer_account")
+    String customerAccount;
 
     /**
      * Map of extra parameters for custom features not available in this client library. The content
@@ -206,9 +215,15 @@ public class TaxIdCreateParams extends ApiRequestParams {
     @SerializedName("type")
     Type type;
 
-    private Owner(String account, String customer, Map<String, Object> extraParams, Type type) {
+    private Owner(
+        String account,
+        String customer,
+        String customerAccount,
+        Map<String, Object> extraParams,
+        Type type) {
       this.account = account;
       this.customer = customer;
+      this.customerAccount = customerAccount;
       this.extraParams = extraParams;
       this.type = type;
     }
@@ -222,6 +237,8 @@ public class TaxIdCreateParams extends ApiRequestParams {
 
       private String customer;
 
+      private String customerAccount;
+
       private Map<String, Object> extraParams;
 
       private Type type;
@@ -229,10 +246,10 @@ public class TaxIdCreateParams extends ApiRequestParams {
       /** Finalize and obtain parameter instance from this builder. */
       public TaxIdCreateParams.Owner build() {
         return new TaxIdCreateParams.Owner(
-            this.account, this.customer, this.extraParams, this.type);
+            this.account, this.customer, this.customerAccount, this.extraParams, this.type);
       }
 
-      /** Account the tax ID belongs to. Required when {@code type=account} */
+      /** Connected Account the tax ID belongs to. Required when {@code type=account} */
       public Builder setAccount(String account) {
         this.account = account;
         return this;
@@ -241,6 +258,15 @@ public class TaxIdCreateParams extends ApiRequestParams {
       /** Customer the tax ID belongs to. Required when {@code type=customer} */
       public Builder setCustomer(String customer) {
         this.customer = customer;
+        return this;
+      }
+
+      /**
+       * ID of the Account representing the customer that the tax ID belongs to. Can be used in
+       * place of {@code customer} when {@code type=customer}
+       */
+      public Builder setCustomerAccount(String customerAccount) {
+        this.customerAccount = customerAccount;
         return this;
       }
 
@@ -435,11 +461,17 @@ public class TaxIdCreateParams extends ApiRequestParams {
     @SerializedName("eu_vat")
     EU_VAT("eu_vat"),
 
+    @SerializedName("fo_vat")
+    FO_VAT("fo_vat"),
+
     @SerializedName("gb_vat")
     GB_VAT("gb_vat"),
 
     @SerializedName("ge_vat")
     GE_VAT("ge_vat"),
+
+    @SerializedName("gi_tin")
+    GI_TIN("gi_tin"),
 
     @SerializedName("gn_nif")
     GN_NIF("gn_nif"),
@@ -453,6 +485,9 @@ public class TaxIdCreateParams extends ApiRequestParams {
     @SerializedName("hu_tin")
     HU_TIN("hu_tin"),
 
+    @SerializedName("ic_nif")
+    IC_NIF("ic_nif"),
+
     @SerializedName("id_npwp")
     ID_NPWP("id_npwp"),
 
@@ -464,6 +499,9 @@ public class TaxIdCreateParams extends ApiRequestParams {
 
     @SerializedName("is_vat")
     IS_VAT("is_vat"),
+
+    @SerializedName("it_cf")
+    IT_CF("it_cf"),
 
     @SerializedName("jp_cn")
     JP_CN("jp_cn"),
@@ -497,6 +535,9 @@ public class TaxIdCreateParams extends ApiRequestParams {
 
     @SerializedName("li_vat")
     LI_VAT("li_vat"),
+
+    @SerializedName("lk_vat")
+    LK_VAT("lk_vat"),
 
     @SerializedName("ma_vat")
     MA_VAT("ma_vat"),
@@ -548,6 +589,12 @@ public class TaxIdCreateParams extends ApiRequestParams {
 
     @SerializedName("ph_tin")
     PH_TIN("ph_tin"),
+
+    @SerializedName("pl_nip")
+    PL_NIP("pl_nip"),
+
+    @SerializedName("py_ruc")
+    PY_RUC("py_ruc"),
 
     @SerializedName("ro_tin")
     RO_TIN("ro_tin"),

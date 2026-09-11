@@ -37,9 +37,13 @@ public class CreditBalanceSummary extends ApiResource {
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Customer> customer;
 
+  /** The account the balance is for. */
+  @SerializedName("customer_account")
+  String customerAccount;
+
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

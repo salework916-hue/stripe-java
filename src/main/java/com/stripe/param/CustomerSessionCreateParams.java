@@ -14,18 +14,19 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = false)
 public class CustomerSessionCreateParams extends ApiRequestParams {
   /**
-   * <strong>Required.</strong> Configuration for each component. Exactly 1 component must be
+   * <strong>Required.</strong> Configuration for each component. At least 1 component must be
    * enabled.
    */
   @SerializedName("components")
   Components components;
 
-  /**
-   * <strong>Required.</strong> The ID of an existing customer for which to create the Customer
-   * Session.
-   */
+  /** The ID of an existing customer for which to create the Customer Session. */
   @SerializedName("customer")
   String customer;
+
+  /** The ID of an existing Account for which to create the Customer Session. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /** Specifies which fields in the response should be expanded. */
   @SerializedName("expand")
@@ -43,10 +44,12 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
   private CustomerSessionCreateParams(
       Components components,
       String customer,
+      String customerAccount,
       List<String> expand,
       Map<String, Object> extraParams) {
     this.components = components;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.expand = expand;
     this.extraParams = extraParams;
   }
@@ -60,6 +63,8 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
 
     private String customer;
 
+    private String customerAccount;
+
     private List<String> expand;
 
     private Map<String, Object> extraParams;
@@ -67,11 +72,11 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
     /** Finalize and obtain parameter instance from this builder. */
     public CustomerSessionCreateParams build() {
       return new CustomerSessionCreateParams(
-          this.components, this.customer, this.expand, this.extraParams);
+          this.components, this.customer, this.customerAccount, this.expand, this.extraParams);
     }
 
     /**
-     * <strong>Required.</strong> Configuration for each component. Exactly 1 component must be
+     * <strong>Required.</strong> Configuration for each component. At least 1 component must be
      * enabled.
      */
     public Builder setComponents(CustomerSessionCreateParams.Components components) {
@@ -79,12 +84,15 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
       return this;
     }
 
-    /**
-     * <strong>Required.</strong> The ID of an existing customer for which to create the Customer
-     * Session.
-     */
+    /** The ID of an existing customer for which to create the Customer Session. */
     public Builder setCustomer(String customer) {
       this.customer = customer;
+      return this;
+    }
+
+    /** The ID of an existing Account for which to create the Customer Session. */
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 
@@ -144,9 +152,21 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
   @Getter
   @EqualsAndHashCode(callSuper = false)
   public static class Components {
+    /** Configuration for active entitlements. */
+    @SerializedName("active_entitlements")
+    ActiveEntitlements activeEntitlements;
+
     /** Configuration for buy button. */
     @SerializedName("buy_button")
     BuyButton buyButton;
+
+    /** Configuration for customer portal. */
+    @SerializedName("customer_portal")
+    CustomerPortal customerPortal;
+
+    /** Configuration for the customer sheet. */
+    @SerializedName("customer_sheet")
+    CustomerSheet customerSheet;
 
     /**
      * Map of extra parameters for custom features not available in this client library. The content
@@ -157,6 +177,10 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
     @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
     Map<String, Object> extraParams;
 
+    /** Configuration for the mobile payment element. */
+    @SerializedName("mobile_payment_element")
+    MobilePaymentElement mobilePaymentElement;
+
     /** Configuration for the Payment Element. */
     @SerializedName("payment_element")
     PaymentElement paymentElement;
@@ -166,12 +190,20 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
     PricingTable pricingTable;
 
     private Components(
+        ActiveEntitlements activeEntitlements,
         BuyButton buyButton,
+        CustomerPortal customerPortal,
+        CustomerSheet customerSheet,
         Map<String, Object> extraParams,
+        MobilePaymentElement mobilePaymentElement,
         PaymentElement paymentElement,
         PricingTable pricingTable) {
+      this.activeEntitlements = activeEntitlements;
       this.buyButton = buyButton;
+      this.customerPortal = customerPortal;
+      this.customerSheet = customerSheet;
       this.extraParams = extraParams;
+      this.mobilePaymentElement = mobilePaymentElement;
       this.paymentElement = paymentElement;
       this.pricingTable = pricingTable;
     }
@@ -181,9 +213,17 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
     }
 
     public static class Builder {
+      private ActiveEntitlements activeEntitlements;
+
       private BuyButton buyButton;
 
+      private CustomerPortal customerPortal;
+
+      private CustomerSheet customerSheet;
+
       private Map<String, Object> extraParams;
+
+      private MobilePaymentElement mobilePaymentElement;
 
       private PaymentElement paymentElement;
 
@@ -192,12 +232,40 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
       /** Finalize and obtain parameter instance from this builder. */
       public CustomerSessionCreateParams.Components build() {
         return new CustomerSessionCreateParams.Components(
-            this.buyButton, this.extraParams, this.paymentElement, this.pricingTable);
+            this.activeEntitlements,
+            this.buyButton,
+            this.customerPortal,
+            this.customerSheet,
+            this.extraParams,
+            this.mobilePaymentElement,
+            this.paymentElement,
+            this.pricingTable);
+      }
+
+      /** Configuration for active entitlements. */
+      public Builder setActiveEntitlements(
+          CustomerSessionCreateParams.Components.ActiveEntitlements activeEntitlements) {
+        this.activeEntitlements = activeEntitlements;
+        return this;
       }
 
       /** Configuration for buy button. */
       public Builder setBuyButton(CustomerSessionCreateParams.Components.BuyButton buyButton) {
         this.buyButton = buyButton;
+        return this;
+      }
+
+      /** Configuration for customer portal. */
+      public Builder setCustomerPortal(
+          CustomerSessionCreateParams.Components.CustomerPortal customerPortal) {
+        this.customerPortal = customerPortal;
+        return this;
+      }
+
+      /** Configuration for the customer sheet. */
+      public Builder setCustomerSheet(
+          CustomerSessionCreateParams.Components.CustomerSheet customerSheet) {
+        this.customerSheet = customerSheet;
         return this;
       }
 
@@ -227,6 +295,13 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
         return this;
       }
 
+      /** Configuration for the mobile payment element. */
+      public Builder setMobilePaymentElement(
+          CustomerSessionCreateParams.Components.MobilePaymentElement mobilePaymentElement) {
+        this.mobilePaymentElement = mobilePaymentElement;
+        return this;
+      }
+
       /** Configuration for the Payment Element. */
       public Builder setPaymentElement(
           CustomerSessionCreateParams.Components.PaymentElement paymentElement) {
@@ -239,6 +314,78 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
           CustomerSessionCreateParams.Components.PricingTable pricingTable) {
         this.pricingTable = pricingTable;
         return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class ActiveEntitlements {
+      /** <strong>Required.</strong> Whether the active entitlements is enabled. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      private ActiveEntitlements(Boolean enabled, Map<String, Object> extraParams) {
+        this.enabled = enabled;
+        this.extraParams = extraParams;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Boolean enabled;
+
+        private Map<String, Object> extraParams;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public CustomerSessionCreateParams.Components.ActiveEntitlements build() {
+          return new CustomerSessionCreateParams.Components.ActiveEntitlements(
+              this.enabled, this.extraParams);
+        }
+
+        /** <strong>Required.</strong> Whether the active entitlements is enabled. */
+        public Builder setEnabled(Boolean enabled) {
+          this.enabled = enabled;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.ActiveEntitlements#extraParams}
+         * for the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.ActiveEntitlements#extraParams}
+         * for the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
       }
     }
 
@@ -310,6 +457,779 @@ public class CustomerSessionCreateParams extends ApiRequestParams {
           }
           this.extraParams.putAll(map);
           return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class CustomerPortal {
+      /** <strong>Required.</strong> Whether the customer portal is enabled. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      private CustomerPortal(Boolean enabled, Map<String, Object> extraParams) {
+        this.enabled = enabled;
+        this.extraParams = extraParams;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Boolean enabled;
+
+        private Map<String, Object> extraParams;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public CustomerSessionCreateParams.Components.CustomerPortal build() {
+          return new CustomerSessionCreateParams.Components.CustomerPortal(
+              this.enabled, this.extraParams);
+        }
+
+        /** <strong>Required.</strong> Whether the customer portal is enabled. */
+        public Builder setEnabled(Boolean enabled) {
+          this.enabled = enabled;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.CustomerPortal#extraParams} for
+         * the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.CustomerPortal#extraParams} for
+         * the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class CustomerSheet {
+      /** <strong>Required.</strong> Whether the customer sheet is enabled. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** This hash defines whether the customer sheet supports certain features. */
+      @SerializedName("features")
+      Features features;
+
+      private CustomerSheet(Boolean enabled, Map<String, Object> extraParams, Features features) {
+        this.enabled = enabled;
+        this.extraParams = extraParams;
+        this.features = features;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Boolean enabled;
+
+        private Map<String, Object> extraParams;
+
+        private Features features;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public CustomerSessionCreateParams.Components.CustomerSheet build() {
+          return new CustomerSessionCreateParams.Components.CustomerSheet(
+              this.enabled, this.extraParams, this.features);
+        }
+
+        /** <strong>Required.</strong> Whether the customer sheet is enabled. */
+        public Builder setEnabled(Boolean enabled) {
+          this.enabled = enabled;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.CustomerSheet#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.CustomerSheet#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** This hash defines whether the customer sheet supports certain features. */
+        public Builder setFeatures(
+            CustomerSessionCreateParams.Components.CustomerSheet.Features features) {
+          this.features = features;
+          return this;
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Features {
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /**
+         * A list of <a
+         * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-allow_redisplay">{@code
+         * allow_redisplay}</a> values that controls which saved payment methods the customer sheet
+         * displays by filtering to only show payment methods with an {@code allow_redisplay} value
+         * that is present in this list.
+         *
+         * <p>If not specified, defaults to [&quot;always&quot;]. In order to display all saved
+         * payment methods, specify [&quot;always&quot;, &quot;limited&quot;,
+         * &quot;unspecified&quot;].
+         */
+        @SerializedName("payment_method_allow_redisplay_filters")
+        List<
+                CustomerSessionCreateParams.Components.CustomerSheet.Features
+                    .PaymentMethodAllowRedisplayFilter>
+            paymentMethodAllowRedisplayFilters;
+
+        /**
+         * Controls whether the customer sheet displays the option to remove a saved payment
+         * method.&quot;
+         *
+         * <p>Allowing buyers to remove their saved payment methods impacts subscriptions that
+         * depend on that payment method. Removing the payment method detaches the <a
+         * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-customer">{@code
+         * customer} object</a> from that <a
+         * href="https://docs.stripe.com/api/payment_methods">PaymentMethod</a>.
+         */
+        @SerializedName("payment_method_remove")
+        PaymentMethodRemove paymentMethodRemove;
+
+        private Features(
+            Map<String, Object> extraParams,
+            List<
+                    CustomerSessionCreateParams.Components.CustomerSheet.Features
+                        .PaymentMethodAllowRedisplayFilter>
+                paymentMethodAllowRedisplayFilters,
+            PaymentMethodRemove paymentMethodRemove) {
+          this.extraParams = extraParams;
+          this.paymentMethodAllowRedisplayFilters = paymentMethodAllowRedisplayFilters;
+          this.paymentMethodRemove = paymentMethodRemove;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Map<String, Object> extraParams;
+
+          private List<
+                  CustomerSessionCreateParams.Components.CustomerSheet.Features
+                      .PaymentMethodAllowRedisplayFilter>
+              paymentMethodAllowRedisplayFilters;
+
+          private PaymentMethodRemove paymentMethodRemove;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public CustomerSessionCreateParams.Components.CustomerSheet.Features build() {
+            return new CustomerSessionCreateParams.Components.CustomerSheet.Features(
+                this.extraParams,
+                this.paymentMethodAllowRedisplayFilters,
+                this.paymentMethodRemove);
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * CustomerSessionCreateParams.Components.CustomerSheet.Features#extraParams} for the
+           * field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * CustomerSessionCreateParams.Components.CustomerSheet.Features#extraParams} for the
+           * field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /**
+           * Add an element to `paymentMethodAllowRedisplayFilters` list. A list is initialized for
+           * the first `add/addAll` call, and subsequent calls adds additional elements to the
+           * original list. See {@link
+           * CustomerSessionCreateParams.Components.CustomerSheet.Features#paymentMethodAllowRedisplayFilters}
+           * for the field documentation.
+           */
+          public Builder addPaymentMethodAllowRedisplayFilter(
+              CustomerSessionCreateParams.Components.CustomerSheet.Features
+                      .PaymentMethodAllowRedisplayFilter
+                  element) {
+            if (this.paymentMethodAllowRedisplayFilters == null) {
+              this.paymentMethodAllowRedisplayFilters = new ArrayList<>();
+            }
+            this.paymentMethodAllowRedisplayFilters.add(element);
+            return this;
+          }
+
+          /**
+           * Add all elements to `paymentMethodAllowRedisplayFilters` list. A list is initialized
+           * for the first `add/addAll` call, and subsequent calls adds additional elements to the
+           * original list. See {@link
+           * CustomerSessionCreateParams.Components.CustomerSheet.Features#paymentMethodAllowRedisplayFilters}
+           * for the field documentation.
+           */
+          public Builder addAllPaymentMethodAllowRedisplayFilter(
+              List<
+                      CustomerSessionCreateParams.Components.CustomerSheet.Features
+                          .PaymentMethodAllowRedisplayFilter>
+                  elements) {
+            if (this.paymentMethodAllowRedisplayFilters == null) {
+              this.paymentMethodAllowRedisplayFilters = new ArrayList<>();
+            }
+            this.paymentMethodAllowRedisplayFilters.addAll(elements);
+            return this;
+          }
+
+          /**
+           * Controls whether the customer sheet displays the option to remove a saved payment
+           * method.&quot;
+           *
+           * <p>Allowing buyers to remove their saved payment methods impacts subscriptions that
+           * depend on that payment method. Removing the payment method detaches the <a
+           * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-customer">{@code
+           * customer} object</a> from that <a
+           * href="https://docs.stripe.com/api/payment_methods">PaymentMethod</a>.
+           */
+          public Builder setPaymentMethodRemove(
+              CustomerSessionCreateParams.Components.CustomerSheet.Features.PaymentMethodRemove
+                  paymentMethodRemove) {
+            this.paymentMethodRemove = paymentMethodRemove;
+            return this;
+          }
+        }
+
+        public enum PaymentMethodAllowRedisplayFilter implements ApiRequestParams.EnumParam {
+          @SerializedName("always")
+          ALWAYS("always"),
+
+          @SerializedName("limited")
+          LIMITED("limited"),
+
+          @SerializedName("unspecified")
+          UNSPECIFIED("unspecified");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodAllowRedisplayFilter(String value) {
+            this.value = value;
+          }
+        }
+
+        public enum PaymentMethodRemove implements ApiRequestParams.EnumParam {
+          @SerializedName("disabled")
+          DISABLED("disabled"),
+
+          @SerializedName("enabled")
+          ENABLED("enabled");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodRemove(String value) {
+            this.value = value;
+          }
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class MobilePaymentElement {
+      /** <strong>Required.</strong> Whether the mobile payment element is enabled. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** This hash defines whether the mobile payment element supports certain features. */
+      @SerializedName("features")
+      Features features;
+
+      private MobilePaymentElement(
+          Boolean enabled, Map<String, Object> extraParams, Features features) {
+        this.enabled = enabled;
+        this.extraParams = extraParams;
+        this.features = features;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Boolean enabled;
+
+        private Map<String, Object> extraParams;
+
+        private Features features;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public CustomerSessionCreateParams.Components.MobilePaymentElement build() {
+          return new CustomerSessionCreateParams.Components.MobilePaymentElement(
+              this.enabled, this.extraParams, this.features);
+        }
+
+        /** <strong>Required.</strong> Whether the mobile payment element is enabled. */
+        public Builder setEnabled(Boolean enabled) {
+          this.enabled = enabled;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.MobilePaymentElement#extraParams}
+         * for the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CustomerSessionCreateParams.Components.MobilePaymentElement#extraParams}
+         * for the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** This hash defines whether the mobile payment element supports certain features. */
+        public Builder setFeatures(
+            CustomerSessionCreateParams.Components.MobilePaymentElement.Features features) {
+          this.features = features;
+          return this;
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Features {
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /**
+         * A list of <a
+         * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-allow_redisplay">{@code
+         * allow_redisplay}</a> values that controls which saved payment methods the mobile payment
+         * element displays by filtering to only show payment methods with an {@code
+         * allow_redisplay} value that is present in this list.
+         *
+         * <p>If not specified, defaults to [&quot;always&quot;]. In order to display all saved
+         * payment methods, specify [&quot;always&quot;, &quot;limited&quot;,
+         * &quot;unspecified&quot;].
+         */
+        @SerializedName("payment_method_allow_redisplay_filters")
+        List<
+                CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                    .PaymentMethodAllowRedisplayFilter>
+            paymentMethodAllowRedisplayFilters;
+
+        /** Controls whether or not the mobile payment element shows saved payment methods. */
+        @SerializedName("payment_method_redisplay")
+        PaymentMethodRedisplay paymentMethodRedisplay;
+
+        /**
+         * Controls whether the mobile payment element displays the option to remove a saved payment
+         * method.&quot;
+         *
+         * <p>Allowing buyers to remove their saved payment methods impacts subscriptions that
+         * depend on that payment method. Removing the payment method detaches the <a
+         * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-customer">{@code
+         * customer} object</a> from that <a
+         * href="https://docs.stripe.com/api/payment_methods">PaymentMethod</a>.
+         */
+        @SerializedName("payment_method_remove")
+        PaymentMethodRemove paymentMethodRemove;
+
+        /**
+         * Controls whether the mobile payment element displays a checkbox offering to save a new
+         * payment method.
+         *
+         * <p>If a customer checks the box, the <a
+         * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-allow_redisplay">{@code
+         * allow_redisplay}</a> value on the PaymentMethod is set to {@code 'always'} at
+         * confirmation time. For PaymentIntents, the <a
+         * href="https://docs.stripe.com/api/payment_intents/object#payment_intent_object-setup_future_usage">{@code
+         * setup_future_usage}</a> value is also set to the value defined in {@code
+         * payment_method_save_usage}.
+         */
+        @SerializedName("payment_method_save")
+        PaymentMethodSave paymentMethodSave;
+
+        /**
+         * Allows overriding the value of allow_override when saving a new payment method when
+         * payment_method_save is set to disabled. Use values: &quot;always&quot;,
+         * &quot;limited&quot;, or &quot;unspecified&quot;.
+         *
+         * <p>If not specified, defaults to {@code nil} (no override value).
+         */
+        @SerializedName("payment_method_save_allow_redisplay_override")
+        PaymentMethodSaveAllowRedisplayOverride paymentMethodSaveAllowRedisplayOverride;
+
+        private Features(
+            Map<String, Object> extraParams,
+            List<
+                    CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                        .PaymentMethodAllowRedisplayFilter>
+                paymentMethodAllowRedisplayFilters,
+            PaymentMethodRedisplay paymentMethodRedisplay,
+            PaymentMethodRemove paymentMethodRemove,
+            PaymentMethodSave paymentMethodSave,
+            PaymentMethodSaveAllowRedisplayOverride paymentMethodSaveAllowRedisplayOverride) {
+          this.extraParams = extraParams;
+          this.paymentMethodAllowRedisplayFilters = paymentMethodAllowRedisplayFilters;
+          this.paymentMethodRedisplay = paymentMethodRedisplay;
+          this.paymentMethodRemove = paymentMethodRemove;
+          this.paymentMethodSave = paymentMethodSave;
+          this.paymentMethodSaveAllowRedisplayOverride = paymentMethodSaveAllowRedisplayOverride;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Map<String, Object> extraParams;
+
+          private List<
+                  CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                      .PaymentMethodAllowRedisplayFilter>
+              paymentMethodAllowRedisplayFilters;
+
+          private PaymentMethodRedisplay paymentMethodRedisplay;
+
+          private PaymentMethodRemove paymentMethodRemove;
+
+          private PaymentMethodSave paymentMethodSave;
+
+          private PaymentMethodSaveAllowRedisplayOverride paymentMethodSaveAllowRedisplayOverride;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public CustomerSessionCreateParams.Components.MobilePaymentElement.Features build() {
+            return new CustomerSessionCreateParams.Components.MobilePaymentElement.Features(
+                this.extraParams,
+                this.paymentMethodAllowRedisplayFilters,
+                this.paymentMethodRedisplay,
+                this.paymentMethodRemove,
+                this.paymentMethodSave,
+                this.paymentMethodSaveAllowRedisplayOverride);
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * CustomerSessionCreateParams.Components.MobilePaymentElement.Features#extraParams} for
+           * the field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * CustomerSessionCreateParams.Components.MobilePaymentElement.Features#extraParams} for
+           * the field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /**
+           * Add an element to `paymentMethodAllowRedisplayFilters` list. A list is initialized for
+           * the first `add/addAll` call, and subsequent calls adds additional elements to the
+           * original list. See {@link
+           * CustomerSessionCreateParams.Components.MobilePaymentElement.Features#paymentMethodAllowRedisplayFilters}
+           * for the field documentation.
+           */
+          public Builder addPaymentMethodAllowRedisplayFilter(
+              CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                      .PaymentMethodAllowRedisplayFilter
+                  element) {
+            if (this.paymentMethodAllowRedisplayFilters == null) {
+              this.paymentMethodAllowRedisplayFilters = new ArrayList<>();
+            }
+            this.paymentMethodAllowRedisplayFilters.add(element);
+            return this;
+          }
+
+          /**
+           * Add all elements to `paymentMethodAllowRedisplayFilters` list. A list is initialized
+           * for the first `add/addAll` call, and subsequent calls adds additional elements to the
+           * original list. See {@link
+           * CustomerSessionCreateParams.Components.MobilePaymentElement.Features#paymentMethodAllowRedisplayFilters}
+           * for the field documentation.
+           */
+          public Builder addAllPaymentMethodAllowRedisplayFilter(
+              List<
+                      CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                          .PaymentMethodAllowRedisplayFilter>
+                  elements) {
+            if (this.paymentMethodAllowRedisplayFilters == null) {
+              this.paymentMethodAllowRedisplayFilters = new ArrayList<>();
+            }
+            this.paymentMethodAllowRedisplayFilters.addAll(elements);
+            return this;
+          }
+
+          /** Controls whether or not the mobile payment element shows saved payment methods. */
+          public Builder setPaymentMethodRedisplay(
+              CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                      .PaymentMethodRedisplay
+                  paymentMethodRedisplay) {
+            this.paymentMethodRedisplay = paymentMethodRedisplay;
+            return this;
+          }
+
+          /**
+           * Controls whether the mobile payment element displays the option to remove a saved
+           * payment method.&quot;
+           *
+           * <p>Allowing buyers to remove their saved payment methods impacts subscriptions that
+           * depend on that payment method. Removing the payment method detaches the <a
+           * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-customer">{@code
+           * customer} object</a> from that <a
+           * href="https://docs.stripe.com/api/payment_methods">PaymentMethod</a>.
+           */
+          public Builder setPaymentMethodRemove(
+              CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                      .PaymentMethodRemove
+                  paymentMethodRemove) {
+            this.paymentMethodRemove = paymentMethodRemove;
+            return this;
+          }
+
+          /**
+           * Controls whether the mobile payment element displays a checkbox offering to save a new
+           * payment method.
+           *
+           * <p>If a customer checks the box, the <a
+           * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-allow_redisplay">{@code
+           * allow_redisplay}</a> value on the PaymentMethod is set to {@code 'always'} at
+           * confirmation time. For PaymentIntents, the <a
+           * href="https://docs.stripe.com/api/payment_intents/object#payment_intent_object-setup_future_usage">{@code
+           * setup_future_usage}</a> value is also set to the value defined in {@code
+           * payment_method_save_usage}.
+           */
+          public Builder setPaymentMethodSave(
+              CustomerSessionCreateParams.Components.MobilePaymentElement.Features.PaymentMethodSave
+                  paymentMethodSave) {
+            this.paymentMethodSave = paymentMethodSave;
+            return this;
+          }
+
+          /**
+           * Allows overriding the value of allow_override when saving a new payment method when
+           * payment_method_save is set to disabled. Use values: &quot;always&quot;,
+           * &quot;limited&quot;, or &quot;unspecified&quot;.
+           *
+           * <p>If not specified, defaults to {@code nil} (no override value).
+           */
+          public Builder setPaymentMethodSaveAllowRedisplayOverride(
+              CustomerSessionCreateParams.Components.MobilePaymentElement.Features
+                      .PaymentMethodSaveAllowRedisplayOverride
+                  paymentMethodSaveAllowRedisplayOverride) {
+            this.paymentMethodSaveAllowRedisplayOverride = paymentMethodSaveAllowRedisplayOverride;
+            return this;
+          }
+        }
+
+        public enum PaymentMethodAllowRedisplayFilter implements ApiRequestParams.EnumParam {
+          @SerializedName("always")
+          ALWAYS("always"),
+
+          @SerializedName("limited")
+          LIMITED("limited"),
+
+          @SerializedName("unspecified")
+          UNSPECIFIED("unspecified");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodAllowRedisplayFilter(String value) {
+            this.value = value;
+          }
+        }
+
+        public enum PaymentMethodRedisplay implements ApiRequestParams.EnumParam {
+          @SerializedName("disabled")
+          DISABLED("disabled"),
+
+          @SerializedName("enabled")
+          ENABLED("enabled");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodRedisplay(String value) {
+            this.value = value;
+          }
+        }
+
+        public enum PaymentMethodRemove implements ApiRequestParams.EnumParam {
+          @SerializedName("disabled")
+          DISABLED("disabled"),
+
+          @SerializedName("enabled")
+          ENABLED("enabled");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodRemove(String value) {
+            this.value = value;
+          }
+        }
+
+        public enum PaymentMethodSave implements ApiRequestParams.EnumParam {
+          @SerializedName("disabled")
+          DISABLED("disabled"),
+
+          @SerializedName("enabled")
+          ENABLED("enabled");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodSave(String value) {
+            this.value = value;
+          }
+        }
+
+        public enum PaymentMethodSaveAllowRedisplayOverride implements ApiRequestParams.EnumParam {
+          @SerializedName("always")
+          ALWAYS("always"),
+
+          @SerializedName("limited")
+          LIMITED("limited"),
+
+          @SerializedName("unspecified")
+          UNSPECIFIED("unspecified");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          PaymentMethodSaveAllowRedisplayOverride(String value) {
+            this.value = value;
+          }
         }
       }
     }

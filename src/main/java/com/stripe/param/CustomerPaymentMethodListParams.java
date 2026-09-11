@@ -270,6 +270,9 @@ public class CustomerPaymentMethodListParams extends ApiRequestParams {
     @SerializedName("billie")
     BILLIE("billie"),
 
+    @SerializedName("bizum")
+    BIZUM("bizum"),
+
     @SerializedName("blik")
     BLIK("blik"),
 
@@ -284,6 +287,9 @@ public class CustomerPaymentMethodListParams extends ApiRequestParams {
 
     @SerializedName("crypto")
     CRYPTO("crypto"),
+
+    @SerializedName("custom")
+    CUSTOM("custom"),
 
     @SerializedName("customer_balance")
     CUSTOMER_BALANCE("customer_balance"),
@@ -318,6 +324,9 @@ public class CustomerPaymentMethodListParams extends ApiRequestParams {
     @SerializedName("link")
     LINK("link"),
 
+    @SerializedName("mb_way")
+    MB_WAY("mb_way"),
+
     @SerializedName("mobilepay")
     MOBILEPAY("mobilepay"),
 
@@ -348,6 +357,9 @@ public class CustomerPaymentMethodListParams extends ApiRequestParams {
     @SerializedName("paypal")
     PAYPAL("paypal"),
 
+    @SerializedName("payto")
+    PAYTO("payto"),
+
     @SerializedName("pix")
     PIX("pix"),
 
@@ -363,17 +375,26 @@ public class CustomerPaymentMethodListParams extends ApiRequestParams {
     @SerializedName("satispay")
     SATISPAY("satispay"),
 
+    @SerializedName("scalapay")
+    SCALAPAY("scalapay"),
+
     @SerializedName("sepa_debit")
     SEPA_DEBIT("sepa_debit"),
 
     @SerializedName("sofort")
     SOFORT("sofort"),
 
+    @SerializedName("sunbit")
+    SUNBIT("sunbit"),
+
     @SerializedName("swish")
     SWISH("swish"),
 
     @SerializedName("twint")
     TWINT("twint"),
+
+    @SerializedName("upi")
+    UPI("upi"),
 
     @SerializedName("us_bank_account")
     US_BANK_ACCOUNT("us_bank_account"),

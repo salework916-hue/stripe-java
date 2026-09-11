@@ -108,14 +108,14 @@ public class TaxRate extends ApiResource implements HasId, MetadataStore<TaxRate
   String jurisdictionLevel;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -159,8 +159,9 @@ public class TaxRate extends ApiResource implements HasId, MetadataStore<TaxRate
    * The high-level tax type, such as {@code vat} or {@code sales_tax}.
    *
    * <p>One of {@code amusement_tax}, {@code communications_tax}, {@code gst}, {@code hst}, {@code
-   * igst}, {@code jct}, {@code lease_tax}, {@code pst}, {@code qst}, {@code retail_delivery_fee},
-   * {@code rst}, {@code sales_tax}, {@code service_tax}, or {@code vat}.
+   * igst}, {@code jct}, {@code lease_tax}, {@code mass_transit_parking_tax}, {@code parking_tax},
+   * {@code pst}, {@code qst}, {@code retail_delivery_fee}, {@code rst}, {@code sales_tax}, {@code
+   * service_tax}, or {@code vat}.
    */
   @SerializedName("tax_type")
   String taxType;

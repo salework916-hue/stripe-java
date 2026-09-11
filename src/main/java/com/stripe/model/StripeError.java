@@ -12,7 +12,7 @@ import lombok.Setter;
 public class StripeError extends StripeObject {
   /**
    * For card errors resulting from a card issuer decline, a short string indicating <a
-   * href="https://stripe.com/docs/declines#retrying-issuer-declines">how to proceed with an
+   * href="https://docs.stripe.com/declines#retrying-issuer-declines">how to proceed with an
    * error</a> if they provide one.
    */
   @SerializedName("advice_code")
@@ -24,18 +24,21 @@ public class StripeError extends StripeObject {
 
   /**
    * For some errors that could be handled programmatically, a short string indicating the <a
-   * href="https://stripe.com/docs/error-codes">error code</a> reported.
+   * href="https://docs.stripe.com/error-codes">error code</a> reported.
    *
    * <p>One of {@code account_closed}, {@code account_country_invalid_address}, {@code
    * account_error_country_change_requires_additional_steps}, {@code account_information_mismatch},
-   * {@code account_invalid}, {@code account_number_invalid}, {@code acss_debit_session_incomplete},
-   * {@code alipay_upgrade_required}, {@code amount_too_large}, {@code amount_too_small}, {@code
-   * api_key_expired}, {@code application_fees_not_allowed}, {@code authentication_required}, {@code
-   * balance_insufficient}, {@code balance_invalid_parameter}, {@code
-   * bank_account_bad_routing_numbers}, {@code bank_account_declined}, {@code bank_account_exists},
-   * {@code bank_account_restricted}, {@code bank_account_unusable}, {@code
-   * bank_account_unverified}, {@code bank_account_verification_failed}, {@code
-   * billing_invalid_mandate}, {@code bitcoin_upgrade_required}, {@code
+   * {@code account_invalid}, {@code account_number_invalid}, {@code
+   * account_token_required_for_v2_account}, {@code acss_debit_session_incomplete}, {@code
+   * action_blocked}, {@code alipay_upgrade_required}, {@code amount_too_large}, {@code
+   * amount_too_small}, {@code anomalous_money_movement_request}, {@code api_key_expired}, {@code
+   * application_fees_not_allowed}, {@code approval_required}, {@code authentication_failure},
+   * {@code authentication_required}, {@code balance_insufficient}, {@code
+   * balance_invalid_parameter}, {@code bank_account_bad_routing_numbers}, {@code
+   * bank_account_declined}, {@code bank_account_exists}, {@code bank_account_restricted}, {@code
+   * bank_account_unusable}, {@code bank_account_unverified}, {@code
+   * bank_account_verification_failed}, {@code billing_invalid_mandate}, {@code
+   * bitcoin_upgrade_required}, {@code capability_not_active}, {@code
    * capture_charge_authorization_expired}, {@code capture_unauthorized_payment}, {@code
    * card_decline_rate_limit_exceeded}, {@code card_declined}, {@code
    * cardholder_phone_number_required}, {@code charge_already_captured}, {@code
@@ -45,17 +48,23 @@ public class StripeError extends StripeObject {
    * {@code country_code_invalid}, {@code country_unsupported}, {@code coupon_expired}, {@code
    * customer_max_payment_methods}, {@code customer_max_subscriptions}, {@code
    * customer_session_expired}, {@code customer_tax_location_invalid}, {@code debit_not_authorized},
-   * {@code email_invalid}, {@code expired_card}, {@code financial_connections_account_inactive},
-   * {@code financial_connections_no_successful_transaction_refresh}, {@code
-   * forwarding_api_inactive}, {@code forwarding_api_invalid_parameter}, {@code
-   * forwarding_api_retryable_upstream_error}, {@code forwarding_api_upstream_connection_error},
-   * {@code forwarding_api_upstream_connection_timeout}, {@code forwarding_api_upstream_error},
-   * {@code idempotency_key_in_use}, {@code incorrect_address}, {@code incorrect_cvc}, {@code
-   * incorrect_number}, {@code incorrect_zip}, {@code india_recurring_payment_mandate_canceled},
-   * {@code instant_payouts_config_disabled}, {@code instant_payouts_currency_disabled}, {@code
-   * instant_payouts_limit_exceeded}, {@code instant_payouts_unsupported}, {@code
-   * insufficient_funds}, {@code intent_invalid_state}, {@code intent_verification_method_missing},
-   * {@code invalid_card_type}, {@code invalid_characters}, {@code invalid_charge_amount}, {@code
+   * {@code email_invalid}, {@code expired_card}, {@code expired_payment_method}, {@code
+   * failed_tax_calculation}, {@code financial_account_balance_does_not_support_currency}, {@code
+   * financial_account_capability_not_enabled}, {@code financial_account_capability_restricted},
+   * {@code financial_connections_account_inactive}, {@code
+   * financial_connections_account_pending_account_numbers}, {@code
+   * financial_connections_account_unavailable_account_numbers}, {@code
+   * financial_connections_no_successful_transaction_refresh}, {@code forwarding_api_inactive},
+   * {@code forwarding_api_invalid_parameter}, {@code forwarding_api_retryable_upstream_error},
+   * {@code forwarding_api_upstream_connection_error}, {@code
+   * forwarding_api_upstream_connection_timeout}, {@code forwarding_api_upstream_error}, {@code
+   * idempotency_key_in_use}, {@code incorrect_address}, {@code incorrect_cvc}, {@code
+   * incorrect_number}, {@code incorrect_postal_code}, {@code incorrect_zip}, {@code
+   * india_recurring_payment_mandate_canceled}, {@code instant_payouts_config_disabled}, {@code
+   * instant_payouts_currency_disabled}, {@code instant_payouts_limit_exceeded}, {@code
+   * instant_payouts_unsupported}, {@code insufficient_funds}, {@code intent_invalid_state}, {@code
+   * intent_verification_method_missing}, {@code invalid_canceled_subscription_fields}, {@code
+   * invalid_card_type}, {@code invalid_characters}, {@code invalid_charge_amount}, {@code
    * invalid_cvc}, {@code invalid_expiry_month}, {@code invalid_expiry_year}, {@code
    * invalid_mandate_reference_prefix_format}, {@code invalid_number}, {@code invalid_source_usage},
    * {@code invalid_tax_location}, {@code invoice_no_customer_line_items}, {@code
@@ -72,32 +81,36 @@ public class StripeError extends StripeObject {
    * {@code payment_intent_invalid_parameter}, {@code
    * payment_intent_konbini_rejected_confirmation_number}, {@code payment_intent_mandate_invalid},
    * {@code payment_intent_payment_attempt_expired}, {@code payment_intent_payment_attempt_failed},
-   * {@code payment_intent_unexpected_state}, {@code payment_method_bank_account_already_verified},
-   * {@code payment_method_bank_account_blocked}, {@code
-   * payment_method_billing_details_address_missing}, {@code payment_method_configuration_failures},
-   * {@code payment_method_currency_mismatch}, {@code payment_method_customer_decline}, {@code
-   * payment_method_invalid_parameter}, {@code payment_method_invalid_parameter_testmode}, {@code
-   * payment_method_microdeposit_failed}, {@code
+   * {@code payment_intent_rate_limit_exceeded}, {@code payment_intent_unexpected_state}, {@code
+   * payment_method_bank_account_already_verified}, {@code payment_method_bank_account_blocked},
+   * {@code payment_method_billing_details_address_missing}, {@code
+   * payment_method_configuration_failures}, {@code payment_method_currency_mismatch}, {@code
+   * payment_method_customer_decline}, {@code payment_method_invalid_parameter}, {@code
+   * payment_method_invalid_parameter_testmode}, {@code payment_method_microdeposit_failed}, {@code
+   * payment_method_microdeposit_processing_error}, {@code
    * payment_method_microdeposit_verification_amounts_invalid}, {@code
    * payment_method_microdeposit_verification_amounts_mismatch}, {@code
    * payment_method_microdeposit_verification_attempts_exceeded}, {@code
    * payment_method_microdeposit_verification_descriptor_code_mismatch}, {@code
    * payment_method_microdeposit_verification_timeout}, {@code payment_method_not_available}, {@code
    * payment_method_provider_decline}, {@code payment_method_provider_timeout}, {@code
-   * payment_method_unactivated}, {@code payment_method_unexpected_state}, {@code
-   * payment_method_unsupported_type}, {@code payout_reconciliation_not_ready}, {@code
-   * payouts_limit_exceeded}, {@code payouts_not_allowed}, {@code platform_account_required}, {@code
-   * platform_api_key_expired}, {@code postal_code_invalid}, {@code processing_error}, {@code
-   * product_inactive}, {@code progressive_onboarding_limit_exceeded}, {@code rate_limit}, {@code
-   * refer_to_customer}, {@code refund_disputed_payment}, {@code resource_already_exists}, {@code
+   * payment_method_restricted}, {@code payment_method_unactivated}, {@code
+   * payment_method_unexpected_state}, {@code payment_method_unsupported_type}, {@code
+   * payout_reconciliation_not_ready}, {@code payouts_limit_exceeded}, {@code payouts_not_allowed},
+   * {@code platform_account_required}, {@code platform_api_key_expired}, {@code
+   * postal_code_invalid}, {@code processing_error}, {@code product_inactive}, {@code
+   * progressive_onboarding_limit_exceeded}, {@code rate_limit}, {@code refer_to_customer}, {@code
+   * refund_disputed_payment}, {@code request_blocked}, {@code resource_already_exists}, {@code
    * resource_missing}, {@code return_intent_already_processed}, {@code routing_number_invalid},
-   * {@code secret_key_required}, {@code sepa_unsupported_account}, {@code setup_attempt_failed},
+   * {@code secret_key_required}, {@code sepa_unsupported_account}, {@code
+   * service_period_coupon_with_metered_tiered_item_unsupported}, {@code setup_attempt_failed},
    * {@code setup_intent_authentication_failure}, {@code setup_intent_invalid_parameter}, {@code
    * setup_intent_mandate_invalid}, {@code setup_intent_mobile_wallet_unsupported}, {@code
    * setup_intent_setup_attempt_expired}, {@code setup_intent_unexpected_state}, {@code
-   * shipping_address_invalid}, {@code shipping_calculation_failed}, {@code sku_inactive}, {@code
-   * state_unsupported}, {@code status_transition_invalid}, {@code stripe_tax_inactive}, {@code
-   * tax_id_invalid}, {@code tax_id_prohibited}, {@code taxes_calculation_failed}, {@code
+   * shipping_address_invalid}, {@code shipping_calculation_failed}, {@code siret_invalid}, {@code
+   * sku_inactive}, {@code state_unsupported}, {@code status_transition_invalid}, {@code
+   * storer_capability_missing}, {@code storer_capability_not_active}, {@code stripe_tax_inactive},
+   * {@code tax_id_invalid}, {@code tax_id_prohibited}, {@code taxes_calculation_failed}, {@code
    * terminal_location_country_unsupported}, {@code terminal_reader_busy}, {@code
    * terminal_reader_hardware_fault}, {@code terminal_reader_invalid_location_for_activation},
    * {@code terminal_reader_invalid_location_for_payment}, {@code terminal_reader_offline}, {@code
@@ -111,14 +124,14 @@ public class StripeError extends StripeObject {
 
   /**
    * For card errors resulting from a card issuer decline, a short string indicating the <a
-   * href="https://stripe.com/docs/declines#issuer-declines">card issuer's reason for the
+   * href="https://docs.stripe.com/declines#issuer-declines">card issuer's reason for the
    * decline</a> if they provide one.
    */
   @SerializedName("decline_code")
   String declineCode;
 
   /**
-   * A URL to more information about the <a href="https://stripe.com/docs/error-codes">error
+   * A URL to more information about the <a href="https://docs.stripe.com/error-codes">error
    * code</a> reported.
    */
   @SerializedName("doc_url")
@@ -159,11 +172,11 @@ public class StripeError extends StripeObject {
    * particular session.
    *
    * <p>A PaymentIntent transitions through <a
-   * href="https://stripe.com/docs/payments/intents#intent-statuses">multiple statuses</a>
-   * throughout its lifetime as it interfaces with Stripe.js to perform authentication flows and
-   * ultimately creates at most one successful charge.
+   * href="https://stripe.com/payments/paymentintents/lifecycle">multiple statuses</a> throughout
+   * its lifetime as it interfaces with Stripe.js to perform authentication flows and ultimately
+   * creates at most one successful charge.
    *
-   * <p>Related guide: <a href="https://stripe.com/docs/payments/payment-intents">Payment Intents
+   * <p>Related guide: <a href="https://docs.stripe.com/payments/payment-intents">Payment Intents
    * API</a>
    */
   @SerializedName("payment_intent")
@@ -171,11 +184,11 @@ public class StripeError extends StripeObject {
 
   /**
    * PaymentMethod objects represent your customer's payment instruments. You can use them with <a
-   * href="https://stripe.com/docs/payments/payment-intents">PaymentIntents</a> to collect payments
+   * href="https://docs.stripe.com/payments/payment-intents">PaymentIntents</a> to collect payments
    * or save them to Customer objects to store instrument details for future payments.
    *
-   * <p>Related guides: <a href="https://stripe.com/docs/payments/payment-methods">Payment
-   * Methods</a> and <a href="https://stripe.com/docs/payments/more-payment-scenarios">More Payment
+   * <p>Related guides: <a href="https://docs.stripe.com/payments/payment-methods">Payment
+   * Methods</a> and <a href="https://docs.stripe.com/payments/more-payment-scenarios">More Payment
    * Scenarios</a>.
    */
   @SerializedName("payment_method")
@@ -196,8 +209,7 @@ public class StripeError extends StripeObject {
    * A SetupIntent guides you through the process of setting up and saving a customer's payment
    * credentials for future payments. For example, you can use a SetupIntent to set up and save your
    * customer's card without immediately collecting a payment. Later, you can use <a
-   * href="https://stripe.com/docs/api#payment_intents">PaymentIntents</a> to drive the payment
-   * flow.
+   * href="https://api.stripe.com#payment_intents">PaymentIntents</a> to drive the payment flow.
    *
    * <p>Create a SetupIntent when you're ready to collect your customer's payment credentials. Don't
    * maintain long-lived, unconfirmed SetupIntents because they might not be valid. The SetupIntent
@@ -211,11 +223,10 @@ public class StripeError extends StripeObject {
    * to be run through <a href="https://docs.stripe.com/strong-customer-authentication">Strong
    * Customer Authentication</a> during payment method collection to streamline later <a
    * href="https://docs.stripe.com/payments/setup-intents">off-session payments</a>. If you use the
-   * SetupIntent with a <a
-   * href="https://stripe.com/docs/api#setup_intent_object-customer">Customer</a>, it automatically
-   * attaches the resulting payment method to that Customer after successful setup. We recommend
-   * using SetupIntents or <a
-   * href="https://stripe.com/docs/api#payment_intent_object-setup_future_usage">setup_future_usage</a>
+   * SetupIntent with a <a href="https://api.stripe.com#setup_intent_object-customer">Customer</a>,
+   * it automatically attaches the resulting payment method to that Customer after successful setup.
+   * We recommend using SetupIntents or <a
+   * href="https://api.stripe.com#payment_intent_object-setup_future_usage">setup_future_usage</a>
    * on PaymentIntents to save payment methods to prevent saving invalid or unoptimized payment
    * methods.
    *

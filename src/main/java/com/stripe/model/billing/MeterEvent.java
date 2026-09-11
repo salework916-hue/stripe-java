@@ -36,8 +36,8 @@ public class MeterEvent extends ApiResource {
   String identifier;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -54,7 +54,7 @@ public class MeterEvent extends ApiResource {
    * The payload of the event. This contains the fields corresponding to a meter's {@code
    * customer_mapping.event_payload_key} (default is {@code stripe_customer_id}) and {@code
    * value_settings.event_payload_key} (default is {@code value}). Read more about the <a
-   * href="https://stripe.com/docs/billing/subscriptions/usage-based/recording-usage#payload-key-overrides">payload</a>.
+   * href="https://docs.stripe.com/billing/subscriptions/usage-based/meters/configure#meter-configuration-attributes">payload</a>.
    */
   @SerializedName("payload")
   Map<String, String> payload;

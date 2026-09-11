@@ -38,7 +38,9 @@ public class PersonalizationDesign extends ApiResource
     implements HasId, MetadataStore<PersonalizationDesign> {
   /**
    * The file for the card logo to use with physical bundles that support card logos. Must have a
-   * {@code purpose} value of {@code issuing_logo}.
+   * {@code purpose} value of {@code issuing_logo}. Image must be in PNG format with dimensions of
+   * 1000px by 200px. It must be a binary (black and white) image containing a black logo on a white
+   * background. We don't accept grayscale.
    */
   @SerializedName("card_logo")
   @Getter(lombok.AccessLevel.NONE)
@@ -59,8 +61,8 @@ public class PersonalizationDesign extends ApiResource
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -73,7 +75,7 @@ public class PersonalizationDesign extends ApiResource
   String lookupKey;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */

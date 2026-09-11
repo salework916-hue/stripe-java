@@ -109,7 +109,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
 
   /**
    * Information about the <a
-   * href="https://stripe.com/docs/connect/custom-accounts/future-requirements">upcoming new
+   * href="https://docs.stripe.com/connect/custom-accounts/future-requirements">upcoming new
    * requirements for this person</a>, including what information needs to be collected, and by
    * when.
    */
@@ -167,7 +167,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   String maidenName;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -231,7 +231,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   /**
    * Deletes an existing person’s relationship to the account’s legal entity. Any person with a
    * relationship for an account can be deleted through the API, except if the person is the {@code
-   * account_opener}. If your integration is using the {@code executive} parameter, you cannot
+   * representative}. If your integration is using the {@code executive} parameter, you cannot
    * delete the only verified {@code executive} on file.
    */
   public Person delete() throws StripeException {
@@ -241,7 +241,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   /**
    * Deletes an existing person’s relationship to the account’s legal entity. Any person with a
    * relationship for an account can be deleted through the API, except if the person is the {@code
-   * account_opener}. If your integration is using the {@code executive} parameter, you cannot
+   * representative}. If your integration is using the {@code executive} parameter, you cannot
    * delete the only verified {@code executive} on file.
    */
   public Person delete(RequestOptions options) throws StripeException {
@@ -251,7 +251,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   /**
    * Deletes an existing person’s relationship to the account’s legal entity. Any person with a
    * relationship for an account can be deleted through the API, except if the person is the {@code
-   * account_opener}. If your integration is using the {@code executive} parameter, you cannot
+   * representative}. If your integration is using the {@code executive} parameter, you cannot
    * delete the only verified {@code executive} on file.
    */
   public Person delete(Map<String, Object> params) throws StripeException {
@@ -261,7 +261,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   /**
    * Deletes an existing person’s relationship to the account’s legal entity. Any person with a
    * relationship for an account can be deleted through the API, except if the person is the {@code
-   * account_opener}. If your integration is using the {@code executive} parameter, you cannot
+   * representative}. If your integration is using the {@code executive} parameter, you cannot
    * delete the only verified {@code executive} on file.
    */
   public Person delete(Map<String, Object> params, RequestOptions options) throws StripeException {
@@ -460,17 +460,20 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   @EqualsAndHashCode(callSuper = false)
   public static class FutureRequirements extends StripeObject {
     /**
-     * Fields that are due and can be satisfied by providing the corresponding alternative fields
-     * instead.
+     * Fields that are due and can be resolved by providing the corresponding alternative fields
+     * instead. Many alternatives can list the same {@code original_fields_due}, and any of these
+     * alternatives can serve as a pathway for attempting to resolve the fields again. Re-providing
+     * {@code original_fields_due} also serves as a pathway for attempting to resolve the fields
+     * again.
      */
     @SerializedName("alternatives")
     List<Person.FutureRequirements.Alternative> alternatives;
 
     /**
-     * Fields that need to be collected to keep the person's account enabled. If not collected by
-     * the account's {@code future_requirements[current_deadline]}, these fields will transition to
-     * the main {@code requirements} hash, and may immediately become {@code past_due}, but the
-     * account may also be given a grace period depending on the account's enablement state prior to
+     * Fields that need to be resolved to keep the person's account enabled. If not resolved by the
+     * account's {@code future_requirements[current_deadline]}, these fields will transition to the
+     * main {@code requirements} hash, and may immediately become {@code past_due}, but the account
+     * may also be given a grace period depending on the account's enablement state prior to
      * transition.
      */
     @SerializedName("currently_due")
@@ -492,20 +495,19 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     List<String> eventuallyDue;
 
     /**
-     * Fields that weren't collected by the account's {@code requirements.current_deadline}. These
-     * fields need to be collected to enable the person's account. New fields will never appear
-     * here; {@code future_requirements.past_due} will always be a subset of {@code
-     * requirements.past_due}.
+     * Fields that haven't been resolved by the account's {@code requirements.current_deadline}.
+     * These fields need to be resolved to enable the person's account. {@code
+     * future_requirements.past_due} is a subset of {@code requirements.past_due}.
      */
     @SerializedName("past_due")
     List<String> pastDue;
 
     /**
-     * Fields that might become required depending on the results of verification or review. It's an
-     * empty array unless an asynchronous verification is pending. If verification fails, these
-     * fields move to {@code eventually_due} or {@code currently_due}. Fields might appear in {@code
-     * eventually_due} or {@code currently_due} and in {@code pending_verification} if verification
-     * fails but another verification is still pending.
+     * Fields that are being reviewed, or might become required depending on the results of a
+     * review. If the review fails, these fields can move to {@code eventually_due}, {@code
+     * currently_due}, {@code past_due} or {@code alternatives}. Fields might appear in {@code
+     * eventually_due}, {@code currently_due}, {@code past_due} or {@code alternatives} and in
+     * {@code pending_verification} if one verification fails but another is still pending.
      */
     @SerializedName("pending_verification")
     List<String> pendingVerification;
@@ -518,12 +520,12 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Alternative extends StripeObject {
-      /** Fields that can be provided to satisfy all fields in {@code original_fields_due}. */
+      /** Fields that can be provided to resolve all fields in {@code original_fields_due}. */
       @SerializedName("alternative_fields_due")
       List<String> alternativeFieldsDue;
 
       /**
-       * Fields that are due and can be satisfied by providing all fields in {@code
+       * Fields that are due and can be resolved by providing all fields in {@code
        * alternative_fields_due}.
        */
       @SerializedName("original_fields_due")
@@ -541,14 +543,14 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
       /**
        * The code for the type of error.
        *
-       * <p>One of {@code information_missing}, {@code invalid_address_city_state_postal_code},
-       * {@code invalid_address_highway_contract_box}, {@code invalid_address_private_mailbox},
-       * {@code invalid_business_profile_name}, {@code invalid_business_profile_name_denylisted},
-       * {@code invalid_company_name_denylisted}, {@code invalid_dob_age_over_maximum}, {@code
-       * invalid_dob_age_under_18}, {@code invalid_dob_age_under_minimum}, {@code
-       * invalid_product_description_length}, {@code invalid_product_description_url_match}, {@code
-       * invalid_representative_country}, {@code invalid_signator}, {@code
-       * invalid_statement_descriptor_business_mismatch}, {@code
+       * <p>One of {@code external_request}, {@code information_missing}, {@code
+       * invalid_address_city_state_postal_code}, {@code invalid_address_highway_contract_box},
+       * {@code invalid_address_private_mailbox}, {@code invalid_business_profile_name}, {@code
+       * invalid_business_profile_name_denylisted}, {@code invalid_company_name_denylisted}, {@code
+       * invalid_dob_age_over_maximum}, {@code invalid_dob_age_under_18}, {@code
+       * invalid_dob_age_under_minimum}, {@code invalid_product_description_length}, {@code
+       * invalid_product_description_url_match}, {@code invalid_representative_country}, {@code
+       * invalid_signator}, {@code invalid_statement_descriptor_business_mismatch}, {@code
        * invalid_statement_descriptor_denylisted}, {@code invalid_statement_descriptor_length},
        * {@code invalid_statement_descriptor_prefix_denylisted}, {@code
        * invalid_statement_descriptor_prefix_mismatch}, {@code invalid_street_address}, {@code
@@ -567,29 +569,30 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
        * invalid_url_website_incomplete_return_policy}, {@code
        * invalid_url_website_incomplete_terms_and_conditions}, {@code
        * invalid_url_website_incomplete_under_construction}, {@code invalid_url_website_other},
-       * {@code invalid_value_other}, {@code verification_directors_mismatch}, {@code
-       * verification_document_address_mismatch}, {@code verification_document_address_missing},
-       * {@code verification_document_corrupt}, {@code verification_document_country_not_supported},
-       * {@code verification_document_directors_mismatch}, {@code
-       * verification_document_dob_mismatch}, {@code verification_document_duplicate_type}, {@code
-       * verification_document_expired}, {@code verification_document_failed_copy}, {@code
-       * verification_document_failed_greyscale}, {@code verification_document_failed_other}, {@code
-       * verification_document_failed_test_mode}, {@code verification_document_fraudulent}, {@code
-       * verification_document_id_number_mismatch}, {@code verification_document_id_number_missing},
-       * {@code verification_document_incomplete}, {@code verification_document_invalid}, {@code
-       * verification_document_issue_or_expiry_date_missing}, {@code
-       * verification_document_manipulated}, {@code verification_document_missing_back}, {@code
-       * verification_document_missing_front}, {@code verification_document_name_mismatch}, {@code
-       * verification_document_name_missing}, {@code verification_document_nationality_mismatch},
-       * {@code verification_document_not_readable}, {@code verification_document_not_signed},
-       * {@code verification_document_not_uploaded}, {@code verification_document_photo_mismatch},
-       * {@code verification_document_too_large}, {@code verification_document_type_not_supported},
-       * {@code verification_extraneous_directors}, {@code verification_failed_address_match},
-       * {@code verification_failed_authorizer_authority}, {@code
-       * verification_failed_business_iec_number}, {@code verification_failed_document_match},
-       * {@code verification_failed_id_number_match}, {@code verification_failed_keyed_identity},
-       * {@code verification_failed_keyed_match}, {@code verification_failed_name_match}, {@code
-       * verification_failed_other}, {@code verification_failed_representative_authority}, {@code
+       * {@code invalid_value_other}, {@code unsupported_business_type}, {@code
+       * verification_directors_mismatch}, {@code verification_document_address_mismatch}, {@code
+       * verification_document_address_missing}, {@code verification_document_corrupt}, {@code
+       * verification_document_country_not_supported}, {@code
+       * verification_document_directors_mismatch}, {@code verification_document_dob_mismatch},
+       * {@code verification_document_duplicate_type}, {@code verification_document_expired}, {@code
+       * verification_document_failed_copy}, {@code verification_document_failed_greyscale}, {@code
+       * verification_document_failed_other}, {@code verification_document_failed_test_mode}, {@code
+       * verification_document_fraudulent}, {@code verification_document_id_number_mismatch}, {@code
+       * verification_document_id_number_missing}, {@code verification_document_incomplete}, {@code
+       * verification_document_invalid}, {@code verification_document_issue_or_expiry_date_missing},
+       * {@code verification_document_manipulated}, {@code verification_document_missing_back},
+       * {@code verification_document_missing_front}, {@code verification_document_name_mismatch},
+       * {@code verification_document_name_missing}, {@code
+       * verification_document_nationality_mismatch}, {@code verification_document_not_readable},
+       * {@code verification_document_not_signed}, {@code verification_document_not_uploaded},
+       * {@code verification_document_photo_mismatch}, {@code verification_document_too_large},
+       * {@code verification_document_type_not_supported}, {@code
+       * verification_extraneous_directors}, {@code verification_failed_address_match}, {@code
+       * verification_failed_authorizer_authority}, {@code verification_failed_business_iec_number},
+       * {@code verification_failed_document_match}, {@code verification_failed_id_number_match},
+       * {@code verification_failed_keyed_identity}, {@code verification_failed_keyed_match}, {@code
+       * verification_failed_name_match}, {@code verification_failed_other}, {@code
+       * verification_failed_representative_authority}, {@code
        * verification_failed_residential_address}, {@code verification_failed_tax_id_match}, {@code
        * verification_failed_tax_id_not_issued}, {@code
        * verification_legal_entity_structure_mismatch}, {@code verification_missing_directors},
@@ -681,15 +684,18 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
   @EqualsAndHashCode(callSuper = false)
   public static class Requirements extends StripeObject {
     /**
-     * Fields that are due and can be satisfied by providing the corresponding alternative fields
-     * instead.
+     * Fields that are due and can be resolved by providing the corresponding alternative fields
+     * instead. Many alternatives can list the same {@code original_fields_due}, and any of these
+     * alternatives can serve as a pathway for attempting to resolve the fields again. Re-providing
+     * {@code original_fields_due} also serves as a pathway for attempting to resolve the fields
+     * again.
      */
     @SerializedName("alternatives")
     List<Person.Requirements.Alternative> alternatives;
 
     /**
-     * Fields that need to be collected to keep the person's account enabled. If not collected by
-     * the account's {@code current_deadline}, these fields appear in {@code past_due} as well, and
+     * Fields that need to be resolved to keep the person's account enabled. If not resolved by the
+     * account's {@code current_deadline}, these fields will appear in {@code past_due} as well, and
      * the account is disabled.
      */
     @SerializedName("currently_due")
@@ -710,18 +716,18 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     List<String> eventuallyDue;
 
     /**
-     * Fields that weren't collected by the account's {@code current_deadline}. These fields need to
-     * be collected to enable the person's account.
+     * Fields that haven't been resolved by {@code current_deadline}. These fields need to be
+     * resolved to enable the person's account.
      */
     @SerializedName("past_due")
     List<String> pastDue;
 
     /**
-     * Fields that might become required depending on the results of verification or review. It's an
-     * empty array unless an asynchronous verification is pending. If verification fails, these
-     * fields move to {@code eventually_due}, {@code currently_due}, or {@code past_due}. Fields
-     * might appear in {@code eventually_due}, {@code currently_due}, or {@code past_due} and in
-     * {@code pending_verification} if verification fails but another verification is still pending.
+     * Fields that are being reviewed, or might become required depending on the results of a
+     * review. If the review fails, these fields can move to {@code eventually_due}, {@code
+     * currently_due}, {@code past_due} or {@code alternatives}. Fields might appear in {@code
+     * eventually_due}, {@code currently_due}, {@code past_due} or {@code alternatives} and in
+     * {@code pending_verification} if one verification fails but another is still pending.
      */
     @SerializedName("pending_verification")
     List<String> pendingVerification;
@@ -734,12 +740,12 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Alternative extends StripeObject {
-      /** Fields that can be provided to satisfy all fields in {@code original_fields_due}. */
+      /** Fields that can be provided to resolve all fields in {@code original_fields_due}. */
       @SerializedName("alternative_fields_due")
       List<String> alternativeFieldsDue;
 
       /**
-       * Fields that are due and can be satisfied by providing all fields in {@code
+       * Fields that are due and can be resolved by providing all fields in {@code
        * alternative_fields_due}.
        */
       @SerializedName("original_fields_due")
@@ -757,14 +763,14 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
       /**
        * The code for the type of error.
        *
-       * <p>One of {@code information_missing}, {@code invalid_address_city_state_postal_code},
-       * {@code invalid_address_highway_contract_box}, {@code invalid_address_private_mailbox},
-       * {@code invalid_business_profile_name}, {@code invalid_business_profile_name_denylisted},
-       * {@code invalid_company_name_denylisted}, {@code invalid_dob_age_over_maximum}, {@code
-       * invalid_dob_age_under_18}, {@code invalid_dob_age_under_minimum}, {@code
-       * invalid_product_description_length}, {@code invalid_product_description_url_match}, {@code
-       * invalid_representative_country}, {@code invalid_signator}, {@code
-       * invalid_statement_descriptor_business_mismatch}, {@code
+       * <p>One of {@code external_request}, {@code information_missing}, {@code
+       * invalid_address_city_state_postal_code}, {@code invalid_address_highway_contract_box},
+       * {@code invalid_address_private_mailbox}, {@code invalid_business_profile_name}, {@code
+       * invalid_business_profile_name_denylisted}, {@code invalid_company_name_denylisted}, {@code
+       * invalid_dob_age_over_maximum}, {@code invalid_dob_age_under_18}, {@code
+       * invalid_dob_age_under_minimum}, {@code invalid_product_description_length}, {@code
+       * invalid_product_description_url_match}, {@code invalid_representative_country}, {@code
+       * invalid_signator}, {@code invalid_statement_descriptor_business_mismatch}, {@code
        * invalid_statement_descriptor_denylisted}, {@code invalid_statement_descriptor_length},
        * {@code invalid_statement_descriptor_prefix_denylisted}, {@code
        * invalid_statement_descriptor_prefix_mismatch}, {@code invalid_street_address}, {@code
@@ -783,29 +789,30 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
        * invalid_url_website_incomplete_return_policy}, {@code
        * invalid_url_website_incomplete_terms_and_conditions}, {@code
        * invalid_url_website_incomplete_under_construction}, {@code invalid_url_website_other},
-       * {@code invalid_value_other}, {@code verification_directors_mismatch}, {@code
-       * verification_document_address_mismatch}, {@code verification_document_address_missing},
-       * {@code verification_document_corrupt}, {@code verification_document_country_not_supported},
-       * {@code verification_document_directors_mismatch}, {@code
-       * verification_document_dob_mismatch}, {@code verification_document_duplicate_type}, {@code
-       * verification_document_expired}, {@code verification_document_failed_copy}, {@code
-       * verification_document_failed_greyscale}, {@code verification_document_failed_other}, {@code
-       * verification_document_failed_test_mode}, {@code verification_document_fraudulent}, {@code
-       * verification_document_id_number_mismatch}, {@code verification_document_id_number_missing},
-       * {@code verification_document_incomplete}, {@code verification_document_invalid}, {@code
-       * verification_document_issue_or_expiry_date_missing}, {@code
-       * verification_document_manipulated}, {@code verification_document_missing_back}, {@code
-       * verification_document_missing_front}, {@code verification_document_name_mismatch}, {@code
-       * verification_document_name_missing}, {@code verification_document_nationality_mismatch},
-       * {@code verification_document_not_readable}, {@code verification_document_not_signed},
-       * {@code verification_document_not_uploaded}, {@code verification_document_photo_mismatch},
-       * {@code verification_document_too_large}, {@code verification_document_type_not_supported},
-       * {@code verification_extraneous_directors}, {@code verification_failed_address_match},
-       * {@code verification_failed_authorizer_authority}, {@code
-       * verification_failed_business_iec_number}, {@code verification_failed_document_match},
-       * {@code verification_failed_id_number_match}, {@code verification_failed_keyed_identity},
-       * {@code verification_failed_keyed_match}, {@code verification_failed_name_match}, {@code
-       * verification_failed_other}, {@code verification_failed_representative_authority}, {@code
+       * {@code invalid_value_other}, {@code unsupported_business_type}, {@code
+       * verification_directors_mismatch}, {@code verification_document_address_mismatch}, {@code
+       * verification_document_address_missing}, {@code verification_document_corrupt}, {@code
+       * verification_document_country_not_supported}, {@code
+       * verification_document_directors_mismatch}, {@code verification_document_dob_mismatch},
+       * {@code verification_document_duplicate_type}, {@code verification_document_expired}, {@code
+       * verification_document_failed_copy}, {@code verification_document_failed_greyscale}, {@code
+       * verification_document_failed_other}, {@code verification_document_failed_test_mode}, {@code
+       * verification_document_fraudulent}, {@code verification_document_id_number_mismatch}, {@code
+       * verification_document_id_number_missing}, {@code verification_document_incomplete}, {@code
+       * verification_document_invalid}, {@code verification_document_issue_or_expiry_date_missing},
+       * {@code verification_document_manipulated}, {@code verification_document_missing_back},
+       * {@code verification_document_missing_front}, {@code verification_document_name_mismatch},
+       * {@code verification_document_name_missing}, {@code
+       * verification_document_nationality_mismatch}, {@code verification_document_not_readable},
+       * {@code verification_document_not_signed}, {@code verification_document_not_uploaded},
+       * {@code verification_document_photo_mismatch}, {@code verification_document_too_large},
+       * {@code verification_document_type_not_supported}, {@code
+       * verification_extraneous_directors}, {@code verification_failed_address_match}, {@code
+       * verification_failed_authorizer_authority}, {@code verification_failed_business_iec_number},
+       * {@code verification_failed_document_match}, {@code verification_failed_id_number_match},
+       * {@code verification_failed_keyed_identity}, {@code verification_failed_keyed_match}, {@code
+       * verification_failed_name_match}, {@code verification_failed_other}, {@code
+       * verification_failed_representative_authority}, {@code
        * verification_failed_residential_address}, {@code verification_failed_tax_id_match}, {@code
        * verification_failed_tax_id_not_issued}, {@code
        * verification_legal_entity_structure_mismatch}, {@code verification_missing_directors},
@@ -927,7 +934,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     /**
      * The state of verification for the person. Possible values are {@code unverified}, {@code
      * pending}, or {@code verified}. Please refer <a
-     * href="https://stripe.com/docs/connect/handling-api-verification">guide</a> to handle
+     * href="https://docs.stripe.com/connect/handling-api-verification">guide</a> to handle
      * verification updates.
      */
     @SerializedName("status")
@@ -942,7 +949,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     @EqualsAndHashCode(callSuper = false)
     public static class AdditionalDocument extends StripeObject {
       /**
-       * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+       * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
        * upload</a> with a {@code purpose} value of {@code identity_document}.
        */
       @SerializedName("back")
@@ -972,7 +979,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
       String detailsCode;
 
       /**
-       * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+       * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
        * upload</a> with a {@code purpose} value of {@code identity_document}.
        */
       @SerializedName("front")
@@ -1026,7 +1033,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
     @EqualsAndHashCode(callSuper = false)
     public static class Document extends StripeObject {
       /**
-       * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+       * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
        * upload</a> with a {@code purpose} value of {@code identity_document}.
        */
       @SerializedName("back")
@@ -1056,7 +1063,7 @@ public class Person extends ApiResource implements HasId, MetadataStore<Person> 
       String detailsCode;
 
       /**
-       * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+       * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
        * upload</a> with a {@code purpose} value of {@code identity_document}.
        */
       @SerializedName("front")

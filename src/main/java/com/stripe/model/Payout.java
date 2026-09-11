@@ -28,7 +28,7 @@ import lombok.Setter;
  * href="https://stripe.com/docs/connect/manage-payout-schedule">varying schedules</a>, depending on
  * your country and industry.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/payouts">Receiving payouts</a>
+ * <p>Related guide: <a href="https://docs.stripe.com/payouts">Receiving payouts</a>
  */
 @Getter
 @Setter
@@ -42,7 +42,7 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * The application fee (if any) for the payout. <a
-   * href="https://stripe.com/docs/connect/instant-payouts#monetization-and-fees">See the Connect
+   * href="https://docs.stripe.com/connect/instant-payouts#monetization-and-fees">See the Connect
    * documentation</a> for details.
    */
   @SerializedName("application_fee")
@@ -52,7 +52,7 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * The amount of the application fee (if any) requested for the payout. <a
-   * href="https://stripe.com/docs/connect/instant-payouts#monetization-and-fees">See the Connect
+   * href="https://docs.stripe.com/connect/instant-payouts#monetization-and-fees">See the Connect
    * documentation</a> for details.
    */
   @SerializedName("application_fee_amount")
@@ -67,7 +67,7 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Returns {@code true} if the payout is created by an <a
-   * href="https://stripe.com/docs/payouts#payout-schedule">automated payout schedule</a> and {@code
+   * href="https://docs.stripe.com/payouts#payout-schedule">automated payout schedule</a> and {@code
    * false} if it's <a href="https://stripe.com/docs/payouts#manual-payouts">requested manually</a>.
    */
   @SerializedName("automatic")
@@ -113,7 +113,7 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Error code that provides a reason for a payout failure, if available. View our <a
-   * href="https://stripe.com/docs/api#payout_failures">list of failure codes</a>.
+   * href="https://docs.stripe.com/api#payout_failures">list of failure codes</a>.
    */
   @SerializedName("failure_code")
   String failureCode;
@@ -128,14 +128,14 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -172,7 +172,7 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * If {@code completed}, you can use the <a
-   * href="https://stripe.com/docs/api/balance_transactions/list#balance_transaction_list-payout">Balance
+   * href="https://docs.stripe.com/api/balance_transactions/list#balance_transaction_list-payout">Balance
    * Transactions API</a> to list all balance transactions that are paid out in this payout.
    *
    * <p>One of {@code completed}, {@code in_progress}, or {@code not_applicable}.
@@ -403,8 +403,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
    *
    * <p>If you create a manual payout on a Stripe account that uses multiple payment source types,
    * you need to specify the source type balance that the payout draws from. The <a
-   * href="https://stripe.com/docs/api#balance_object">balance object</a> details available and
-   * pending amounts by source type.
+   * href="https://stripe.com/api/balances/object">balance object</a> details available and pending
+   * amounts by source type.
    */
   public static Payout create(Map<String, Object> params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -420,8 +420,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
    *
    * <p>If you create a manual payout on a Stripe account that uses multiple payment source types,
    * you need to specify the source type balance that the payout draws from. The <a
-   * href="https://stripe.com/docs/api#balance_object">balance object</a> details available and
-   * pending amounts by source type.
+   * href="https://stripe.com/api/balances/object">balance object</a> details available and pending
+   * amounts by source type.
    */
   public static Payout create(Map<String, Object> params, RequestOptions options)
       throws StripeException {
@@ -441,8 +441,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
    *
    * <p>If you create a manual payout on a Stripe account that uses multiple payment source types,
    * you need to specify the source type balance that the payout draws from. The <a
-   * href="https://stripe.com/docs/api#balance_object">balance object</a> details available and
-   * pending amounts by source type.
+   * href="https://stripe.com/api/balances/object">balance object</a> details available and pending
+   * amounts by source type.
    */
   public static Payout create(PayoutCreateParams params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -458,8 +458,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
    *
    * <p>If you create a manual payout on a Stripe account that uses multiple payment source types,
    * you need to specify the source type balance that the payout draws from. The <a
-   * href="https://stripe.com/docs/api#balance_object">balance object</a> details available and
-   * pending amounts by source type.
+   * href="https://stripe.com/api/balances/object">balance object</a> details available and pending
+   * amounts by source type.
    */
   public static Payout create(PayoutCreateParams params, RequestOptions options)
       throws StripeException {
@@ -573,8 +573,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Reverses a payout by debiting the destination bank account. At this time, you can only reverse
-   * payouts for connected accounts to US bank accounts. If the payout is manual and in the {@code
-   * pending} status, use {@code /v1/payouts/:id/cancel} instead.
+   * payouts for connected accounts to US and Canadian bank accounts. If the payout is manual and in
+   * the {@code pending} status, use {@code /v1/payouts/:id/cancel} instead.
    *
    * <p>By requesting a reversal through {@code /v1/payouts/:id/reverse}, you confirm that the
    * authorized signatory of the selected bank account authorizes the debit on the bank account and
@@ -586,8 +586,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Reverses a payout by debiting the destination bank account. At this time, you can only reverse
-   * payouts for connected accounts to US bank accounts. If the payout is manual and in the {@code
-   * pending} status, use {@code /v1/payouts/:id/cancel} instead.
+   * payouts for connected accounts to US and Canadian bank accounts. If the payout is manual and in
+   * the {@code pending} status, use {@code /v1/payouts/:id/cancel} instead.
    *
    * <p>By requesting a reversal through {@code /v1/payouts/:id/reverse}, you confirm that the
    * authorized signatory of the selected bank account authorizes the debit on the bank account and
@@ -599,8 +599,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Reverses a payout by debiting the destination bank account. At this time, you can only reverse
-   * payouts for connected accounts to US bank accounts. If the payout is manual and in the {@code
-   * pending} status, use {@code /v1/payouts/:id/cancel} instead.
+   * payouts for connected accounts to US and Canadian bank accounts. If the payout is manual and in
+   * the {@code pending} status, use {@code /v1/payouts/:id/cancel} instead.
    *
    * <p>By requesting a reversal through {@code /v1/payouts/:id/reverse}, you confirm that the
    * authorized signatory of the selected bank account authorizes the debit on the bank account and
@@ -612,8 +612,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Reverses a payout by debiting the destination bank account. At this time, you can only reverse
-   * payouts for connected accounts to US bank accounts. If the payout is manual and in the {@code
-   * pending} status, use {@code /v1/payouts/:id/cancel} instead.
+   * payouts for connected accounts to US and Canadian bank accounts. If the payout is manual and in
+   * the {@code pending} status, use {@code /v1/payouts/:id/cancel} instead.
    *
    * <p>By requesting a reversal through {@code /v1/payouts/:id/reverse}, you confirm that the
    * authorized signatory of the selected bank account authorizes the debit on the bank account and
@@ -628,8 +628,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Reverses a payout by debiting the destination bank account. At this time, you can only reverse
-   * payouts for connected accounts to US bank accounts. If the payout is manual and in the {@code
-   * pending} status, use {@code /v1/payouts/:id/cancel} instead.
+   * payouts for connected accounts to US and Canadian bank accounts. If the payout is manual and in
+   * the {@code pending} status, use {@code /v1/payouts/:id/cancel} instead.
    *
    * <p>By requesting a reversal through {@code /v1/payouts/:id/reverse}, you confirm that the
    * authorized signatory of the selected bank account authorizes the debit on the bank account and
@@ -641,8 +641,8 @@ public class Payout extends ApiResource implements MetadataStore<Payout>, Balanc
 
   /**
    * Reverses a payout by debiting the destination bank account. At this time, you can only reverse
-   * payouts for connected accounts to US bank accounts. If the payout is manual and in the {@code
-   * pending} status, use {@code /v1/payouts/:id/cancel} instead.
+   * payouts for connected accounts to US and Canadian bank accounts. If the payout is manual and in
+   * the {@code pending} status, use {@code /v1/payouts/:id/cancel} instead.
    *
    * <p>By requesting a reversal through {@code /v1/payouts/:id/reverse}, you confirm that the
    * authorized signatory of the selected bank account authorizes the debit on the bank account and

@@ -249,6 +249,21 @@ public class ReaderListParams extends ApiRequestParams {
     @SerializedName("simulated_stripe_s700")
     SIMULATED_STRIPE_S700("simulated_stripe_s700"),
 
+    @SerializedName("simulated_stripe_s710")
+    SIMULATED_STRIPE_S710("simulated_stripe_s710"),
+
+    @SerializedName("simulated_verifone_m425")
+    SIMULATED_VERIFONE_M425("simulated_verifone_m425"),
+
+    @SerializedName("simulated_verifone_p630")
+    SIMULATED_VERIFONE_P630("simulated_verifone_p630"),
+
+    @SerializedName("simulated_verifone_ux700")
+    SIMULATED_VERIFONE_UX700("simulated_verifone_ux700"),
+
+    @SerializedName("simulated_verifone_v660p")
+    SIMULATED_VERIFONE_V660P("simulated_verifone_v660p"),
+
     @SerializedName("simulated_wisepos_e")
     SIMULATED_WISEPOS_E("simulated_wisepos_e"),
 
@@ -258,8 +273,23 @@ public class ReaderListParams extends ApiRequestParams {
     @SerializedName("stripe_s700")
     STRIPE_S700("stripe_s700"),
 
+    @SerializedName("stripe_s710")
+    STRIPE_S710("stripe_s710"),
+
     @SerializedName("verifone_P400")
-    VERIFONE_P400("verifone_P400");
+    VERIFONE_P400("verifone_P400"),
+
+    @SerializedName("verifone_m425")
+    VERIFONE_M425("verifone_m425"),
+
+    @SerializedName("verifone_p630")
+    VERIFONE_P630("verifone_p630"),
+
+    @SerializedName("verifone_ux700")
+    VERIFONE_UX700("verifone_ux700"),
+
+    @SerializedName("verifone_v660p")
+    VERIFONE_V660P("verifone_v660p");
 
     @Getter(onMethod_ = {@Override})
     private final String value;

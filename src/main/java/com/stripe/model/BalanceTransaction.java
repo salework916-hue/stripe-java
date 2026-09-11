@@ -22,7 +22,7 @@ import lombok.Setter;
  * Balance transactions represent funds moving through your Stripe account. Stripe creates them for
  * every type of transaction that enters or leaves your Stripe account balance.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/reports/balance-transaction-types">Balance
+ * <p>Related guide: <a href="https://docs.stripe.com/reports/balance-transaction-types">Balance
  * transaction types</a>
  */
 @Getter
@@ -43,7 +43,8 @@ public class BalanceTransaction extends ApiResource implements HasId {
   /**
    * The balance that this transaction impacts.
    *
-   * <p>One of {@code issuing}, {@code payments}, or {@code refund_and_dispute_prefunding}.
+   * <p>One of {@code issuing}, {@code payments}, {@code refund_and_dispute_prefunding}, or {@code
+   * risk_reserved}.
    */
   @SerializedName("balance_type")
   String balanceType;
@@ -65,7 +66,7 @@ public class BalanceTransaction extends ApiResource implements HasId {
 
   /**
    * If applicable, this transaction uses an exchange rate. If money converts from currency A to
-   * currency B, then the {@code amount} in currency A, multipled by the {@code exchange_rate},
+   * currency B, then the {@code amount} in currency A, multiplied by the {@code exchange_rate},
    * equals the {@code amount} in currency B. For example, if you charge a customer 10.00 EUR, the
    * PaymentIntent's {@code amount} is {@code 1000} and {@code currency} is {@code eur}. If this
    * converts to 12.34 USD in your Stripe account, the BalanceTransaction's {@code amount} is {@code
@@ -127,21 +128,22 @@ public class BalanceTransaction extends ApiResource implements HasId {
   String status;
 
   /**
-   * Transaction type: {@code adjustment}, {@code advance}, {@code advance_funding}, {@code
-   * anticipation_repayment}, {@code application_fee}, {@code application_fee_refund}, {@code
-   * charge}, {@code climate_order_purchase}, {@code climate_order_refund}, {@code
-   * connect_collection_transfer}, {@code contribution}, {@code issuing_authorization_hold}, {@code
-   * issuing_authorization_release}, {@code issuing_dispute}, {@code issuing_transaction}, {@code
-   * obligation_outbound}, {@code obligation_reversal_inbound}, {@code payment}, {@code
+   * Transaction type: {@code tax_fund}, {@code adjustment}, {@code advance}, {@code
+   * advance_funding}, {@code anticipation_repayment}, {@code application_fee}, {@code
+   * application_fee_refund}, {@code charge}, {@code climate_order_purchase}, {@code
+   * climate_order_refund}, {@code connect_collection_transfer}, {@code contribution}, {@code
+   * inbound_transfer}, {@code inbound_transfer_reversal}, {@code issuing_authorization_hold},
+   * {@code issuing_authorization_release}, {@code issuing_dispute}, {@code issuing_transaction},
+   * {@code obligation_outbound}, {@code obligation_reversal_inbound}, {@code payment}, {@code
    * payment_failure_refund}, {@code payment_network_reserve_hold}, {@code
    * payment_network_reserve_release}, {@code payment_refund}, {@code payment_reversal}, {@code
    * payment_unreconciled}, {@code payout}, {@code payout_cancel}, {@code payout_failure}, {@code
    * payout_minimum_balance_hold}, {@code payout_minimum_balance_release}, {@code refund}, {@code
-   * refund_failure}, {@code reserve_transaction}, {@code reserved_funds}, {@code stripe_fee},
-   * {@code stripe_fx_fee}, {@code stripe_balance_payment_debit}, {@code
-   * stripe_balance_payment_debit_reversal}, {@code tax_fee}, {@code topup}, {@code topup_reversal},
-   * {@code transfer}, {@code transfer_cancel}, {@code transfer_failure}, or {@code
-   * transfer_refund}. Learn more about <a
+   * refund_failure}, {@code reserve_transaction}, {@code reserved_funds}, {@code reserve_hold},
+   * {@code reserve_release}, {@code stripe_fee}, {@code stripe_fx_fee}, {@code
+   * stripe_balance_payment_debit}, {@code stripe_balance_payment_debit_reversal}, {@code tax_fee},
+   * {@code topup}, {@code topup_reversal}, {@code transfer}, {@code transfer_cancel}, {@code
+   * transfer_failure}, {@code transfer_refund}, or {@code fee_credit_funding}. Learn more about <a
    * href="https://stripe.com/docs/reports/balance-transaction-types">balance transaction types and
    * what they represent</a>. To classify transactions for accounting purposes, consider {@code
    * reporting_category} instead.
@@ -149,18 +151,19 @@ public class BalanceTransaction extends ApiResource implements HasId {
    * <p>One of {@code adjustment}, {@code advance}, {@code advance_funding}, {@code
    * anticipation_repayment}, {@code application_fee}, {@code application_fee_refund}, {@code
    * charge}, {@code climate_order_purchase}, {@code climate_order_refund}, {@code
-   * connect_collection_transfer}, {@code contribution}, {@code issuing_authorization_hold}, {@code
-   * issuing_authorization_release}, {@code issuing_dispute}, {@code issuing_transaction}, {@code
-   * obligation_outbound}, {@code obligation_reversal_inbound}, {@code payment}, {@code
+   * connect_collection_transfer}, {@code contribution}, {@code fee_credit_funding}, {@code
+   * inbound_transfer}, {@code inbound_transfer_reversal}, {@code issuing_authorization_hold},
+   * {@code issuing_authorization_release}, {@code issuing_dispute}, {@code issuing_transaction},
+   * {@code obligation_outbound}, {@code obligation_reversal_inbound}, {@code payment}, {@code
    * payment_failure_refund}, {@code payment_network_reserve_hold}, {@code
    * payment_network_reserve_release}, {@code payment_refund}, {@code payment_reversal}, {@code
    * payment_unreconciled}, {@code payout}, {@code payout_cancel}, {@code payout_failure}, {@code
    * payout_minimum_balance_hold}, {@code payout_minimum_balance_release}, {@code refund}, {@code
-   * refund_failure}, {@code reserve_transaction}, {@code reserved_funds}, {@code
-   * stripe_balance_payment_debit}, {@code stripe_balance_payment_debit_reversal}, {@code
-   * stripe_fee}, {@code stripe_fx_fee}, {@code tax_fee}, {@code topup}, {@code topup_reversal},
-   * {@code transfer}, {@code transfer_cancel}, {@code transfer_failure}, or {@code
-   * transfer_refund}.
+   * refund_failure}, {@code reserve_hold}, {@code reserve_release}, {@code reserve_transaction},
+   * {@code reserved_funds}, {@code stripe_balance_payment_debit}, {@code
+   * stripe_balance_payment_debit_reversal}, {@code stripe_fee}, {@code stripe_fx_fee}, {@code
+   * tax_fee}, {@code tax_fund}, {@code topup}, {@code topup_reversal}, {@code transfer}, {@code
+   * transfer_cancel}, {@code transfer_failure}, or {@code transfer_refund}.
    */
   @SerializedName("type")
   String type;
@@ -185,11 +188,11 @@ public class BalanceTransaction extends ApiResource implements HasId {
   }
 
   /**
-   * Returns a list of transactions that have contributed to the Stripe account balance (e.g.,
-   * charges, transfers, and so forth). The transactions are returned in sorted order, with the most
+   * Returns a list of transactions that have contributed to the Stripe account balance (for
+   * example, charges, transfers, and so on). The transactions return in sorted order, with the most
    * recent transactions appearing first.
    *
-   * <p>Note that this endpoint was previously called “Balance history” and used the path {@code
+   * <p>The previous name of this endpoint was “Balance history,” and it used the path {@code
    * /v1/balance/history}.
    */
   public static BalanceTransactionCollection list(Map<String, Object> params)
@@ -198,11 +201,11 @@ public class BalanceTransaction extends ApiResource implements HasId {
   }
 
   /**
-   * Returns a list of transactions that have contributed to the Stripe account balance (e.g.,
-   * charges, transfers, and so forth). The transactions are returned in sorted order, with the most
+   * Returns a list of transactions that have contributed to the Stripe account balance (for
+   * example, charges, transfers, and so on). The transactions return in sorted order, with the most
    * recent transactions appearing first.
    *
-   * <p>Note that this endpoint was previously called “Balance history” and used the path {@code
+   * <p>The previous name of this endpoint was “Balance history,” and it used the path {@code
    * /v1/balance/history}.
    */
   public static BalanceTransactionCollection list(
@@ -214,11 +217,11 @@ public class BalanceTransaction extends ApiResource implements HasId {
   }
 
   /**
-   * Returns a list of transactions that have contributed to the Stripe account balance (e.g.,
-   * charges, transfers, and so forth). The transactions are returned in sorted order, with the most
+   * Returns a list of transactions that have contributed to the Stripe account balance (for
+   * example, charges, transfers, and so on). The transactions return in sorted order, with the most
    * recent transactions appearing first.
    *
-   * <p>Note that this endpoint was previously called “Balance history” and used the path {@code
+   * <p>The previous name of this endpoint was “Balance history,” and it used the path {@code
    * /v1/balance/history}.
    */
   public static BalanceTransactionCollection list(BalanceTransactionListParams params)
@@ -227,11 +230,11 @@ public class BalanceTransaction extends ApiResource implements HasId {
   }
 
   /**
-   * Returns a list of transactions that have contributed to the Stripe account balance (e.g.,
-   * charges, transfers, and so forth). The transactions are returned in sorted order, with the most
+   * Returns a list of transactions that have contributed to the Stripe account balance (for
+   * example, charges, transfers, and so on). The transactions return in sorted order, with the most
    * recent transactions appearing first.
    *
-   * <p>Note that this endpoint was previously called “Balance history” and used the path {@code
+   * <p>The previous name of this endpoint was “Balance history,” and it used the path {@code
    * /v1/balance/history}.
    */
   public static BalanceTransactionCollection list(
@@ -330,7 +333,7 @@ public class BalanceTransaction extends ApiResource implements HasId {
 
     /**
      * Type of the fee, one of: {@code application_fee}, {@code payment_method_passthrough_fee},
-     * {@code stripe_fee} or {@code tax}.
+     * {@code stripe_fee}, {@code tax}, or {@code withheld_tax}.
      */
     @SerializedName("type")
     String type;

@@ -35,7 +35,7 @@ public class MeterEventCreateParams extends ApiRequestParams {
 
   /**
    * A unique identifier for the event. If not provided, one is generated. We recommend using
-   * UUID-like identifiers. We will enforce uniqueness within a rolling period of at least 24 hours.
+   * UUID-like identifiers. Stripe enforces uniqueness within a rolling period of at least 24 hours.
    * The enforcement of uniqueness primarily addresses issues arising from accidental retries or
    * other problems occurring within extremely brief time intervals. This approach helps prevent
    * duplicate entries and ensures data integrity in high-frequency operations.
@@ -47,7 +47,7 @@ public class MeterEventCreateParams extends ApiRequestParams {
    * <strong>Required.</strong> The payload of the event. This must contain the fields corresponding
    * to a meter's {@code customer_mapping.event_payload_key} (default is {@code stripe_customer_id})
    * and {@code value_settings.event_payload_key} (default is {@code value}). Read more about the <a
-   * href="https://docs.stripe.com/billing/subscriptions/usage-based/recording-usage#payload-key-overrides">payload</a>.
+   * href="https://docs.stripe.com/billing/subscriptions/usage-based/meters/configure#meter-configuration-attributes">payload</a>.
    */
   @SerializedName("payload")
   Map<String, String> payload;
@@ -165,7 +165,7 @@ public class MeterEventCreateParams extends ApiRequestParams {
 
     /**
      * A unique identifier for the event. If not provided, one is generated. We recommend using
-     * UUID-like identifiers. We will enforce uniqueness within a rolling period of at least 24
+     * UUID-like identifiers. Stripe enforces uniqueness within a rolling period of at least 24
      * hours. The enforcement of uniqueness primarily addresses issues arising from accidental
      * retries or other problems occurring within extremely brief time intervals. This approach
      * helps prevent duplicate entries and ensures data integrity in high-frequency operations.

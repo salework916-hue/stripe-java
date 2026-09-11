@@ -17,7 +17,7 @@ public class AuthorizationCaptureParams extends ApiRequestParams {
   /**
    * The amount to capture from the authorization. If not provided, the full amount of the
    * authorization will be captured. This amount is in the authorization currency and in the <a
-   * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("capture_amount")
   Long captureAmount;
@@ -87,7 +87,7 @@ public class AuthorizationCaptureParams extends ApiRequestParams {
     /**
      * The amount to capture from the authorization. If not provided, the full amount of the
      * authorization will be captured. This amount is in the authorization currency and in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
      */
     public Builder setCaptureAmount(Long captureAmount) {
       this.captureAmount = captureAmount;
@@ -745,7 +745,7 @@ public class AuthorizationCaptureParams extends ApiRequestParams {
           Map<String, Object> extraParams;
 
           /**
-           * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost, inclusive
+           * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost, inclusive
            * of taxes.
            */
           @SerializedName("gross_amount_decimal")
@@ -802,7 +802,7 @@ public class AuthorizationCaptureParams extends ApiRequestParams {
             }
 
             /**
-             * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost,
+             * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost,
              * inclusive of taxes.
              */
             public Builder setGrossAmountDecimal(BigDecimal grossAmountDecimal) {

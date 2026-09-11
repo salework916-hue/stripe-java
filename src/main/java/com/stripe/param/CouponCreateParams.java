@@ -86,7 +86,7 @@ public class CouponCreateParams extends ApiRequestParams {
   Long maxRedemptions;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -109,8 +109,9 @@ public class CouponCreateParams extends ApiRequestParams {
   BigDecimal percentOff;
 
   /**
-   * Unix timestamp specifying the last time at which the coupon can be redeemed. After the
-   * redeem_by date, the coupon can no longer be applied to new customers.
+   * Unix timestamp specifying the last time at which the coupon can be redeemed (cannot be set to
+   * more than 5 years in the future). After the redeem_by date, the coupon can no longer be applied
+   * to new customers.
    */
   @SerializedName("redeem_by")
   Long redeemBy;
@@ -367,7 +368,7 @@ public class CouponCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -378,7 +379,7 @@ public class CouponCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -407,8 +408,9 @@ public class CouponCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Unix timestamp specifying the last time at which the coupon can be redeemed. After the
-     * redeem_by date, the coupon can no longer be applied to new customers.
+     * Unix timestamp specifying the last time at which the coupon can be redeemed (cannot be set to
+     * more than 5 years in the future). After the redeem_by date, the coupon can no longer be
+     * applied to new customers.
      */
     public Builder setRedeemBy(Long redeemBy) {
       this.redeemBy = redeemBy;

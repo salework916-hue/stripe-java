@@ -32,15 +32,16 @@ public class ValueListCreateParams extends ApiRequestParams {
 
   /**
    * Type of the items in the value list. One of {@code card_fingerprint}, {@code card_bin}, {@code
-   * email}, {@code ip_address}, {@code country}, {@code string}, {@code case_sensitive_string},
-   * {@code customer_id}, {@code sepa_debit_fingerprint}, or {@code us_bank_account_fingerprint}.
-   * Use {@code string} if the item type is unknown or mixed.
+   * crypto_fingerprint}, {@code email}, {@code ip_address}, {@code country}, {@code string}, {@code
+   * case_sensitive_string}, {@code customer_id}, {@code account}, {@code sepa_debit_fingerprint},
+   * or {@code us_bank_account_fingerprint}. Use {@code string} if the item type is unknown or
+   * mixed.
    */
   @SerializedName("item_type")
   ItemType itemType;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -150,9 +151,10 @@ public class ValueListCreateParams extends ApiRequestParams {
 
     /**
      * Type of the items in the value list. One of {@code card_fingerprint}, {@code card_bin},
-     * {@code email}, {@code ip_address}, {@code country}, {@code string}, {@code
-     * case_sensitive_string}, {@code customer_id}, {@code sepa_debit_fingerprint}, or {@code
-     * us_bank_account_fingerprint}. Use {@code string} if the item type is unknown or mixed.
+     * {@code crypto_fingerprint}, {@code email}, {@code ip_address}, {@code country}, {@code
+     * string}, {@code case_sensitive_string}, {@code customer_id}, {@code account}, {@code
+     * sepa_debit_fingerprint}, or {@code us_bank_account_fingerprint}. Use {@code string} if the
+     * item type is unknown or mixed.
      */
     public Builder setItemType(ValueListCreateParams.ItemType itemType) {
       this.itemType = itemType;
@@ -193,6 +195,9 @@ public class ValueListCreateParams extends ApiRequestParams {
   }
 
   public enum ItemType implements ApiRequestParams.EnumParam {
+    @SerializedName("account")
+    ACCOUNT("account"),
+
     @SerializedName("card_bin")
     CARD_BIN("card_bin"),
 
@@ -204,6 +209,9 @@ public class ValueListCreateParams extends ApiRequestParams {
 
     @SerializedName("country")
     COUNTRY("country"),
+
+    @SerializedName("crypto_fingerprint")
+    CRYPTO_FINGERPRINT("crypto_fingerprint"),
 
     @SerializedName("customer_id")
     CUSTOMER_ID("customer_id"),

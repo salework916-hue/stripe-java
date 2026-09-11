@@ -13,9 +13,21 @@ import lombok.Getter;
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public class PaymentMethodListParams extends ApiRequestParams {
+  /**
+   * This field indicates whether this payment method can be shown again to its customer in a
+   * checkout flow. Stripe products such as Checkout and Elements use this field to determine
+   * whether a payment method can be shown as a saved payment method in a checkout flow.
+   */
+  @SerializedName("allow_redisplay")
+  AllowRedisplay allowRedisplay;
+
   /** The ID of the customer whose PaymentMethods will be retrieved. */
   @SerializedName("customer")
   String customer;
+
+  /** The ID of the Account whose PaymentMethods will be retrieved. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * A cursor for use in pagination. {@code ending_before} is an object ID that defines your place
@@ -56,22 +68,26 @@ public class PaymentMethodListParams extends ApiRequestParams {
   String startingAfter;
 
   /**
-   * An optional filter on the list, based on the object {@code type} field. Without the filter, the
-   * list includes all current and future payment method types. If your integration expects only one
-   * type of payment method in the response, make sure to provide a type value in the request.
+   * Filters the list by the object {@code type} field. Unfiltered, the list returns all payment
+   * method types except {@code custom}. If your integration expects only one type of payment method
+   * in the response, specify that type value in the request to reduce your payload.
    */
   @SerializedName("type")
   Type type;
 
   private PaymentMethodListParams(
+      AllowRedisplay allowRedisplay,
       String customer,
+      String customerAccount,
       String endingBefore,
       List<String> expand,
       Map<String, Object> extraParams,
       Long limit,
       String startingAfter,
       Type type) {
+    this.allowRedisplay = allowRedisplay;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.endingBefore = endingBefore;
     this.expand = expand;
     this.extraParams = extraParams;
@@ -85,7 +101,11 @@ public class PaymentMethodListParams extends ApiRequestParams {
   }
 
   public static class Builder {
+    private AllowRedisplay allowRedisplay;
+
     private String customer;
+
+    private String customerAccount;
 
     private String endingBefore;
 
@@ -102,7 +122,9 @@ public class PaymentMethodListParams extends ApiRequestParams {
     /** Finalize and obtain parameter instance from this builder. */
     public PaymentMethodListParams build() {
       return new PaymentMethodListParams(
+          this.allowRedisplay,
           this.customer,
+          this.customerAccount,
           this.endingBefore,
           this.expand,
           this.extraParams,
@@ -111,9 +133,25 @@ public class PaymentMethodListParams extends ApiRequestParams {
           this.type);
     }
 
+    /**
+     * This field indicates whether this payment method can be shown again to its customer in a
+     * checkout flow. Stripe products such as Checkout and Elements use this field to determine
+     * whether a payment method can be shown as a saved payment method in a checkout flow.
+     */
+    public Builder setAllowRedisplay(PaymentMethodListParams.AllowRedisplay allowRedisplay) {
+      this.allowRedisplay = allowRedisplay;
+      return this;
+    }
+
     /** The ID of the customer whose PaymentMethods will be retrieved. */
     public Builder setCustomer(String customer) {
       this.customer = customer;
+      return this;
+    }
+
+    /** The ID of the Account whose PaymentMethods will be retrieved. */
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 
@@ -201,14 +239,31 @@ public class PaymentMethodListParams extends ApiRequestParams {
     }
 
     /**
-     * An optional filter on the list, based on the object {@code type} field. Without the filter,
-     * the list includes all current and future payment method types. If your integration expects
-     * only one type of payment method in the response, make sure to provide a type value in the
-     * request.
+     * Filters the list by the object {@code type} field. Unfiltered, the list returns all payment
+     * method types except {@code custom}. If your integration expects only one type of payment
+     * method in the response, specify that type value in the request to reduce your payload.
      */
     public Builder setType(PaymentMethodListParams.Type type) {
       this.type = type;
       return this;
+    }
+  }
+
+  public enum AllowRedisplay implements ApiRequestParams.EnumParam {
+    @SerializedName("always")
+    ALWAYS("always"),
+
+    @SerializedName("limited")
+    LIMITED("limited"),
+
+    @SerializedName("unspecified")
+    UNSPECIFIED("unspecified");
+
+    @Getter(onMethod_ = {@Override})
+    private final String value;
+
+    AllowRedisplay(String value) {
+      this.value = value;
     }
   }
 
@@ -243,6 +298,9 @@ public class PaymentMethodListParams extends ApiRequestParams {
     @SerializedName("billie")
     BILLIE("billie"),
 
+    @SerializedName("bizum")
+    BIZUM("bizum"),
+
     @SerializedName("blik")
     BLIK("blik"),
 
@@ -257,6 +315,9 @@ public class PaymentMethodListParams extends ApiRequestParams {
 
     @SerializedName("crypto")
     CRYPTO("crypto"),
+
+    @SerializedName("custom")
+    CUSTOM("custom"),
 
     @SerializedName("customer_balance")
     CUSTOMER_BALANCE("customer_balance"),
@@ -291,6 +352,9 @@ public class PaymentMethodListParams extends ApiRequestParams {
     @SerializedName("link")
     LINK("link"),
 
+    @SerializedName("mb_way")
+    MB_WAY("mb_way"),
+
     @SerializedName("mobilepay")
     MOBILEPAY("mobilepay"),
 
@@ -321,6 +385,9 @@ public class PaymentMethodListParams extends ApiRequestParams {
     @SerializedName("paypal")
     PAYPAL("paypal"),
 
+    @SerializedName("payto")
+    PAYTO("payto"),
+
     @SerializedName("pix")
     PIX("pix"),
 
@@ -336,17 +403,26 @@ public class PaymentMethodListParams extends ApiRequestParams {
     @SerializedName("satispay")
     SATISPAY("satispay"),
 
+    @SerializedName("scalapay")
+    SCALAPAY("scalapay"),
+
     @SerializedName("sepa_debit")
     SEPA_DEBIT("sepa_debit"),
 
     @SerializedName("sofort")
     SOFORT("sofort"),
 
+    @SerializedName("sunbit")
+    SUNBIT("sunbit"),
+
     @SerializedName("swish")
     SWISH("swish"),
 
     @SerializedName("twint")
     TWINT("twint"),
+
+    @SerializedName("upi")
+    UPI("upi"),
 
     @SerializedName("us_bank_account")
     US_BANK_ACCOUNT("us_bank_account"),

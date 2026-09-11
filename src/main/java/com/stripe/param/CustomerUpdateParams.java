@@ -14,7 +14,11 @@ import lombok.Getter;
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public class CustomerUpdateParams extends ApiRequestParams {
-  /** The customer's address. */
+  /**
+   * The customer's address. Learn about <a
+   * href="https://docs.stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+   * requirements for calculating tax</a>.
+   */
   @SerializedName("address")
   Object address;
 
@@ -27,20 +31,24 @@ public class CustomerUpdateParams extends ApiRequestParams {
   @SerializedName("balance")
   Long balance;
 
+  /** The customer's business name. This may be up to <em>150 characters</em>. */
+  @SerializedName("business_name")
+  Object businessName;
+
   /** Balance information and default balance settings for this customer. */
   @SerializedName("cash_balance")
   CashBalance cashBalance;
 
   /**
    * If you are using payment methods created via the PaymentMethods API, see the <a
-   * href="https://stripe.com/docs/api/customers/update#update_customer-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
+   * href="https://docs.stripe.com/api/customers/update#update_customer-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
    * parameter.
    *
    * <p>Provide the ID of a payment source already attached to this customer to make it this
    * customer's default payment source.
    *
    * <p>If you want to add a new payment source and make it the default, see the <a
-   * href="https://stripe.com/docs/api/customers/update#update_customer-source">source</a> property.
+   * href="https://docs.stripe.com/api/customers/update#update_customer-source">source</a> property.
    */
   @SerializedName("default_source")
   Object defaultSource;
@@ -72,6 +80,10 @@ public class CustomerUpdateParams extends ApiRequestParams {
   @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
   Map<String, Object> extraParams;
 
+  /** The customer's full name. This may be up to <em>150 characters</em>. */
+  @SerializedName("individual_name")
+  Object individualName;
+
   /**
    * The prefix for the customer used to generate unique invoice numbers. Must be 3–12 uppercase
    * letters or numbers.
@@ -84,7 +96,7 @@ public class CustomerUpdateParams extends ApiRequestParams {
   InvoiceSettings invoiceSettings;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -129,12 +141,14 @@ public class CustomerUpdateParams extends ApiRequestParams {
   private CustomerUpdateParams(
       Object address,
       Long balance,
+      Object businessName,
       CashBalance cashBalance,
       Object defaultSource,
       Object description,
       Object email,
       List<String> expand,
       Map<String, Object> extraParams,
+      Object individualName,
       Object invoicePrefix,
       InvoiceSettings invoiceSettings,
       Object metadata,
@@ -149,12 +163,14 @@ public class CustomerUpdateParams extends ApiRequestParams {
       Boolean validate) {
     this.address = address;
     this.balance = balance;
+    this.businessName = businessName;
     this.cashBalance = cashBalance;
     this.defaultSource = defaultSource;
     this.description = description;
     this.email = email;
     this.expand = expand;
     this.extraParams = extraParams;
+    this.individualName = individualName;
     this.invoicePrefix = invoicePrefix;
     this.invoiceSettings = invoiceSettings;
     this.metadata = metadata;
@@ -178,6 +194,8 @@ public class CustomerUpdateParams extends ApiRequestParams {
 
     private Long balance;
 
+    private Object businessName;
+
     private CashBalance cashBalance;
 
     private Object defaultSource;
@@ -189,6 +207,8 @@ public class CustomerUpdateParams extends ApiRequestParams {
     private List<String> expand;
 
     private Map<String, Object> extraParams;
+
+    private Object individualName;
 
     private Object invoicePrefix;
 
@@ -219,12 +239,14 @@ public class CustomerUpdateParams extends ApiRequestParams {
       return new CustomerUpdateParams(
           this.address,
           this.balance,
+          this.businessName,
           this.cashBalance,
           this.defaultSource,
           this.description,
           this.email,
           this.expand,
           this.extraParams,
+          this.individualName,
           this.invoicePrefix,
           this.invoiceSettings,
           this.metadata,
@@ -239,13 +261,21 @@ public class CustomerUpdateParams extends ApiRequestParams {
           this.validate);
     }
 
-    /** The customer's address. */
+    /**
+     * The customer's address. Learn about <a
+     * href="https://docs.stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+     * requirements for calculating tax</a>.
+     */
     public Builder setAddress(CustomerUpdateParams.Address address) {
       this.address = address;
       return this;
     }
 
-    /** The customer's address. */
+    /**
+     * The customer's address. Learn about <a
+     * href="https://docs.stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+     * requirements for calculating tax</a>.
+     */
     public Builder setAddress(EmptyParam address) {
       this.address = address;
       return this;
@@ -262,6 +292,18 @@ public class CustomerUpdateParams extends ApiRequestParams {
       return this;
     }
 
+    /** The customer's business name. This may be up to <em>150 characters</em>. */
+    public Builder setBusinessName(String businessName) {
+      this.businessName = businessName;
+      return this;
+    }
+
+    /** The customer's business name. This may be up to <em>150 characters</em>. */
+    public Builder setBusinessName(EmptyParam businessName) {
+      this.businessName = businessName;
+      return this;
+    }
+
     /** Balance information and default balance settings for this customer. */
     public Builder setCashBalance(CustomerUpdateParams.CashBalance cashBalance) {
       this.cashBalance = cashBalance;
@@ -270,14 +312,14 @@ public class CustomerUpdateParams extends ApiRequestParams {
 
     /**
      * If you are using payment methods created via the PaymentMethods API, see the <a
-     * href="https://stripe.com/docs/api/customers/update#update_customer-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
+     * href="https://docs.stripe.com/api/customers/update#update_customer-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
      * parameter.
      *
      * <p>Provide the ID of a payment source already attached to this customer to make it this
      * customer's default payment source.
      *
      * <p>If you want to add a new payment source and make it the default, see the <a
-     * href="https://stripe.com/docs/api/customers/update#update_customer-source">source</a>
+     * href="https://docs.stripe.com/api/customers/update#update_customer-source">source</a>
      * property.
      */
     public Builder setDefaultSource(String defaultSource) {
@@ -287,14 +329,14 @@ public class CustomerUpdateParams extends ApiRequestParams {
 
     /**
      * If you are using payment methods created via the PaymentMethods API, see the <a
-     * href="https://stripe.com/docs/api/customers/update#update_customer-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
+     * href="https://docs.stripe.com/api/customers/update#update_customer-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
      * parameter.
      *
      * <p>Provide the ID of a payment source already attached to this customer to make it this
      * customer's default payment source.
      *
      * <p>If you want to add a new payment source and make it the default, see the <a
-     * href="https://stripe.com/docs/api/customers/update#update_customer-source">source</a>
+     * href="https://docs.stripe.com/api/customers/update#update_customer-source">source</a>
      * property.
      */
     public Builder setDefaultSource(EmptyParam defaultSource) {
@@ -390,6 +432,18 @@ public class CustomerUpdateParams extends ApiRequestParams {
       return this;
     }
 
+    /** The customer's full name. This may be up to <em>150 characters</em>. */
+    public Builder setIndividualName(String individualName) {
+      this.individualName = individualName;
+      return this;
+    }
+
+    /** The customer's full name. This may be up to <em>150 characters</em>. */
+    public Builder setIndividualName(EmptyParam individualName) {
+      this.individualName = individualName;
+      return this;
+    }
+
     /**
      * The prefix for the customer used to generate unique invoice numbers. Must be 3–12 uppercase
      * letters or numbers.
@@ -443,7 +497,7 @@ public class CustomerUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -454,7 +508,7 @@ public class CustomerUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -590,11 +644,11 @@ public class CustomerUpdateParams extends ApiRequestParams {
     @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
     Map<String, Object> extraParams;
 
-    /** Address line 1 (e.g., street, PO Box, or company name). */
+    /** Address line 1, such as the street, PO Box, or company name. */
     @SerializedName("line1")
     Object line1;
 
-    /** Address line 2 (e.g., apartment, suite, unit, or building). */
+    /** Address line 2, such as the apartment, suite, unit, or building. */
     @SerializedName("line2")
     Object line2;
 
@@ -602,7 +656,10 @@ public class CustomerUpdateParams extends ApiRequestParams {
     @SerializedName("postal_code")
     Object postalCode;
 
-    /** State, county, province, or region. */
+    /**
+     * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+     * 3166-2</a>).
+     */
     @SerializedName("state")
     Object state;
 
@@ -712,25 +769,25 @@ public class CustomerUpdateParams extends ApiRequestParams {
         return this;
       }
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       public Builder setLine1(String line1) {
         this.line1 = line1;
         return this;
       }
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       public Builder setLine1(EmptyParam line1) {
         this.line1 = line1;
         return this;
       }
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       public Builder setLine2(String line2) {
         this.line2 = line2;
         return this;
       }
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       public Builder setLine2(EmptyParam line2) {
         this.line2 = line2;
         return this;
@@ -748,13 +805,19 @@ public class CustomerUpdateParams extends ApiRequestParams {
         return this;
       }
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       public Builder setState(String state) {
         this.state = state;
         return this;
       }
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       public Builder setState(EmptyParam state) {
         this.state = state;
         return this;
@@ -852,7 +915,7 @@ public class CustomerUpdateParams extends ApiRequestParams {
        * Controls how funds transferred by the customer are applied to payment intents and invoices.
        * Valid options are {@code automatic}, {@code manual}, or {@code merchant_default}. For more
        * information about these reconciliation modes, see <a
-       * href="https://stripe.com/docs/payments/customer-balance/reconciliation">Reconciliation</a>.
+       * href="https://docs.stripe.com/payments/customer-balance/reconciliation">Reconciliation</a>.
        */
       @SerializedName("reconciliation_mode")
       ReconciliationMode reconciliationMode;
@@ -909,7 +972,7 @@ public class CustomerUpdateParams extends ApiRequestParams {
          * Controls how funds transferred by the customer are applied to payment intents and
          * invoices. Valid options are {@code automatic}, {@code manual}, or {@code
          * merchant_default}. For more information about these reconciliation modes, see <a
-         * href="https://stripe.com/docs/payments/customer-balance/reconciliation">Reconciliation</a>.
+         * href="https://docs.stripe.com/payments/customer-balance/reconciliation">Reconciliation</a>.
          */
         public Builder setReconciliationMode(
             CustomerUpdateParams.CashBalance.Settings.ReconciliationMode reconciliationMode) {
@@ -1506,11 +1569,11 @@ public class CustomerUpdateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       Object line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       Object line2;
 
@@ -1518,7 +1581,10 @@ public class CustomerUpdateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       Object postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       Object state;
 
@@ -1630,25 +1696,25 @@ public class CustomerUpdateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(EmptyParam line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(EmptyParam line2) {
           this.line2 = line2;
           return this;
@@ -1666,13 +1732,19 @@ public class CustomerUpdateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(EmptyParam state) {
           this.state = state;
           return this;

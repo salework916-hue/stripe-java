@@ -21,7 +21,7 @@ import lombok.Setter;
  * Value list items allow you to add specific values to a given Radar value list, which can then be
  * used in rules.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/radar/lists#managing-list-items">Managing list
+ * <p>Related guide: <a href="https://docs.stripe.com/radar/lists#managing-list-items">Managing list
  * items</a>
  */
 @Getter
@@ -46,8 +46,8 @@ public class ValueListItem extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

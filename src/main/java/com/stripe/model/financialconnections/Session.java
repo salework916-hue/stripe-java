@@ -8,6 +8,7 @@ import com.stripe.model.Customer;
 import com.stripe.model.ExpandableField;
 import com.stripe.model.HasId;
 import com.stripe.model.StripeObject;
+import com.stripe.model.Token;
 import com.stripe.net.ApiRequest;
 import com.stripe.net.ApiRequestParams;
 import com.stripe.net.ApiResource;
@@ -38,6 +39,29 @@ public class Session extends ApiResource implements HasId {
   @SerializedName("accounts")
   AccountCollection accounts;
 
+  /**
+   * Tokenization is the process Stripe uses to collect sensitive card or bank account details, or
+   * personally identifiable information (PII), directly from your customers in a secure manner. A
+   * token representing this information is returned to your server to use. Use our <a
+   * href="https://docs.stripe.com/payments">recommended payments integrations</a> to perform this
+   * process on the client-side. This guarantees that no sensitive card data touches your server,
+   * and allows your integration to operate in a PCI-compliant way.
+   *
+   * <p>If you can't use client-side tokenization, you can also create tokens using the API with
+   * either your publishable or secret API key. If your integration uses this method, you're
+   * responsible for any PCI compliance that it might require, and you must keep your secret API key
+   * safe. Unlike with client-side tokenization, your customer's information isn't sent directly to
+   * Stripe, so we can't determine how it's handled or stored.
+   *
+   * <p>You can't store or use tokens more than once. To store card or bank account information for
+   * later use, create <a href="https://docs.stripe.com/api#customers">Customer</a> objects or <a
+   * href="https://stripe.com/api#external_accounts">External accounts</a>. <a
+   * href="https://docs.stripe.com/radar">Radar</a>, our integrated solution for automatic fraud
+   * protection, performs best with integrations that use client-side tokenization.
+   */
+  @SerializedName("bank_account_token")
+  Token bankAccountToken;
+
   /** A value that will be passed to the client to launch the authentication flow. */
   @SerializedName("client_secret")
   String clientSecret;
@@ -50,12 +74,18 @@ public class Session extends ApiResource implements HasId {
   @SerializedName("id")
   String id;
 
+  @SerializedName("limits")
+  Limits limits;
+
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
+
+  @SerializedName("manual_entry")
+  ManualEntry manualEntry;
 
   /**
    * String representing the object's type. Objects of the same type share the same value.
@@ -171,7 +201,7 @@ public class Session extends ApiResource implements HasId {
   @EqualsAndHashCode(callSuper = false)
   public static class AccountHolder extends StripeObject {
     /**
-     * The ID of the Stripe account this account belongs to. Should only be present if {@code
+     * The ID of the Stripe account that this account belongs to. Only available when {@code
      * account_holder.type} is {@code account}.
      */
     @SerializedName("account")
@@ -180,13 +210,16 @@ public class Session extends ApiResource implements HasId {
     ExpandableField<Account> account;
 
     /**
-     * ID of the Stripe customer this account belongs to. Present if and only if {@code
-     * account_holder.type} is {@code customer}.
+     * The ID for an Account representing a customer that this account belongs to. Only available
+     * when {@code account_holder.type} is {@code customer}.
      */
     @SerializedName("customer")
     @Getter(lombok.AccessLevel.NONE)
     @Setter(lombok.AccessLevel.NONE)
     ExpandableField<Customer> customer;
+
+    @SerializedName("customer_account")
+    String customerAccount;
 
     /**
      * Type of account holder that this account belongs to.
@@ -252,6 +285,49 @@ public class Session extends ApiResource implements HasId {
     /** List of countries from which to filter accounts. */
     @SerializedName("countries")
     List<String> countries;
+
+    /** Country from which to filter accounts. */
+    @SerializedName("country")
+    String country;
+
+    /**
+     * Whether the Session should require that linked accounts support payments and retrieve account
+     * numbers before completion.
+     *
+     * <p>One of {@code all}, {@code at_least_one}, or {@code none}.
+     */
+    @SerializedName("require_payment_method_support")
+    String requirePaymentMethodSupport;
+  }
+
+  /**
+   * For more details about Limits, please refer to the <a href="https://docs.stripe.com/api">API
+   * Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class Limits extends StripeObject {
+    /** The number of accounts that can be linked in this Session. */
+    @SerializedName("accounts")
+    Long accounts;
+  }
+
+  /**
+   * For more details about ManualEntry, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class ManualEntry extends StripeObject {
+    /**
+     * Controls how manual entry of bank account details is presented to the user.
+     *
+     * <p>One of {@code automatic}, or {@code disabled}.
+     */
+    @SerializedName("mode")
+    String mode;
   }
 
   @Override
@@ -259,6 +335,9 @@ public class Session extends ApiResource implements HasId {
     super.setResponseGetter(responseGetter);
     trySetResponseGetter(accountHolder, responseGetter);
     trySetResponseGetter(accounts, responseGetter);
+    trySetResponseGetter(bankAccountToken, responseGetter);
     trySetResponseGetter(filters, responseGetter);
+    trySetResponseGetter(limits, responseGetter);
+    trySetResponseGetter(manualEntry, responseGetter);
   }
 }

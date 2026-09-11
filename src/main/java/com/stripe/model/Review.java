@@ -22,7 +22,7 @@ import lombok.Setter;
  * Reviews can be used to supplement automated fraud detection with human expertise.
  *
  * <p>Learn more about <a href="https://stripe.com/radar">Radar</a> and reviewing payments <a
- * href="https://stripe.com/docs/radar/reviews">here</a>.
+ * href="https://docs.stripe.com/radar/reviews">here</a>.
  */
 @Getter
 @Setter
@@ -68,8 +68,8 @@ public class Review extends ApiResource implements HasId {
   IpAddressLocation ipAddressLocation;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

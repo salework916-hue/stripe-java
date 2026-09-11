@@ -26,12 +26,21 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
   String currency;
 
   /**
-   * The identifier of the customer whose upcoming invoice you'd like to retrieve. If {@code
+   * The identifier of the customer whose upcoming invoice you're retrieving. If {@code
    * automatic_tax} is enabled then one of {@code customer}, {@code customer_details}, {@code
    * subscription}, or {@code schedule} must be set.
    */
   @SerializedName("customer")
   String customer;
+
+  /**
+   * The identifier of the account representing the customer whose upcoming invoice you're
+   * retrieving. If {@code automatic_tax} is enabled then one of {@code customer}, {@code
+   * customer_account}, {@code customer_details}, {@code subscription}, or {@code schedule} must be
+   * set.
+   */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * Details about the customer you want to invoice or overrides for an existing customer. If {@code
@@ -77,7 +86,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
   /**
    * The account (if any) for which the funds of the invoice payment are intended. If set, the
    * invoice will be presented with the branding and support information of the specified account.
-   * See the <a href="https://stripe.com/docs/billing/invoices/connect">Invoices with Connect</a>
+   * See the <a href="https://docs.stripe.com/billing/invoices/connect">Invoices with Connect</a>
    * documentation for details.
    */
   @SerializedName("on_behalf_of")
@@ -125,6 +134,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       AutomaticTax automaticTax,
       String currency,
       String customer,
+      String customerAccount,
       CustomerDetails customerDetails,
       Object discounts,
       List<String> expand,
@@ -140,6 +150,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     this.automaticTax = automaticTax;
     this.currency = currency;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.customerDetails = customerDetails;
     this.discounts = discounts;
     this.expand = expand;
@@ -164,6 +175,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     private String currency;
 
     private String customer;
+
+    private String customerAccount;
 
     private CustomerDetails customerDetails;
 
@@ -195,6 +208,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           this.automaticTax,
           this.currency,
           this.customer,
+          this.customerAccount,
           this.customerDetails,
           this.discounts,
           this.expand,
@@ -225,12 +239,23 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     }
 
     /**
-     * The identifier of the customer whose upcoming invoice you'd like to retrieve. If {@code
+     * The identifier of the customer whose upcoming invoice you're retrieving. If {@code
      * automatic_tax} is enabled then one of {@code customer}, {@code customer_details}, {@code
      * subscription}, or {@code schedule} must be set.
      */
     public Builder setCustomer(String customer) {
       this.customer = customer;
+      return this;
+    }
+
+    /**
+     * The identifier of the account representing the customer whose upcoming invoice you're
+     * retrieving. If {@code automatic_tax} is enabled then one of {@code customer}, {@code
+     * customer_account}, {@code customer_details}, {@code subscription}, or {@code schedule} must
+     * be set.
+     */
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 
@@ -384,7 +409,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     /**
      * The account (if any) for which the funds of the invoice payment are intended. If set, the
      * invoice will be presented with the branding and support information of the specified account.
-     * See the <a href="https://stripe.com/docs/billing/invoices/connect">Invoices with Connect</a>
+     * See the <a href="https://docs.stripe.com/billing/invoices/connect">Invoices with Connect</a>
      * documentation for details.
      */
     public Builder setOnBehalfOf(String onBehalfOf) {
@@ -395,7 +420,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     /**
      * The account (if any) for which the funds of the invoice payment are intended. If set, the
      * invoice will be presented with the branding and support information of the specified account.
-     * See the <a href="https://stripe.com/docs/billing/invoices/connect">Invoices with Connect</a>
+     * See the <a href="https://docs.stripe.com/billing/invoices/connect">Invoices with Connect</a>
      * documentation for details.
      */
     public Builder setOnBehalfOf(EmptyParam onBehalfOf) {
@@ -459,7 +484,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     /**
      * <strong>Required.</strong> Whether Stripe automatically computes tax on this invoice. Note
      * that incompatible invoice items (invoice items with manually specified <a
-     * href="https://stripe.com/docs/api/tax_rates">tax rates</a>, negative amounts, or {@code
+     * href="https://docs.stripe.com/api/tax_rates">tax rates</a>, negative amounts, or {@code
      * tax_behavior=unspecified}) cannot be added to automatic tax invoices.
      */
     @SerializedName("enabled")
@@ -508,7 +533,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       /**
        * <strong>Required.</strong> Whether Stripe automatically computes tax on this invoice. Note
        * that incompatible invoice items (invoice items with manually specified <a
-       * href="https://stripe.com/docs/api/tax_rates">tax rates</a>, negative amounts, or {@code
+       * href="https://docs.stripe.com/api/tax_rates">tax rates</a>, negative amounts, or {@code
        * tax_behavior=unspecified}) cannot be added to automatic tax invoices.
        */
       public Builder setEnabled(Boolean enabled) {
@@ -658,7 +683,11 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
   @Getter
   @EqualsAndHashCode(callSuper = false)
   public static class CustomerDetails {
-    /** The customer's address. */
+    /**
+     * The customer's address. Learn about <a
+     * href="https://stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+     * requirements for calculating tax</a>.
+     */
     @SerializedName("address")
     Object address;
 
@@ -725,13 +754,21 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
             this.address, this.extraParams, this.shipping, this.tax, this.taxExempt, this.taxIds);
       }
 
-      /** The customer's address. */
+      /**
+       * The customer's address. Learn about <a
+       * href="https://stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+       * requirements for calculating tax</a>.
+       */
       public Builder setAddress(InvoiceCreatePreviewParams.CustomerDetails.Address address) {
         this.address = address;
         return this;
       }
 
-      /** The customer's address. */
+      /**
+       * The customer's address. Learn about <a
+       * href="https://stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+       * requirements for calculating tax</a>.
+       */
       public Builder setAddress(EmptyParam address) {
         this.address = address;
         return this;
@@ -844,11 +881,11 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -856,7 +893,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -951,13 +991,13 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -969,7 +1009,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -1101,11 +1144,11 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
         Map<String, Object> extraParams;
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         @SerializedName("line1")
         String line1;
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         @SerializedName("line2")
         String line2;
 
@@ -1113,7 +1156,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         @SerializedName("postal_code")
         String postalCode;
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         @SerializedName("state")
         String state;
 
@@ -1211,13 +1257,13 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
             return this;
           }
 
-          /** Address line 1 (e.g., street, PO Box, or company name). */
+          /** Address line 1, such as the street, PO Box, or company name. */
           public Builder setLine1(String line1) {
             this.line1 = line1;
             return this;
           }
 
-          /** Address line 2 (e.g., apartment, suite, unit, or building). */
+          /** Address line 2, such as the apartment, suite, unit, or building. */
           public Builder setLine2(String line2) {
             this.line2 = line2;
             return this;
@@ -1229,7 +1275,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
             return this;
           }
 
-          /** State, county, province, or region. */
+          /**
+           * State, county, province, or region (<a
+           * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+           */
           public Builder setState(String state) {
             this.state = state;
             return this;
@@ -1353,18 +1402,20 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
        * {@code cd_nif}, {@code ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code
        * cn_tin}, {@code co_nit}, {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn},
        * {@code ec_ruc}, {@code eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code
-       * eu_vat}, {@code gb_vat}, {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code hr_oib},
-       * {@code hu_tin}, {@code id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code
-       * jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin},
-       * {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code
-       * ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc},
-       * {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code
-       * no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin},
-       * {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code
-       * sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit},
-       * {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code
-       * ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat},
-       * {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
+       * eu_vat}, {@code fo_vat}, {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code gn_nif},
+       * {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp}, {@code
+       * il_vat}, {@code in_gst}, {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code jp_rn},
+       * {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code
+       * kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code lk_vat}, {@code ma_vat},
+       * {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code
+       * my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec},
+       * {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code
+       * pl_nip}, {@code py_ruc}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp},
+       * {@code sa_vat}, {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code
+       * sr_fin}, {@code sv_nit}, {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat},
+       * {@code tz_vat}, {@code ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code
+       * uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or
+       * {@code zw_tin}
        */
       @SerializedName("type")
       Type type;
@@ -1434,19 +1485,20 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
          * {@code cd_nif}, {@code ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code
          * cn_tin}, {@code co_nit}, {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn},
          * {@code ec_ruc}, {@code eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat},
-         * {@code eu_vat}, {@code gb_vat}, {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code
-         * hr_oib}, {@code hu_tin}, {@code id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat},
-         * {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code
-         * kh_tin}, {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat},
-         * {@code ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code
-         * mx_rfc}, {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat},
-         * {@code no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code
-         * ph_tin}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat},
-         * {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code
-         * sv_nit}, {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat},
-         * {@code ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code
-         * uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code
-         * zw_tin}
+         * {@code eu_vat}, {@code fo_vat}, {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code
+         * gn_nif}, {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp},
+         * {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code
+         * jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn},
+         * {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code lk_vat}, {@code
+         * ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc},
+         * {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code
+         * no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin},
+         * {@code pl_nip}, {@code py_ruc}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code
+         * ru_kpp}, {@code sa_vat}, {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code
+         * sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code th_vat}, {@code tj_tin}, {@code
+         * tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat}, {@code ug_tin}, {@code us_ein},
+         * {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code
+         * za_vat}, {@code zm_tin}, or {@code zw_tin}
          */
         public Builder setType(InvoiceCreatePreviewParams.CustomerDetails.TaxId.Type type) {
           this.type = type;
@@ -1596,11 +1648,17 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         @SerializedName("eu_vat")
         EU_VAT("eu_vat"),
 
+        @SerializedName("fo_vat")
+        FO_VAT("fo_vat"),
+
         @SerializedName("gb_vat")
         GB_VAT("gb_vat"),
 
         @SerializedName("ge_vat")
         GE_VAT("ge_vat"),
+
+        @SerializedName("gi_tin")
+        GI_TIN("gi_tin"),
 
         @SerializedName("gn_nif")
         GN_NIF("gn_nif"),
@@ -1614,6 +1672,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         @SerializedName("hu_tin")
         HU_TIN("hu_tin"),
 
+        @SerializedName("ic_nif")
+        IC_NIF("ic_nif"),
+
         @SerializedName("id_npwp")
         ID_NPWP("id_npwp"),
 
@@ -1625,6 +1686,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         @SerializedName("is_vat")
         IS_VAT("is_vat"),
+
+        @SerializedName("it_cf")
+        IT_CF("it_cf"),
 
         @SerializedName("jp_cn")
         JP_CN("jp_cn"),
@@ -1658,6 +1722,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         @SerializedName("li_vat")
         LI_VAT("li_vat"),
+
+        @SerializedName("lk_vat")
+        LK_VAT("lk_vat"),
 
         @SerializedName("ma_vat")
         MA_VAT("ma_vat"),
@@ -1709,6 +1776,12 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         @SerializedName("ph_tin")
         PH_TIN("ph_tin"),
+
+        @SerializedName("pl_nip")
+        PL_NIP("pl_nip"),
+
+        @SerializedName("py_ruc")
+        PY_RUC("py_ruc"),
 
         @SerializedName("ro_tin")
         RO_TIN("ro_tin"),
@@ -1966,7 +2039,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     String invoiceitem;
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -1977,9 +2050,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     /**
      * The period associated with this invoice item. When set to different values, the period will
      * be rendered on the invoice. If you have <a
-     * href="https://stripe.com/docs/revenue-recognition">Stripe Revenue Recognition</a> enabled,
+     * href="https://docs.stripe.com/revenue-recognition">Stripe Revenue Recognition</a> enabled,
      * the period will be used to recognize and defer revenue. See the <a
-     * href="https://stripe.com/docs/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
+     * href="https://docs.stripe.com/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
      * Recognition documentation</a> for details.
      */
     @SerializedName("period")
@@ -1990,19 +2063,30 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     String price;
 
     /**
-     * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+     * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
      * inline. One of {@code price} or {@code price_data} is required.
      */
     @SerializedName("price_data")
     PriceData priceData;
 
-    /** Non-negative integer. The quantity of units for the invoice item. */
+    /**
+     * Non-negative integer. The quantity of units for the invoice item. Use {@code
+     * quantity_decimal} instead to provide decimal precision. This field will be deprecated in
+     * favor of {@code quantity_decimal} in a future version.
+     */
     @SerializedName("quantity")
     Long quantity;
 
     /**
+     * Non-negative decimal with at most 12 decimal places. The quantity of units for the invoice
+     * item.
+     */
+    @SerializedName("quantity_decimal")
+    BigDecimal quantityDecimal;
+
+    /**
      * Only required if a <a
-     * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+     * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
      * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price is
      * considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
      * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -2011,7 +2095,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     @SerializedName("tax_behavior")
     TaxBehavior taxBehavior;
 
-    /** A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID. */
+    /** A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID. */
     @SerializedName("tax_code")
     Object taxCode;
 
@@ -2051,6 +2135,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         String price,
         PriceData priceData,
         Long quantity,
+        BigDecimal quantityDecimal,
         TaxBehavior taxBehavior,
         Object taxCode,
         Object taxRates,
@@ -2068,6 +2153,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       this.price = price;
       this.priceData = priceData;
       this.quantity = quantity;
+      this.quantityDecimal = quantityDecimal;
       this.taxBehavior = taxBehavior;
       this.taxCode = taxCode;
       this.taxRates = taxRates;
@@ -2104,6 +2190,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       private Long quantity;
 
+      private BigDecimal quantityDecimal;
+
       private TaxBehavior taxBehavior;
 
       private Object taxCode;
@@ -2129,6 +2217,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
             this.price,
             this.priceData,
             this.quantity,
+            this.quantityDecimal,
             this.taxBehavior,
             this.taxCode,
             this.taxRates,
@@ -2275,7 +2364,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       }
 
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to an object. This can be useful for storing additional information about the object
        * in a structured format. Individual keys can be unset by posting an empty value to them. All
        * keys can be unset by posting an empty value to {@code metadata}.
@@ -2286,7 +2375,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       }
 
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to an object. This can be useful for storing additional information about the object
        * in a structured format. Individual keys can be unset by posting an empty value to them. All
        * keys can be unset by posting an empty value to {@code metadata}.
@@ -2299,9 +2388,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       /**
        * The period associated with this invoice item. When set to different values, the period will
        * be rendered on the invoice. If you have <a
-       * href="https://stripe.com/docs/revenue-recognition">Stripe Revenue Recognition</a> enabled,
+       * href="https://docs.stripe.com/revenue-recognition">Stripe Revenue Recognition</a> enabled,
        * the period will be used to recognize and defer revenue. See the <a
-       * href="https://stripe.com/docs/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
+       * href="https://docs.stripe.com/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
        * Recognition documentation</a> for details.
        */
       public Builder setPeriod(InvoiceCreatePreviewParams.InvoiceItem.Period period) {
@@ -2316,7 +2405,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       }
 
       /**
-       * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+       * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
        * inline. One of {@code price} or {@code price_data} is required.
        */
       public Builder setPriceData(InvoiceCreatePreviewParams.InvoiceItem.PriceData priceData) {
@@ -2324,15 +2413,28 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         return this;
       }
 
-      /** Non-negative integer. The quantity of units for the invoice item. */
+      /**
+       * Non-negative integer. The quantity of units for the invoice item. Use {@code
+       * quantity_decimal} instead to provide decimal precision. This field will be deprecated in
+       * favor of {@code quantity_decimal} in a future version.
+       */
       public Builder setQuantity(Long quantity) {
         this.quantity = quantity;
         return this;
       }
 
       /**
+       * Non-negative decimal with at most 12 decimal places. The quantity of units for the invoice
+       * item.
+       */
+      public Builder setQuantityDecimal(BigDecimal quantityDecimal) {
+        this.quantityDecimal = quantityDecimal;
+        return this;
+      }
+
+      /**
        * Only required if a <a
-       * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+       * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
        * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price
        * is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
        * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -2344,13 +2446,13 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         return this;
       }
 
-      /** A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID. */
+      /** A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID. */
       public Builder setTaxCode(String taxCode) {
         this.taxCode = taxCode;
         return this;
       }
 
-      /** A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID. */
+      /** A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID. */
       public Builder setTaxCode(EmptyParam taxCode) {
         this.taxCode = taxCode;
         return this;
@@ -2644,7 +2746,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       /**
        * Only required if a <a
-       * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+       * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
        * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price
        * is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
        * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -2761,7 +2863,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         /**
          * Only required if a <a
-         * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+         * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
          * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price
          * is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
          * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -3101,15 +3203,20 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
+      /** Configure behavior for flexible billing mode. */
+      @SerializedName("flexible")
+      Flexible flexible;
+
       /**
        * <strong>Required.</strong> Controls the calculation and orchestration of prorations and
-       * invoices for subscriptions.
+       * invoices for subscriptions. If no value is passed, the default is {@code flexible}.
        */
       @SerializedName("type")
       Type type;
 
-      private BillingMode(Map<String, Object> extraParams, Type type) {
+      private BillingMode(Map<String, Object> extraParams, Flexible flexible, Type type) {
         this.extraParams = extraParams;
+        this.flexible = flexible;
         this.type = type;
       }
 
@@ -3120,12 +3227,14 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       public static class Builder {
         private Map<String, Object> extraParams;
 
+        private Flexible flexible;
+
         private Type type;
 
         /** Finalize and obtain parameter instance from this builder. */
         public InvoiceCreatePreviewParams.ScheduleDetails.BillingMode build() {
           return new InvoiceCreatePreviewParams.ScheduleDetails.BillingMode(
-              this.extraParams, this.type);
+              this.extraParams, this.flexible, this.type);
         }
 
         /**
@@ -3156,13 +3265,116 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           return this;
         }
 
+        /** Configure behavior for flexible billing mode. */
+        public Builder setFlexible(
+            InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Flexible flexible) {
+          this.flexible = flexible;
+          return this;
+        }
+
         /**
          * <strong>Required.</strong> Controls the calculation and orchestration of prorations and
-         * invoices for subscriptions.
+         * invoices for subscriptions. If no value is passed, the default is {@code flexible}.
          */
         public Builder setType(InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Type type) {
           this.type = type;
           return this;
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Flexible {
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /**
+         * Controls how invoices and invoice items display proration amounts and discount amounts.
+         */
+        @SerializedName("proration_discounts")
+        ProrationDiscounts prorationDiscounts;
+
+        private Flexible(Map<String, Object> extraParams, ProrationDiscounts prorationDiscounts) {
+          this.extraParams = extraParams;
+          this.prorationDiscounts = prorationDiscounts;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Map<String, Object> extraParams;
+
+          private ProrationDiscounts prorationDiscounts;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Flexible build() {
+            return new InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Flexible(
+                this.extraParams, this.prorationDiscounts);
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Flexible#extraParams} for the
+           * field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Flexible#extraParams} for the
+           * field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /**
+           * Controls how invoices and invoice items display proration amounts and discount amounts.
+           */
+          public Builder setProrationDiscounts(
+              InvoiceCreatePreviewParams.ScheduleDetails.BillingMode.Flexible.ProrationDiscounts
+                  prorationDiscounts) {
+            this.prorationDiscounts = prorationDiscounts;
+            return this;
+          }
+        }
+
+        public enum ProrationDiscounts implements ApiRequestParams.EnumParam {
+          @SerializedName("included")
+          INCLUDED("included"),
+
+          @SerializedName("itemized")
+          ITEMIZED("itemized");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          ProrationDiscounts(String value) {
+            this.value = value;
+          }
         }
       }
 
@@ -3211,7 +3423,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
        * Can be set to {@code phase_start} to set the anchor to the start of the phase or {@code
        * automatic} to automatically change it if needed. Cannot be set to {@code phase_start} if
        * this phase specifies a trial. For more information, see the billing cycle <a
-       * href="https://stripe.com/docs/billing/subscriptions/billing-cycle">documentation</a>.
+       * href="https://docs.stripe.com/billing/subscriptions/billing-cycle">documentation</a>.
        */
       @SerializedName("billing_cycle_anchor")
       BillingCycleAnchor billingCycleAnchor;
@@ -3250,11 +3462,11 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       String defaultPaymentMethod;
 
       /**
-       * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax Rates
+       * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax Rates
        * will set the Subscription's <a
-       * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+       * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
        * default_tax_rates}</a>, which means they will be the Invoice's <a
-       * href="https://stripe.com/docs/api/invoices/create#create_invoice-default_tax_rates">{@code
+       * href="https://docs.stripe.com/api/invoices/create#create_invoice-default_tax_rates">{@code
        * default_tax_rates}</a> for any Invoices issued by the Subscription during this Phase.
        */
       @SerializedName("default_tax_rates")
@@ -3283,7 +3495,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       Duration duration;
 
       /**
-       * The date at which this phase of the subscription schedule ends. If set, {@code iterations}
+       * The date at which this phase of the subscription schedule ends. If set, {@code duration}
        * must not be set.
        */
       @SerializedName("end_date")
@@ -3310,17 +3522,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       List<InvoiceCreatePreviewParams.ScheduleDetails.Phase.Item> items;
 
       /**
-       * Integer representing the multiplier applied to the price interval. For example, {@code
-       * iterations=2} applied to a price with {@code interval=month} and {@code interval_count=3}
-       * results in a phase of duration {@code 2 * 3 months = 6 months}. If set, {@code end_date}
-       * must not be set. This parameter is deprecated and will be removed in a future version. Use
-       * {@code duration} instead.
-       */
-      @SerializedName("iterations")
-      Long iterations;
-
-      /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to a phase. Metadata on a schedule's phase will update the underlying subscription's
        * {@code metadata} when the phase is entered, adding new keys and replacing existing keys in
        * the subscription's {@code metadata}. Individual keys in the subscription's {@code metadata}
@@ -3340,10 +3542,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       /**
        * Controls whether the subscription schedule should create <a
-       * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when
+       * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when
        * transitioning to this phase if there is a difference in billing configuration. It's
        * different from the request-level <a
-       * href="https://stripe.com/docs/api/subscription_schedules/update#update_subscription_schedule-proration_behavior">proration_behavior</a>
+       * href="https://docs.stripe.com/api/subscription_schedules/update#update_subscription_schedule-proration_behavior">proration_behavior</a>
        * parameter which controls what happens if the update request affects the billing
        * configuration (item price, quantity, etc.) of the current phase.
        */
@@ -3352,7 +3554,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       /**
        * The date at which this phase of the subscription schedule starts or {@code now}. Must be
-       * set on the first phase.
+       * set on the first phase. Prefer to specify {@code now} over an explicit timestamp when
+       * appropriate to avoid unexpected behavior due to request delays or clock skew resulting in
+       * the phase being slightly backdated or postdated.
        */
       @SerializedName("start_date")
       Object startDate;
@@ -3372,8 +3576,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       Boolean trial;
 
       /**
-       * Sets the phase to trialing from the start date to this date. Must be before the phase end
-       * date, can not be combined with {@code trial}
+       * Sets the phase to trialing from the start date to this date. Must be within the phase. When
+       * previewing an update, if combined with {@code trial=true}, it must match the phase end
+       * date.
        */
       @SerializedName("trial_end")
       Object trialEnd;
@@ -3395,7 +3600,6 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           Map<String, Object> extraParams,
           InvoiceSettings invoiceSettings,
           List<InvoiceCreatePreviewParams.ScheduleDetails.Phase.Item> items,
-          Long iterations,
           Map<String, String> metadata,
           String onBehalfOf,
           ProrationBehavior prorationBehavior,
@@ -3419,7 +3623,6 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         this.extraParams = extraParams;
         this.invoiceSettings = invoiceSettings;
         this.items = items;
-        this.iterations = iterations;
         this.metadata = metadata;
         this.onBehalfOf = onBehalfOf;
         this.prorationBehavior = prorationBehavior;
@@ -3467,8 +3670,6 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         private List<InvoiceCreatePreviewParams.ScheduleDetails.Phase.Item> items;
 
-        private Long iterations;
-
         private Map<String, String> metadata;
 
         private String onBehalfOf;
@@ -3502,7 +3703,6 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
               this.extraParams,
               this.invoiceSettings,
               this.items,
-              this.iterations,
               this.metadata,
               this.onBehalfOf,
               this.prorationBehavior,
@@ -3566,7 +3766,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
          * Can be set to {@code phase_start} to set the anchor to the start of the phase or {@code
          * automatic} to automatically change it if needed. Cannot be set to {@code phase_start} if
          * this phase specifies a trial. For more information, see the billing cycle <a
-         * href="https://stripe.com/docs/billing/subscriptions/billing-cycle">documentation</a>.
+         * href="https://docs.stripe.com/billing/subscriptions/billing-cycle">documentation</a>.
          */
         public Builder setBillingCycleAnchor(
             InvoiceCreatePreviewParams.ScheduleDetails.Phase.BillingCycleAnchor
@@ -3658,11 +3858,11 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+         * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
          * Rates will set the Subscription's <a
-         * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
          * default_tax_rates}</a>, which means they will be the Invoice's <a
-         * href="https://stripe.com/docs/api/invoices/create#create_invoice-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/invoices/create#create_invoice-default_tax_rates">{@code
          * default_tax_rates}</a> for any Invoices issued by the Subscription during this Phase.
          */
         public Builder setDefaultTaxRates(EmptyParam defaultTaxRates) {
@@ -3671,11 +3871,11 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+         * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
          * Rates will set the Subscription's <a
-         * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
          * default_tax_rates}</a>, which means they will be the Invoice's <a
-         * href="https://stripe.com/docs/api/invoices/create#create_invoice-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/invoices/create#create_invoice-default_tax_rates">{@code
          * default_tax_rates}</a> for any Invoices issued by the Subscription during this Phase.
          */
         public Builder setDefaultTaxRates(List<String> defaultTaxRates) {
@@ -3768,8 +3968,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * The date at which this phase of the subscription schedule ends. If set, {@code
-         * iterations} must not be set.
+         * The date at which this phase of the subscription schedule ends. If set, {@code duration}
+         * must not be set.
          */
         public Builder setEndDate(Long endDate) {
           this.endDate = endDate;
@@ -3777,8 +3977,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * The date at which this phase of the subscription schedule ends. If set, {@code
-         * iterations} must not be set.
+         * The date at which this phase of the subscription schedule ends. If set, {@code duration}
+         * must not be set.
          */
         public Builder setEndDate(
             InvoiceCreatePreviewParams.ScheduleDetails.Phase.EndDate endDate) {
@@ -3849,18 +4049,6 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * Integer representing the multiplier applied to the price interval. For example, {@code
-         * iterations=2} applied to a price with {@code interval=month} and {@code interval_count=3}
-         * results in a phase of duration {@code 2 * 3 months = 6 months}. If set, {@code end_date}
-         * must not be set. This parameter is deprecated and will be removed in a future version.
-         * Use {@code duration} instead.
-         */
-        public Builder setIterations(Long iterations) {
-          this.iterations = iterations;
-          return this;
-        }
-
-        /**
          * Add a key/value pair to `metadata` map. A map is initialized for the first `put/putAll`
          * call, and subsequent calls add additional key/value pairs to the original map. See {@link
          * InvoiceCreatePreviewParams.ScheduleDetails.Phase#metadata} for the field documentation.
@@ -3898,10 +4086,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         /**
          * Controls whether the subscription schedule should create <a
-         * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when
+         * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when
          * transitioning to this phase if there is a difference in billing configuration. It's
          * different from the request-level <a
-         * href="https://stripe.com/docs/api/subscription_schedules/update#update_subscription_schedule-proration_behavior">proration_behavior</a>
+         * href="https://docs.stripe.com/api/subscription_schedules/update#update_subscription_schedule-proration_behavior">proration_behavior</a>
          * parameter which controls what happens if the update request affects the billing
          * configuration (item price, quantity, etc.) of the current phase.
          */
@@ -3913,7 +4101,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         /**
          * The date at which this phase of the subscription schedule starts or {@code now}. Must be
-         * set on the first phase.
+         * set on the first phase. Prefer to specify {@code now} over an explicit timestamp when
+         * appropriate to avoid unexpected behavior due to request delays or clock skew resulting in
+         * the phase being slightly backdated or postdated.
          */
         public Builder setStartDate(Long startDate) {
           this.startDate = startDate;
@@ -3922,7 +4112,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         /**
          * The date at which this phase of the subscription schedule starts or {@code now}. Must be
-         * set on the first phase.
+         * set on the first phase. Prefer to specify {@code now} over an explicit timestamp when
+         * appropriate to avoid unexpected behavior due to request delays or clock skew resulting in
+         * the phase being slightly backdated or postdated.
          */
         public Builder setStartDate(
             InvoiceCreatePreviewParams.ScheduleDetails.Phase.StartDate startDate) {
@@ -3950,8 +4142,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * Sets the phase to trialing from the start date to this date. Must be before the phase end
-         * date, can not be combined with {@code trial}
+         * Sets the phase to trialing from the start date to this date. Must be within the phase.
+         * When previewing an update, if combined with {@code trial=true}, it must match the phase
+         * end date.
          */
         public Builder setTrialEnd(Long trialEnd) {
           this.trialEnd = trialEnd;
@@ -3959,8 +4152,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * Sets the phase to trialing from the start date to this date. Must be before the phase end
-         * date, can not be combined with {@code trial}
+         * Sets the phase to trialing from the start date to this date. Must be within the phase.
+         * When previewing an update, if combined with {@code trial=true}, it must match the phase
+         * end date.
          */
         public Builder setTrialEnd(
             InvoiceCreatePreviewParams.ScheduleDetails.Phase.TrialEnd trialEnd) {
@@ -3972,6 +4166,13 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       @Getter
       @EqualsAndHashCode(callSuper = false)
       public static class AddInvoiceItem {
+        /**
+         * Controls whether discounts apply to this invoice item. Defaults to true if no value is
+         * provided.
+         */
+        @SerializedName("discountable")
+        Boolean discountable;
+
         /** The coupons to redeem into discounts for the item. */
         @SerializedName("discounts")
         List<InvoiceCreatePreviewParams.ScheduleDetails.Phase.AddInvoiceItem.Discount> discounts;
@@ -3987,7 +4188,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+         * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
          * attach to an object. This can be useful for storing additional information about the
          * object in a structured format. Individual keys can be unset by posting an empty value to
          * them. All keys can be unset by posting an empty value to {@code metadata}.
@@ -3996,8 +4197,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         Map<String, String> metadata;
 
         /**
-         * The period associated with this invoice item. Defaults to the period of the underlying
-         * subscription that surrounds the start of the phase.
+         * The period associated with this invoice item. If not set, {@code period.start.type}
+         * defaults to {@code max_item_period_start} and {@code period.end.type} defaults to {@code
+         * min_item_period_end}.
          */
         @SerializedName("period")
         Period period;
@@ -4007,7 +4209,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         String price;
 
         /**
-         * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+         * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
          * inline. One of {@code price} or {@code price_data} is required.
          */
         @SerializedName("price_data")
@@ -4025,6 +4227,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         Object taxRates;
 
         private AddInvoiceItem(
+            Boolean discountable,
             List<InvoiceCreatePreviewParams.ScheduleDetails.Phase.AddInvoiceItem.Discount>
                 discounts,
             Map<String, Object> extraParams,
@@ -4034,6 +4237,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
             PriceData priceData,
             Long quantity,
             Object taxRates) {
+          this.discountable = discountable;
           this.discounts = discounts;
           this.extraParams = extraParams;
           this.metadata = metadata;
@@ -4049,6 +4253,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         public static class Builder {
+          private Boolean discountable;
+
           private List<InvoiceCreatePreviewParams.ScheduleDetails.Phase.AddInvoiceItem.Discount>
               discounts;
 
@@ -4069,6 +4275,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           /** Finalize and obtain parameter instance from this builder. */
           public InvoiceCreatePreviewParams.ScheduleDetails.Phase.AddInvoiceItem build() {
             return new InvoiceCreatePreviewParams.ScheduleDetails.Phase.AddInvoiceItem(
+                this.discountable,
                 this.discounts,
                 this.extraParams,
                 this.metadata,
@@ -4077,6 +4284,15 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
                 this.priceData,
                 this.quantity,
                 this.taxRates);
+          }
+
+          /**
+           * Controls whether discounts apply to this invoice item. Defaults to true if no value is
+           * provided.
+           */
+          public Builder setDiscountable(Boolean discountable) {
+            this.discountable = discountable;
+            return this;
           }
 
           /**
@@ -4170,8 +4386,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           }
 
           /**
-           * The period associated with this invoice item. Defaults to the period of the underlying
-           * subscription that surrounds the start of the phase.
+           * The period associated with this invoice item. If not set, {@code period.start.type}
+           * defaults to {@code max_item_period_start} and {@code period.end.type} defaults to
+           * {@code min_item_period_end}.
            */
           public Builder setPeriod(
               InvoiceCreatePreviewParams.ScheduleDetails.Phase.AddInvoiceItem.Period period) {
@@ -4186,7 +4403,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           }
 
           /**
-           * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a>
+           * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a>
            * object inline. One of {@code price} or {@code price_data} is required.
            */
           public Builder setPriceData(
@@ -4721,7 +4938,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
           /**
            * Only required if a <a
-           * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+           * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
            * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the
            * price is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive},
            * {@code exclusive}, or {@code unspecified}. Once specified as either {@code inclusive}
@@ -4843,7 +5060,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
             /**
              * Only required if a <a
-             * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+             * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
              * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the
              * price is considered inclusive of taxes or exclusive of taxes. One of {@code
              * inclusive}, {@code exclusive}, or {@code unspecified}. Once specified as either
@@ -5715,7 +5932,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+         * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
          * attach to a configuration item. Metadata on a configuration item will update the
          * underlying subscription item's {@code metadata} when the phase is entered, adding new
          * keys and replacing existing keys. Individual keys in the subscription item's {@code
@@ -5739,7 +5956,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         String price;
 
         /**
-         * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+         * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
          * inline.
          */
         @SerializedName("price_data")
@@ -5753,9 +5970,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         Long quantity;
 
         /**
-         * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+         * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
          * Rates will override the <a
-         * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
          * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
          * previously-defined tax rates.
          */
@@ -5961,7 +6178,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           }
 
           /**
-           * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a>
+           * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a>
            * object inline.
            */
           public Builder setPriceData(
@@ -6010,9 +6227,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           }
 
           /**
-           * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+           * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
            * Rates will override the <a
-           * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+           * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
            * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to
            * remove previously-defined tax rates.
            */
@@ -6022,9 +6239,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           }
 
           /**
-           * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+           * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
            * Rates will override the <a
-           * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+           * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
            * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to
            * remove previously-defined tax rates.
            */
@@ -6050,7 +6267,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           /**
            * <strong>Required.</strong> Number of units that meets the billing threshold to advance
            * the subscription to a new billing period (e.g., it takes 10 $5 units to meet a $50 <a
-           * href="https://stripe.com/docs/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
+           * href="https://docs.stripe.com/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
            * threshold</a>)
            */
           @SerializedName("usage_gte")
@@ -6110,7 +6327,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
              * <strong>Required.</strong> Number of units that meets the billing threshold to
              * advance the subscription to a new billing period (e.g., it takes 10 $5 units to meet
              * a $50 <a
-             * href="https://stripe.com/docs/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
+             * href="https://docs.stripe.com/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
              * threshold</a>)
              */
             public Builder setUsageGte(Long usageGte) {
@@ -6264,7 +6481,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
           /**
            * Only required if a <a
-           * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+           * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
            * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the
            * price is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive},
            * {@code exclusive}, or {@code unspecified}. Once specified as either {@code inclusive}
@@ -6400,7 +6617,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
             /**
              * Only required if a <a
-             * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+             * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
              * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the
              * price is considered inclusive of taxes or exclusive of taxes. One of {@code
              * inclusive}, {@code exclusive}, or {@code unspecified}. Once specified as either
@@ -6802,7 +7019,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
   public static class SubscriptionDetails {
     /**
      * For new subscriptions, a future timestamp to anchor the subscription's <a
-     * href="https://stripe.com/docs/subscriptions/billing-cycle">billing cycle</a>. This is used to
+     * href="https://docs.stripe.com/subscriptions/billing-cycle">billing cycle</a>. This is used to
      * determine the date of the first full invoice, and, for plans with {@code month} or {@code
      * year} intervals, the day of the month for subsequent invoices. For existing subscriptions,
      * the value can only be set to {@code now} or {@code unchanged}.
@@ -6813,6 +7030,10 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     /** Controls how prorations and invoices for subscriptions are calculated and orchestrated. */
     @SerializedName("billing_mode")
     BillingMode billingMode;
+
+    /** Sets the billing schedules for the subscription. */
+    @SerializedName("billing_schedules")
+    Object billingSchedules;
 
     /**
      * A timestamp at which the subscription should cancel. If set to a date before the current
@@ -6856,8 +7077,17 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     List<InvoiceCreatePreviewParams.SubscriptionDetails.Item> items;
 
     /**
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
+     * to an object. This can be useful for storing additional information about the object in a
+     * structured format. Individual keys can be unset by posting an empty value to them. All keys
+     * can be unset by posting an empty value to {@code metadata}.
+     */
+    @SerializedName("metadata")
+    Object metadata;
+
+    /**
      * Determines how to handle <a
-     * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the
+     * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when the
      * billing cycle changes (e.g., when switching plans, resetting {@code
      * billing_cycle_anchor=now}, or starting a trial), or if an item's {@code quantity} changes.
      * The default value is {@code create_prorations}.
@@ -6899,12 +7129,14 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
     private SubscriptionDetails(
         Object billingCycleAnchor,
         BillingMode billingMode,
+        Object billingSchedules,
         Object cancelAt,
         Boolean cancelAtPeriodEnd,
         Boolean cancelNow,
         Object defaultTaxRates,
         Map<String, Object> extraParams,
         List<InvoiceCreatePreviewParams.SubscriptionDetails.Item> items,
+        Object metadata,
         ProrationBehavior prorationBehavior,
         Long prorationDate,
         ResumeAt resumeAt,
@@ -6912,12 +7144,14 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         Object trialEnd) {
       this.billingCycleAnchor = billingCycleAnchor;
       this.billingMode = billingMode;
+      this.billingSchedules = billingSchedules;
       this.cancelAt = cancelAt;
       this.cancelAtPeriodEnd = cancelAtPeriodEnd;
       this.cancelNow = cancelNow;
       this.defaultTaxRates = defaultTaxRates;
       this.extraParams = extraParams;
       this.items = items;
+      this.metadata = metadata;
       this.prorationBehavior = prorationBehavior;
       this.prorationDate = prorationDate;
       this.resumeAt = resumeAt;
@@ -6934,6 +7168,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       private BillingMode billingMode;
 
+      private Object billingSchedules;
+
       private Object cancelAt;
 
       private Boolean cancelAtPeriodEnd;
@@ -6945,6 +7181,8 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       private Map<String, Object> extraParams;
 
       private List<InvoiceCreatePreviewParams.SubscriptionDetails.Item> items;
+
+      private Object metadata;
 
       private ProrationBehavior prorationBehavior;
 
@@ -6961,12 +7199,14 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         return new InvoiceCreatePreviewParams.SubscriptionDetails(
             this.billingCycleAnchor,
             this.billingMode,
+            this.billingSchedules,
             this.cancelAt,
             this.cancelAtPeriodEnd,
             this.cancelNow,
             this.defaultTaxRates,
             this.extraParams,
             this.items,
+            this.metadata,
             this.prorationBehavior,
             this.prorationDate,
             this.resumeAt,
@@ -6976,7 +7216,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       /**
        * For new subscriptions, a future timestamp to anchor the subscription's <a
-       * href="https://stripe.com/docs/subscriptions/billing-cycle">billing cycle</a>. This is used
+       * href="https://docs.stripe.com/subscriptions/billing-cycle">billing cycle</a>. This is used
        * to determine the date of the first full invoice, and, for plans with {@code month} or
        * {@code year} intervals, the day of the month for subsequent invoices. For existing
        * subscriptions, the value can only be set to {@code now} or {@code unchanged}.
@@ -6989,7 +7229,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
       /**
        * For new subscriptions, a future timestamp to anchor the subscription's <a
-       * href="https://stripe.com/docs/subscriptions/billing-cycle">billing cycle</a>. This is used
+       * href="https://docs.stripe.com/subscriptions/billing-cycle">billing cycle</a>. This is used
        * to determine the date of the first full invoice, and, for plans with {@code month} or
        * {@code year} intervals, the day of the month for subsequent invoices. For existing
        * subscriptions, the value can only be set to {@code now} or {@code unchanged}.
@@ -7007,12 +7247,74 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       }
 
       /**
+       * Add an element to `billingSchedules` list. A list is initialized for the first `add/addAll`
+       * call, and subsequent calls adds additional elements to the original list. See {@link
+       * InvoiceCreatePreviewParams.SubscriptionDetails#billingSchedules} for the field
+       * documentation.
+       */
+      @SuppressWarnings("unchecked")
+      public Builder addBillingSchedule(
+          InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule element) {
+        if (this.billingSchedules == null || this.billingSchedules instanceof EmptyParam) {
+          this.billingSchedules =
+              new ArrayList<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule>();
+        }
+        ((List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule>)
+                this.billingSchedules)
+            .add(element);
+        return this;
+      }
+
+      /**
+       * Add all elements to `billingSchedules` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link InvoiceCreatePreviewParams.SubscriptionDetails#billingSchedules} for the field
+       * documentation.
+       */
+      @SuppressWarnings("unchecked")
+      public Builder addAllBillingSchedule(
+          List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule> elements) {
+        if (this.billingSchedules == null || this.billingSchedules instanceof EmptyParam) {
+          this.billingSchedules =
+              new ArrayList<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule>();
+        }
+        ((List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule>)
+                this.billingSchedules)
+            .addAll(elements);
+        return this;
+      }
+
+      /** Sets the billing schedules for the subscription. */
+      public Builder setBillingSchedules(EmptyParam billingSchedules) {
+        this.billingSchedules = billingSchedules;
+        return this;
+      }
+
+      /** Sets the billing schedules for the subscription. */
+      public Builder setBillingSchedules(
+          List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule> billingSchedules) {
+        this.billingSchedules = billingSchedules;
+        return this;
+      }
+
+      /**
        * A timestamp at which the subscription should cancel. If set to a date before the current
        * period ends, this will cause a proration if prorations have been enabled using {@code
        * proration_behavior}. If set during a future period, this will always cause a proration for
        * that period.
        */
       public Builder setCancelAt(Long cancelAt) {
+        this.cancelAt = cancelAt;
+        return this;
+      }
+
+      /**
+       * A timestamp at which the subscription should cancel. If set to a date before the current
+       * period ends, this will cause a proration if prorations have been enabled using {@code
+       * proration_behavior}. If set during a future period, this will always cause a proration for
+       * that period.
+       */
+      public Builder setCancelAt(InvoiceCreatePreviewParams.SubscriptionDetails.CancelAt cancelAt) {
         this.cancelAt = cancelAt;
         return this;
       }
@@ -7148,8 +7450,59 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       }
 
       /**
+       * Add a key/value pair to `metadata` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * InvoiceCreatePreviewParams.SubscriptionDetails#metadata} for the field documentation.
+       */
+      @SuppressWarnings("unchecked")
+      public Builder putMetadata(String key, String value) {
+        if (this.metadata == null || this.metadata instanceof EmptyParam) {
+          this.metadata = new HashMap<String, String>();
+        }
+        ((Map<String, String>) this.metadata).put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `metadata` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link InvoiceCreatePreviewParams.SubscriptionDetails#metadata} for the field
+       * documentation.
+       */
+      @SuppressWarnings("unchecked")
+      public Builder putAllMetadata(Map<String, String> map) {
+        if (this.metadata == null || this.metadata instanceof EmptyParam) {
+          this.metadata = new HashMap<String, String>();
+        }
+        ((Map<String, String>) this.metadata).putAll(map);
+        return this;
+      }
+
+      /**
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
+       * attach to an object. This can be useful for storing additional information about the object
+       * in a structured format. Individual keys can be unset by posting an empty value to them. All
+       * keys can be unset by posting an empty value to {@code metadata}.
+       */
+      public Builder setMetadata(EmptyParam metadata) {
+        this.metadata = metadata;
+        return this;
+      }
+
+      /**
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
+       * attach to an object. This can be useful for storing additional information about the object
+       * in a structured format. Individual keys can be unset by posting an empty value to them. All
+       * keys can be unset by posting an empty value to {@code metadata}.
+       */
+      public Builder setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+        return this;
+      }
+
+      /**
        * Determines how to handle <a
-       * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the
+       * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when the
        * billing cycle changes (e.g., when switching plans, resetting {@code
        * billing_cycle_anchor=now}, or starting a trial), or if an item's {@code quantity} changes.
        * The default value is {@code create_prorations}.
@@ -7222,15 +7575,20 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
+      /** Configure behavior for flexible billing mode. */
+      @SerializedName("flexible")
+      Flexible flexible;
+
       /**
        * <strong>Required.</strong> Controls the calculation and orchestration of prorations and
-       * invoices for subscriptions.
+       * invoices for subscriptions. If no value is passed, the default is {@code flexible}.
        */
       @SerializedName("type")
       Type type;
 
-      private BillingMode(Map<String, Object> extraParams, Type type) {
+      private BillingMode(Map<String, Object> extraParams, Flexible flexible, Type type) {
         this.extraParams = extraParams;
+        this.flexible = flexible;
         this.type = type;
       }
 
@@ -7241,12 +7599,14 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       public static class Builder {
         private Map<String, Object> extraParams;
 
+        private Flexible flexible;
+
         private Type type;
 
         /** Finalize and obtain parameter instance from this builder. */
         public InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode build() {
           return new InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode(
-              this.extraParams, this.type);
+              this.extraParams, this.flexible, this.type);
         }
 
         /**
@@ -7277,14 +7637,117 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           return this;
         }
 
+        /** Configure behavior for flexible billing mode. */
+        public Builder setFlexible(
+            InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Flexible flexible) {
+          this.flexible = flexible;
+          return this;
+        }
+
         /**
          * <strong>Required.</strong> Controls the calculation and orchestration of prorations and
-         * invoices for subscriptions.
+         * invoices for subscriptions. If no value is passed, the default is {@code flexible}.
          */
         public Builder setType(
             InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Type type) {
           this.type = type;
           return this;
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Flexible {
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /**
+         * Controls how invoices and invoice items display proration amounts and discount amounts.
+         */
+        @SerializedName("proration_discounts")
+        ProrationDiscounts prorationDiscounts;
+
+        private Flexible(Map<String, Object> extraParams, ProrationDiscounts prorationDiscounts) {
+          this.extraParams = extraParams;
+          this.prorationDiscounts = prorationDiscounts;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Map<String, Object> extraParams;
+
+          private ProrationDiscounts prorationDiscounts;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Flexible build() {
+            return new InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Flexible(
+                this.extraParams, this.prorationDiscounts);
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Flexible#extraParams} for
+           * the field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Flexible#extraParams} for
+           * the field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /**
+           * Controls how invoices and invoice items display proration amounts and discount amounts.
+           */
+          public Builder setProrationDiscounts(
+              InvoiceCreatePreviewParams.SubscriptionDetails.BillingMode.Flexible.ProrationDiscounts
+                  prorationDiscounts) {
+            this.prorationDiscounts = prorationDiscounts;
+            return this;
+          }
+        }
+
+        public enum ProrationDiscounts implements ApiRequestParams.EnumParam {
+          @SerializedName("included")
+          INCLUDED("included"),
+
+          @SerializedName("itemized")
+          ITEMIZED("itemized");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          ProrationDiscounts(String value) {
+            this.value = value;
+          }
         }
       }
 
@@ -7300,6 +7763,501 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         Type(String value) {
           this.value = value;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class BillingSchedule {
+      /** Configure billing schedule differently for individual subscription items. */
+      @SerializedName("applies_to")
+      List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo> appliesTo;
+
+      /**
+       * The end date for the billing schedule. You must not set this earlier than current period
+       * end for every applicable subscription item.
+       */
+      @SerializedName("bill_until")
+      BillUntil billUntil;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Specify a key for the billing schedule. Must be unique to this field, alphanumeric, and up
+       * to 200 characters. If not provided, a unique key will be generated.
+       */
+      @SerializedName("key")
+      String key;
+
+      private BillingSchedule(
+          List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo> appliesTo,
+          BillUntil billUntil,
+          Map<String, Object> extraParams,
+          String key) {
+        this.appliesTo = appliesTo;
+        this.billUntil = billUntil;
+        this.extraParams = extraParams;
+        this.key = key;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo>
+            appliesTo;
+
+        private BillUntil billUntil;
+
+        private Map<String, Object> extraParams;
+
+        private String key;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule build() {
+          return new InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule(
+              this.appliesTo, this.billUntil, this.extraParams, this.key);
+        }
+
+        /**
+         * Add an element to `appliesTo` list. A list is initialized for the first `add/addAll`
+         * call, and subsequent calls adds additional elements to the original list. See {@link
+         * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule#appliesTo} for the field
+         * documentation.
+         */
+        public Builder addAppliesTo(
+            InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo element) {
+          if (this.appliesTo == null) {
+            this.appliesTo = new ArrayList<>();
+          }
+          this.appliesTo.add(element);
+          return this;
+        }
+
+        /**
+         * Add all elements to `appliesTo` list. A list is initialized for the first `add/addAll`
+         * call, and subsequent calls adds additional elements to the original list. See {@link
+         * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule#appliesTo} for the field
+         * documentation.
+         */
+        public Builder addAllAppliesTo(
+            List<InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo>
+                elements) {
+          if (this.appliesTo == null) {
+            this.appliesTo = new ArrayList<>();
+          }
+          this.appliesTo.addAll(elements);
+          return this;
+        }
+
+        /**
+         * The end date for the billing schedule. You must not set this earlier than current period
+         * end for every applicable subscription item.
+         */
+        public Builder setBillUntil(
+            InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil billUntil) {
+          this.billUntil = billUntil;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Specify a key for the billing schedule. Must be unique to this field, alphanumeric, and
+         * up to 200 characters. If not provided, a unique key will be generated.
+         */
+        public Builder setKey(String key) {
+          this.key = key;
+          return this;
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class AppliesTo {
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /** The ID of the price object. */
+        @SerializedName("price")
+        String price;
+
+        /**
+         * <strong>Required.</strong> Controls which subscription items the billing schedule applies
+         * to.
+         */
+        @SerializedName("type")
+        Type type;
+
+        private AppliesTo(Map<String, Object> extraParams, String price, Type type) {
+          this.extraParams = extraParams;
+          this.price = price;
+          this.type = type;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Map<String, Object> extraParams;
+
+          private String price;
+
+          private Type type;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo build() {
+            return new InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo(
+                this.extraParams, this.price, this.type);
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo#extraParams}
+           * for the field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo#extraParams}
+           * for the field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /** The ID of the price object. */
+          public Builder setPrice(String price) {
+            this.price = price;
+            return this;
+          }
+
+          /**
+           * <strong>Required.</strong> Controls which subscription items the billing schedule
+           * applies to.
+           */
+          public Builder setType(
+              InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.AppliesTo.Type type) {
+            this.type = type;
+            return this;
+          }
+        }
+
+        public enum Type implements ApiRequestParams.EnumParam {
+          @SerializedName("price")
+          PRICE("price");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          Type(String value) {
+            this.value = value;
+          }
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class BillUntil {
+        /** Specifies the billing period. */
+        @SerializedName("duration")
+        Duration duration;
+
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /** The end date of the billing schedule. */
+        @SerializedName("timestamp")
+        Long timestamp;
+
+        /**
+         * <strong>Required.</strong> Describes how the billing schedule will determine the end
+         * date. Either {@code duration} or {@code timestamp}.
+         */
+        @SerializedName("type")
+        Type type;
+
+        private BillUntil(
+            Duration duration, Map<String, Object> extraParams, Long timestamp, Type type) {
+          this.duration = duration;
+          this.extraParams = extraParams;
+          this.timestamp = timestamp;
+          this.type = type;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Duration duration;
+
+          private Map<String, Object> extraParams;
+
+          private Long timestamp;
+
+          private Type type;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil build() {
+            return new InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil(
+                this.duration, this.extraParams, this.timestamp, this.type);
+          }
+
+          /** Specifies the billing period. */
+          public Builder setDuration(
+              InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil.Duration
+                  duration) {
+            this.duration = duration;
+            return this;
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil#extraParams}
+           * for the field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil#extraParams}
+           * for the field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /** The end date of the billing schedule. */
+          public Builder setTimestamp(Long timestamp) {
+            this.timestamp = timestamp;
+            return this;
+          }
+
+          /**
+           * <strong>Required.</strong> Describes how the billing schedule will determine the end
+           * date. Either {@code duration} or {@code timestamp}.
+           */
+          public Builder setType(
+              InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil.Type type) {
+            this.type = type;
+            return this;
+          }
+        }
+
+        @Getter
+        @EqualsAndHashCode(callSuper = false)
+        public static class Duration {
+          /**
+           * Map of extra parameters for custom features not available in this client library. The
+           * content in this map is not serialized under this field's {@code @SerializedName} value.
+           * Instead, each key/value pair is serialized as if the key is a root-level field
+           * (serialized) name in this param object. Effectively, this map is flattened to its
+           * parent instance.
+           */
+          @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+          Map<String, Object> extraParams;
+
+          /**
+           * <strong>Required.</strong> Specifies billing duration. Either {@code day}, {@code
+           * week}, {@code month} or {@code year}.
+           */
+          @SerializedName("interval")
+          Interval interval;
+
+          /** The multiplier applied to the interval. */
+          @SerializedName("interval_count")
+          Long intervalCount;
+
+          private Duration(Map<String, Object> extraParams, Interval interval, Long intervalCount) {
+            this.extraParams = extraParams;
+            this.interval = interval;
+            this.intervalCount = intervalCount;
+          }
+
+          public static Builder builder() {
+            return new Builder();
+          }
+
+          public static class Builder {
+            private Map<String, Object> extraParams;
+
+            private Interval interval;
+
+            private Long intervalCount;
+
+            /** Finalize and obtain parameter instance from this builder. */
+            public InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil.Duration
+                build() {
+              return new InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil
+                  .Duration(this.extraParams, this.interval, this.intervalCount);
+            }
+
+            /**
+             * Add a key/value pair to `extraParams` map. A map is initialized for the first
+             * `put/putAll` call, and subsequent calls add additional key/value pairs to the
+             * original map. See {@link
+             * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil.Duration#extraParams}
+             * for the field documentation.
+             */
+            public Builder putExtraParam(String key, Object value) {
+              if (this.extraParams == null) {
+                this.extraParams = new HashMap<>();
+              }
+              this.extraParams.put(key, value);
+              return this;
+            }
+
+            /**
+             * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+             * `put/putAll` call, and subsequent calls add additional key/value pairs to the
+             * original map. See {@link
+             * InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil.Duration#extraParams}
+             * for the field documentation.
+             */
+            public Builder putAllExtraParam(Map<String, Object> map) {
+              if (this.extraParams == null) {
+                this.extraParams = new HashMap<>();
+              }
+              this.extraParams.putAll(map);
+              return this;
+            }
+
+            /**
+             * <strong>Required.</strong> Specifies billing duration. Either {@code day}, {@code
+             * week}, {@code month} or {@code year}.
+             */
+            public Builder setInterval(
+                InvoiceCreatePreviewParams.SubscriptionDetails.BillingSchedule.BillUntil.Duration
+                        .Interval
+                    interval) {
+              this.interval = interval;
+              return this;
+            }
+
+            /** The multiplier applied to the interval. */
+            public Builder setIntervalCount(Long intervalCount) {
+              this.intervalCount = intervalCount;
+              return this;
+            }
+          }
+
+          public enum Interval implements ApiRequestParams.EnumParam {
+            @SerializedName("day")
+            DAY("day"),
+
+            @SerializedName("month")
+            MONTH("month"),
+
+            @SerializedName("week")
+            WEEK("week"),
+
+            @SerializedName("year")
+            YEAR("year");
+
+            @Getter(onMethod_ = {@Override})
+            private final String value;
+
+            Interval(String value) {
+              this.value = value;
+            }
+          }
+        }
+
+        public enum Type implements ApiRequestParams.EnumParam {
+          @SerializedName("duration")
+          DURATION("duration"),
+
+          @SerializedName("timestamp")
+          TIMESTAMP("timestamp");
+
+          @Getter(onMethod_ = {@Override})
+          private final String value;
+
+          Type(String value) {
+            this.value = value;
+          }
         }
       }
     }
@@ -7339,12 +8297,17 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Subscription item to update. */
+      /**
+       * Subscription item to update. If you omit {@code id}, the API adds a new subscription item
+       * rather than updating the existing one. See <a
+       * href="https://docs.stripe.com/billing/subscriptions/change-price#changing">Changing a
+       * subscription's price</a>.
+       */
       @SerializedName("id")
       String id;
 
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to an object. This can be useful for storing additional information about the object
        * in a structured format. Individual keys can be unset by posting an empty value to them. All
        * keys can be unset by posting an empty value to {@code metadata}.
@@ -7365,7 +8328,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       String price;
 
       /**
-       * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+       * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
        * inline. One of {@code price} or {@code price_data} is required.
        */
       @SerializedName("price_data")
@@ -7376,9 +8339,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       Long quantity;
 
       /**
-       * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax Rates
+       * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax Rates
        * will override the <a
-       * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+       * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
        * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
        * previously-defined tax rates.
        */
@@ -7571,7 +8534,12 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           return this;
         }
 
-        /** Subscription item to update. */
+        /**
+         * Subscription item to update. If you omit {@code id}, the API adds a new subscription item
+         * rather than updating the existing one. See <a
+         * href="https://docs.stripe.com/billing/subscriptions/change-price#changing">Changing a
+         * subscription's price</a>.
+         */
         public Builder setId(String id) {
           this.id = id;
           return this;
@@ -7608,7 +8576,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+         * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
          * attach to an object. This can be useful for storing additional information about the
          * object in a structured format. Individual keys can be unset by posting an empty value to
          * them. All keys can be unset by posting an empty value to {@code metadata}.
@@ -7619,7 +8587,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+         * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
          * attach to an object. This can be useful for storing additional information about the
          * object in a structured format. Individual keys can be unset by posting an empty value to
          * them. All keys can be unset by posting an empty value to {@code metadata}.
@@ -7646,7 +8614,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+         * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
          * inline. One of {@code price} or {@code price_data} is required.
          */
         public Builder setPriceData(
@@ -7692,9 +8660,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+         * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
          * Rates will override the <a
-         * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
          * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
          * previously-defined tax rates.
          */
@@ -7704,9 +8672,9 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         }
 
         /**
-         * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax
+         * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax
          * Rates will override the <a
-         * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+         * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
          * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
          * previously-defined tax rates.
          */
@@ -7732,7 +8700,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
         /**
          * <strong>Required.</strong> Number of units that meets the billing threshold to advance
          * the subscription to a new billing period (e.g., it takes 10 $5 units to meet a $50 <a
-         * href="https://stripe.com/docs/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
+         * href="https://docs.stripe.com/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
          * threshold</a>)
          */
         @SerializedName("usage_gte")
@@ -7791,7 +8759,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
           /**
            * <strong>Required.</strong> Number of units that meets the billing threshold to advance
            * the subscription to a new billing period (e.g., it takes 10 $5 units to meet a $50 <a
-           * href="https://stripe.com/docs/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
+           * href="https://docs.stripe.com/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
            * threshold</a>)
            */
           public Builder setUsageGte(Long usageGte) {
@@ -7941,7 +8909,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
         /**
          * Only required if a <a
-         * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+         * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
          * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price
          * is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
          * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -8076,7 +9044,7 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
 
           /**
            * Only required if a <a
-           * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+           * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
            * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the
            * price is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive},
            * {@code exclusive}, or {@code unspecified}. Once specified as either {@code inclusive}
@@ -8266,6 +9234,24 @@ public class InvoiceCreatePreviewParams extends ApiRequestParams {
       private final String value;
 
       BillingCycleAnchor(String value) {
+        this.value = value;
+      }
+    }
+
+    public enum CancelAt implements ApiRequestParams.EnumParam {
+      @SerializedName("max_billed_until")
+      MAX_BILLED_UNTIL("max_billed_until"),
+
+      @SerializedName("max_period_end")
+      MAX_PERIOD_END("max_period_end"),
+
+      @SerializedName("min_period_end")
+      MIN_PERIOD_END("min_period_end");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      CancelAt(String value) {
         this.value = value;
       }
     }

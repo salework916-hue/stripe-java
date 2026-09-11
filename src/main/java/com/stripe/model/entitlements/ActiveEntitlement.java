@@ -24,7 +24,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 public class ActiveEntitlement extends ApiResource implements HasId {
   /**
-   * The <a href="https://stripe.com/docs/api/entitlements/feature">Feature</a> that the customer is
+   * The <a href="https://docs.stripe.com/api/entitlements/feature">Feature</a> that the customer is
    * entitled to.
    */
   @SerializedName("feature")
@@ -38,8 +38,8 @@ public class ActiveEntitlement extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

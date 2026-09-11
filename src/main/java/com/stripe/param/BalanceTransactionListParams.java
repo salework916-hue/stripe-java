@@ -61,7 +61,7 @@ public class BalanceTransactionListParams extends ApiRequestParams {
   @SerializedName("payout")
   String payout;
 
-  /** Only returns the original transaction. */
+  /** Only returns transactions associated with the given object. */
   @SerializedName("source")
   String source;
 
@@ -75,21 +75,22 @@ public class BalanceTransactionListParams extends ApiRequestParams {
   String startingAfter;
 
   /**
-   * Only returns transactions of the given type. One of: {@code adjustment}, {@code advance},
-   * {@code advance_funding}, {@code anticipation_repayment}, {@code application_fee}, {@code
-   * application_fee_refund}, {@code charge}, {@code climate_order_purchase}, {@code
-   * climate_order_refund}, {@code connect_collection_transfer}, {@code contribution}, {@code
+   * Only returns transactions of the given type. One of: {@code tax_fund}, {@code adjustment},
+   * {@code advance}, {@code advance_funding}, {@code anticipation_repayment}, {@code
+   * application_fee}, {@code application_fee_refund}, {@code charge}, {@code
+   * climate_order_purchase}, {@code climate_order_refund}, {@code connect_collection_transfer},
+   * {@code contribution}, {@code inbound_transfer}, {@code inbound_transfer_reversal}, {@code
    * issuing_authorization_hold}, {@code issuing_authorization_release}, {@code issuing_dispute},
    * {@code issuing_transaction}, {@code obligation_outbound}, {@code obligation_reversal_inbound},
    * {@code payment}, {@code payment_failure_refund}, {@code payment_network_reserve_hold}, {@code
    * payment_network_reserve_release}, {@code payment_refund}, {@code payment_reversal}, {@code
    * payment_unreconciled}, {@code payout}, {@code payout_cancel}, {@code payout_failure}, {@code
    * payout_minimum_balance_hold}, {@code payout_minimum_balance_release}, {@code refund}, {@code
-   * refund_failure}, {@code reserve_transaction}, {@code reserved_funds}, {@code stripe_fee},
-   * {@code stripe_fx_fee}, {@code stripe_balance_payment_debit}, {@code
-   * stripe_balance_payment_debit_reversal}, {@code tax_fee}, {@code topup}, {@code topup_reversal},
-   * {@code transfer}, {@code transfer_cancel}, {@code transfer_failure}, or {@code
-   * transfer_refund}.
+   * refund_failure}, {@code reserve_transaction}, {@code reserved_funds}, {@code reserve_hold},
+   * {@code reserve_release}, {@code stripe_fee}, {@code stripe_fx_fee}, {@code
+   * stripe_balance_payment_debit}, {@code stripe_balance_payment_debit_reversal}, {@code tax_fee},
+   * {@code topup}, {@code topup_reversal}, {@code transfer}, {@code transfer_cancel}, {@code
+   * transfer_failure}, {@code transfer_refund}, or {@code fee_credit_funding}.
    */
   @SerializedName("type")
   String type;
@@ -260,7 +261,7 @@ public class BalanceTransactionListParams extends ApiRequestParams {
       return this;
     }
 
-    /** Only returns the original transaction. */
+    /** Only returns transactions associated with the given object. */
     public Builder setSource(String source) {
       this.source = source;
       return this;
@@ -278,10 +279,11 @@ public class BalanceTransactionListParams extends ApiRequestParams {
     }
 
     /**
-     * Only returns transactions of the given type. One of: {@code adjustment}, {@code advance},
-     * {@code advance_funding}, {@code anticipation_repayment}, {@code application_fee}, {@code
-     * application_fee_refund}, {@code charge}, {@code climate_order_purchase}, {@code
-     * climate_order_refund}, {@code connect_collection_transfer}, {@code contribution}, {@code
+     * Only returns transactions of the given type. One of: {@code tax_fund}, {@code adjustment},
+     * {@code advance}, {@code advance_funding}, {@code anticipation_repayment}, {@code
+     * application_fee}, {@code application_fee_refund}, {@code charge}, {@code
+     * climate_order_purchase}, {@code climate_order_refund}, {@code connect_collection_transfer},
+     * {@code contribution}, {@code inbound_transfer}, {@code inbound_transfer_reversal}, {@code
      * issuing_authorization_hold}, {@code issuing_authorization_release}, {@code issuing_dispute},
      * {@code issuing_transaction}, {@code obligation_outbound}, {@code
      * obligation_reversal_inbound}, {@code payment}, {@code payment_failure_refund}, {@code
@@ -289,10 +291,11 @@ public class BalanceTransactionListParams extends ApiRequestParams {
      * payment_refund}, {@code payment_reversal}, {@code payment_unreconciled}, {@code payout},
      * {@code payout_cancel}, {@code payout_failure}, {@code payout_minimum_balance_hold}, {@code
      * payout_minimum_balance_release}, {@code refund}, {@code refund_failure}, {@code
-     * reserve_transaction}, {@code reserved_funds}, {@code stripe_fee}, {@code stripe_fx_fee},
-     * {@code stripe_balance_payment_debit}, {@code stripe_balance_payment_debit_reversal}, {@code
-     * tax_fee}, {@code topup}, {@code topup_reversal}, {@code transfer}, {@code transfer_cancel},
-     * {@code transfer_failure}, or {@code transfer_refund}.
+     * reserve_transaction}, {@code reserved_funds}, {@code reserve_hold}, {@code reserve_release},
+     * {@code stripe_fee}, {@code stripe_fx_fee}, {@code stripe_balance_payment_debit}, {@code
+     * stripe_balance_payment_debit_reversal}, {@code tax_fee}, {@code topup}, {@code
+     * topup_reversal}, {@code transfer}, {@code transfer_cancel}, {@code transfer_failure}, {@code
+     * transfer_refund}, or {@code fee_credit_funding}.
      */
     public Builder setType(String type) {
       this.type = type;

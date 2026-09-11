@@ -24,7 +24,7 @@ import lombok.Setter;
  * Refund objects allow you to refund a previously created charge that isn't refunded yet. Funds are
  * refunded to the credit or debit card that's initially charged.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/refunds">Refunds</a>
+ * <p>Related guide: <a href="https://docs.stripe.com/refunds">Refunds</a>
  */
 @Getter
 @Setter
@@ -56,6 +56,16 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
    */
   @SerializedName("currency")
   String currency;
+
+  /** ID of the customer of this refund. */
+  @SerializedName("customer")
+  @Getter(lombok.AccessLevel.NONE)
+  @Setter(lombok.AccessLevel.NONE)
+  ExpandableField<Customer> customer;
+
+  /** ID of the account of this refund. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * An arbitrary string attached to the object. You can use this for displaying to users (available
@@ -97,7 +107,7 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
   String instructionsEmail;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -121,6 +131,12 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<PaymentIntent> paymentIntent;
+
+  /** ID of the payment method associated with this refund. */
+  @SerializedName("payment_method")
+  @Getter(lombok.AccessLevel.NONE)
+  @Setter(lombok.AccessLevel.NONE)
+  ExpandableField<PaymentMethod> paymentMethod;
 
   /**
    * Provides the reason for why the refund is pending. Possible values are: {@code processing},
@@ -161,7 +177,7 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
   /**
    * Status of the refund. This can be {@code pending}, {@code requires_action}, {@code succeeded},
    * {@code failed}, or {@code canceled}. Learn more about <a
-   * href="https://stripe.com/docs/refunds#failed-refunds">failed refunds</a>.
+   * href="https://docs.stripe.com/refunds#failed-refunds">failed refunds</a>.
    */
   @SerializedName("status")
   String status;
@@ -212,6 +228,24 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     this.charge = new ExpandableField<Charge>(expandableObject.getId(), expandableObject);
   }
 
+  /** Get ID of expandable {@code customer} object. */
+  public String getCustomer() {
+    return (this.customer != null) ? this.customer.getId() : null;
+  }
+
+  public void setCustomer(String id) {
+    this.customer = ApiResource.setExpandableFieldId(id, this.customer);
+  }
+
+  /** Get expanded {@code customer}. */
+  public Customer getCustomerObject() {
+    return (this.customer != null) ? this.customer.getExpanded() : null;
+  }
+
+  public void setCustomerObject(Customer expandableObject) {
+    this.customer = new ExpandableField<Customer>(expandableObject.getId(), expandableObject);
+  }
+
   /** Get ID of expandable {@code failureBalanceTransaction} object. */
   public String getFailureBalanceTransaction() {
     return (this.failureBalanceTransaction != null) ? this.failureBalanceTransaction.getId() : null;
@@ -251,6 +285,25 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
   public void setPaymentIntentObject(PaymentIntent expandableObject) {
     this.paymentIntent =
         new ExpandableField<PaymentIntent>(expandableObject.getId(), expandableObject);
+  }
+
+  /** Get ID of expandable {@code paymentMethod} object. */
+  public String getPaymentMethod() {
+    return (this.paymentMethod != null) ? this.paymentMethod.getId() : null;
+  }
+
+  public void setPaymentMethod(String id) {
+    this.paymentMethod = ApiResource.setExpandableFieldId(id, this.paymentMethod);
+  }
+
+  /** Get expanded {@code paymentMethod}. */
+  public PaymentMethod getPaymentMethodObject() {
+    return (this.paymentMethod != null) ? this.paymentMethod.getExpanded() : null;
+  }
+
+  public void setPaymentMethodObject(PaymentMethod expandableObject) {
+    this.paymentMethod =
+        new ExpandableField<PaymentMethod>(expandableObject.getId(), expandableObject);
   }
 
   /** Get ID of expandable {@code sourceTransferReversal} object. */
@@ -625,6 +678,9 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     @SerializedName("cashapp")
     Cashapp cashapp;
 
+    @SerializedName("crypto")
+    Crypto crypto;
+
     @SerializedName("customer_cash_balance")
     CustomerCashBalance customerCashBalance;
 
@@ -648,6 +704,9 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
 
     @SerializedName("klarna")
     Klarna klarna;
+
+    @SerializedName("mb_way")
+    MbWay mbWay;
 
     @SerializedName("multibanco")
     Multibanco multibanco;
@@ -673,6 +732,9 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     @SerializedName("revolut")
     Revolut revolut;
 
+    @SerializedName("scalapay")
+    Scalapay scalapay;
+
     @SerializedName("sofort")
     Sofort sofort;
 
@@ -681,6 +743,9 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
 
     @SerializedName("th_bank_transfer")
     ThBankTransfer thBankTransfer;
+
+    @SerializedName("twint")
+    Twint twint;
 
     /**
      * The type of transaction-specific details of the payment method used in the refund (e.g.,
@@ -842,6 +907,19 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     public static class Cashapp extends StripeObject {}
 
     /**
+     * For more details about Crypto, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Crypto extends StripeObject {
+      /** The transaction hash of the refund. */
+      @SerializedName("reference")
+      String reference;
+    }
+
+    /**
      * For more details about CustomerCashBalance, please refer to the <a
      * href="https://docs.stripe.com/api">API Reference.</a>
      */
@@ -945,6 +1023,26 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Klarna extends StripeObject {}
+
+    /**
+     * For more details about MbWay, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class MbWay extends StripeObject {
+      /** The reference assigned to the refund. */
+      @SerializedName("reference")
+      String reference;
+
+      /**
+       * Status of the reference on the refund. This can be {@code pending}, {@code available} or
+       * {@code unavailable}.
+       */
+      @SerializedName("reference_status")
+      String referenceStatus;
+    }
 
     /**
      * For more details about Multibanco, please refer to the <a
@@ -1059,6 +1157,15 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     public static class Revolut extends StripeObject {}
 
     /**
+     * For more details about Scalapay, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Scalapay extends StripeObject {}
+
+    /**
      * For more details about Sofort, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
@@ -1113,6 +1220,15 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
       @SerializedName("reference_status")
       String referenceStatus;
     }
+
+    /**
+     * For more details about Twint, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Twint extends StripeObject {}
 
     /**
      * For more details about UsBankTransfer, please refer to the <a
@@ -1285,10 +1401,12 @@ public class Refund extends ApiResource implements MetadataStore<Refund>, Balanc
     super.setResponseGetter(responseGetter);
     trySetResponseGetter(balanceTransaction, responseGetter);
     trySetResponseGetter(charge, responseGetter);
+    trySetResponseGetter(customer, responseGetter);
     trySetResponseGetter(destinationDetails, responseGetter);
     trySetResponseGetter(failureBalanceTransaction, responseGetter);
     trySetResponseGetter(nextAction, responseGetter);
     trySetResponseGetter(paymentIntent, responseGetter);
+    trySetResponseGetter(paymentMethod, responseGetter);
     trySetResponseGetter(presentmentDetails, responseGetter);
     trySetResponseGetter(sourceTransferReversal, responseGetter);
     trySetResponseGetter(transferReversal, responseGetter);

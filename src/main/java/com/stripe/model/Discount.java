@@ -9,11 +9,11 @@ import lombok.Setter;
 
 /**
  * A discount represents the actual application of a <a
- * href="https://stripe.com/docs/api#coupons">coupon</a> or <a
- * href="https://stripe.com/docs/api#promotion_codes">promotion code</a>. It contains information
- * about when the discount began, when it will end, and what it is applied to.
+ * href="https://api.stripe.com#coupons">coupon</a> or <a
+ * href="https://api.stripe.com#promotion_codes">promotion code</a>. It contains information about
+ * when the discount began, when it will end, and what it is applied to.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/billing/subscriptions/discounts">Applying
+ * <p>Related guide: <a href="https://docs.stripe.com/billing/subscriptions/discounts">Applying
  * discounts to subscriptions</a>
  */
 @Getter
@@ -22,29 +22,20 @@ import lombok.Setter;
 public class Discount extends StripeObject implements HasId {
   /**
    * The Checkout session that this coupon is applied to, if it is applied to a particular session
-   * in payment mode. Will not be present for subscription mode.
+   * in payment mode. Not present for subscription mode.
    */
   @SerializedName("checkout_session")
   String checkoutSession;
-
-  /**
-   * A coupon contains information about a percent-off or amount-off discount you might want to
-   * apply to a customer. Coupons may be applied to <a
-   * href="https://stripe.com/docs/api#subscriptions">subscriptions</a>, <a
-   * href="https://stripe.com/docs/api#invoices">invoices</a>, <a
-   * href="https://stripe.com/docs/api/checkout/sessions">checkout sessions</a>, <a
-   * href="https://stripe.com/docs/api#quotes">quotes</a>, and more. Coupons do not work with
-   * conventional one-off <a href="https://stripe.com/docs/api#create_charge">charges</a> or <a
-   * href="https://stripe.com/docs/api/payment_intents">payment intents</a>.
-   */
-  @SerializedName("coupon")
-  Coupon coupon;
 
   /** The ID of the customer associated with this discount. */
   @SerializedName("customer")
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Customer> customer;
+
+  /** The ID of the account representing the customer associated with this discount. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /** Always true for a deleted object. */
   @SerializedName("deleted")
@@ -58,8 +49,8 @@ public class Discount extends StripeObject implements HasId {
   Long end;
 
   /**
-   * The ID of the discount object. Discounts cannot be fetched by ID. Use {@code
-   * expand[]=discounts} in API calls to expand discount IDs in an array.
+   * The ID of the discount object. Discounts can't be fetched by ID. Use {@code expand[]=discounts}
+   * in API calls to expand discount IDs in an array.
    */
   @Getter(onMethod_ = {@Override})
   @SerializedName("id")
@@ -93,6 +84,9 @@ public class Discount extends StripeObject implements HasId {
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<PromotionCode> promotionCode;
+
+  @SerializedName("source")
+  Source source;
 
   /** Date that the coupon was applied. */
   @SerializedName("start")
@@ -146,5 +140,46 @@ public class Discount extends StripeObject implements HasId {
   public void setPromotionCodeObject(PromotionCode expandableObject) {
     this.promotionCode =
         new ExpandableField<PromotionCode>(expandableObject.getId(), expandableObject);
+  }
+
+  /**
+   * For more details about Source, please refer to the <a href="https://docs.stripe.com/api">API
+   * Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class Source extends StripeObject {
+    /** The coupon that was redeemed to create this discount. */
+    @SerializedName("coupon")
+    @Getter(lombok.AccessLevel.NONE)
+    @Setter(lombok.AccessLevel.NONE)
+    ExpandableField<Coupon> coupon;
+
+    /**
+     * The source type of the discount.
+     *
+     * <p>Equal to {@code coupon}.
+     */
+    @SerializedName("type")
+    String type;
+
+    /** Get ID of expandable {@code coupon} object. */
+    public String getCoupon() {
+      return (this.coupon != null) ? this.coupon.getId() : null;
+    }
+
+    public void setCoupon(String id) {
+      this.coupon = ApiResource.setExpandableFieldId(id, this.coupon);
+    }
+
+    /** Get expanded {@code coupon}. */
+    public Coupon getCouponObject() {
+      return (this.coupon != null) ? this.coupon.getExpanded() : null;
+    }
+
+    public void setCouponObject(Coupon expandableObject) {
+      this.coupon = new ExpandableField<Coupon>(expandableObject.getId(), expandableObject);
+    }
   }
 }

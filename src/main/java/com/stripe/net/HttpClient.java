@@ -1,14 +1,19 @@
 package com.stripe.net;
 
+import com.google.gson.Gson;
 import com.stripe.Stripe;
 import com.stripe.exception.ApiConnectionException;
 import com.stripe.exception.StripeException;
+import java.io.InputStream;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 
 /** Base abstract class for HTTP clients used to send requests to Stripe's API. */
 public abstract class HttpClient {
@@ -133,18 +138,55 @@ public abstract class HttpClient {
     return sendWithRetries(request, (r) -> this.requestStream(r));
   }
 
+  static String detectAIAgent() {
+    return detectAIAgent(System::getenv);
+  }
+
+  static String detectAIAgent(Function<String, String> getEnv) {
+    String[][] agents = {
+      // The beginning of the section generated from our OpenAPI spec
+      {"ANTIGRAVITY_CLI_ALIAS", "antigravity"},
+      {"CLAUDECODE", "claude_code"},
+      {"CLINE_ACTIVE", "cline"},
+      {"CODEX_SANDBOX", "codex_cli"},
+      {"CODEX_THREAD_ID", "codex_cli"},
+      {"CODEX_SANDBOX_NETWORK_DISABLED", "codex_cli"},
+      {"CODEX_CI", "codex_cli"},
+      {"CURSOR_AGENT", "cursor"},
+      {"GEMINI_CLI", "gemini_cli"},
+      {"OPENCLAW_SHELL", "openclaw"},
+      {"OPENCODE", "open_code"},
+      // The end of the section generated from our OpenAPI spec
+    };
+    for (String[] agent : agents) {
+      String val = getEnv.apply(agent[0]);
+      if (val != null && !val.isEmpty()) {
+        return agent[1];
+      }
+    }
+    return "";
+  }
+
   /**
    * Builds the value of the {@code User-Agent} header.
    *
    * @return a string containing the value of the {@code User-Agent} header
    */
   protected static String buildUserAgentString(StripeRequest request) {
+    return buildUserAgentString(request, detectAIAgent());
+  }
+
+  static String buildUserAgentString(StripeRequest request, String aiAgent) {
     String apiMode = request.apiMode() == ApiMode.V2 ? "v2" : "v1";
 
     String userAgent = String.format("Stripe/%s JavaBindings/%s", apiMode, Stripe.VERSION);
 
     if (Stripe.getAppInfo() != null) {
       userAgent += " " + formatAppInfo(Stripe.getAppInfo());
+    }
+
+    if (!aiAgent.isEmpty()) {
+      userAgent += " AIAgent/" + aiAgent;
     }
 
     return userAgent;
@@ -156,15 +198,11 @@ public abstract class HttpClient {
    * @return a string containing the value of the {@code X-Stripe-Client-User-Agent} header
    */
   protected static String buildXStripeClientUserAgentString() {
-    String[] propertyNames = {
-      "os.name",
-      "os.version",
-      "os.arch",
-      "java.version",
-      "java.vendor",
-      "java.vm.version",
-      "java.vm.vendor"
-    };
+    return buildXStripeClientUserAgentString(detectAIAgent());
+  }
+
+  static String buildXStripeClientUserAgentString(String aiAgent) {
+    String[] propertyNames = {"java.version", "java.vendor", "java.vm.version", "java.vm.vendor"};
 
     Map<String, String> propertyMap = new HashMap<>();
     for (String propertyName : propertyNames) {
@@ -172,12 +210,52 @@ public abstract class HttpClient {
     }
     propertyMap.put("bindings.version", Stripe.VERSION);
     propertyMap.put("lang", "Java");
-    propertyMap.put("publisher", "Stripe");
+    if (Stripe.enableTelemetry) {
+      propertyMap.put(
+          "platform",
+          System.getProperty("os.name")
+              + " "
+              + System.getProperty("os.version")
+              + " "
+              + System.getProperty("os.arch"));
+    }
     if (Stripe.getAppInfo() != null) {
       propertyMap.put("application", ApiResource.INTERNAL_GSON.toJson(Stripe.getAppInfo()));
     }
+    getGsonVersion().ifPresent(ver -> propertyMap.put("gson.version", ver));
+
+    if (!aiAgent.isEmpty()) {
+      propertyMap.put("ai_agent", aiAgent);
+    }
+
+    if (Stripe.enableTelemetry) {
+      String telemetryId = TelemetryId.get();
+      if (telemetryId != null && !telemetryId.isEmpty()) {
+        propertyMap.put("telemetry_id", telemetryId);
+      }
+    }
 
     return ApiResource.INTERNAL_GSON.toJson(propertyMap);
+  }
+
+  /**
+   * Gets the Gson version being used at runtime.
+   *
+   * @return the Gson version string, or Optional.empty() if it cannot be determined
+   */
+  private static Optional<String> getGsonVersion() {
+    try (InputStream in =
+        Gson.class.getResourceAsStream(
+            "/META-INF/maven/com.google.code.gson/gson/pom.properties")) {
+      if (in != null) {
+        Properties props = new Properties();
+        props.load(in);
+        return Optional.ofNullable(props.getProperty("version"));
+      }
+    } catch (Exception ignore) {
+      // Silently ignore - we'll just not include the version
+    }
+    return Optional.empty();
   }
 
   private static String formatAppInfo(Map<String, String> info) {

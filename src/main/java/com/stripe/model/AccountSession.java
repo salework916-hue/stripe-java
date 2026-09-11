@@ -24,7 +24,7 @@ import lombok.Setter;
  * quickly, and cannot be used more than once.
  *
  * <p>Related guide: <a
- * href="https://stripe.com/docs/connect/get-started-connect-embedded-components">Connect embedded
+ * href="https://docs.stripe.com/connect/get-started-connect-embedded-components">Connect embedded
  * components</a>
  */
 @Getter
@@ -44,7 +44,7 @@ public class AccountSession extends ApiResource {
    * that you have TLS enabled on any page that includes the client secret.
    *
    * <p>Refer to our docs to <a
-   * href="https://stripe.com/docs/connect/get-started-connect-embedded-components">setup Connect
+   * href="https://docs.stripe.com/connect/get-started-connect-embedded-components">setup Connect
    * embedded components</a> and learn about how {@code client_secret} should be handled.
    */
   @SerializedName("client_secret")
@@ -58,8 +58,8 @@ public class AccountSession extends ApiResource {
   Long expiresAt;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -167,6 +167,9 @@ public class AccountSession extends ApiResource {
 
     @SerializedName("payment_disputes")
     PaymentDisputes paymentDisputes;
+
+    @SerializedName("payment_method_settings")
+    PaymentMethodSettings paymentMethodSettings;
 
     @SerializedName("payments")
     Payments payments;
@@ -353,9 +356,9 @@ public class AccountSession extends ApiResource {
         Boolean externalAccountCollection;
 
         /**
-         * Whether to allow creation of instant payouts. Defaults to {@code true} when {@code
-         * controller.losses.payments} is set to {@code stripe} for the account, otherwise {@code
-         * false}.
+         * Whether to allow creation of instant payouts. The default value is {@code enabled} when
+         * Stripe is responsible for negative account balances, and {@code use_dashboard_rules}
+         * otherwise.
          */
         @SerializedName("instant_payouts")
         Boolean instantPayouts;
@@ -417,6 +420,13 @@ public class AccountSession extends ApiResource {
         /** Whether sending refunds is enabled. This is {@code true} by default. */
         @SerializedName("refund_management")
         Boolean refundManagement;
+
+        /**
+         * Whether to allow connected accounts to submit disputes using Smart Disputes. Defaults to
+         * the value of {@code dispute_management}.
+         */
+        @SerializedName("smart_disputes_management")
+        Boolean smartDisputesManagement;
       }
     }
 
@@ -569,9 +579,9 @@ public class AccountSession extends ApiResource {
         Boolean externalAccountCollection;
 
         /**
-         * Whether to allow creation of instant payouts. Defaults to {@code true} when {@code
-         * controller.losses.payments} is set to {@code stripe} for the account, otherwise {@code
-         * false}.
+         * Whether to allow creation of instant payouts. The default value is {@code enabled} when
+         * Stripe is responsible for negative account balances, and {@code use_dashboard_rules}
+         * otherwise.
          */
         @SerializedName("instant_payouts")
         Boolean instantPayouts;
@@ -761,6 +771,13 @@ public class AccountSession extends ApiResource {
         /** Whether sending refunds is enabled. This is {@code true} by default. */
         @SerializedName("refund_management")
         Boolean refundManagement;
+
+        /**
+         * Whether to allow connected accounts to submit disputes using Smart Disputes. Defaults to
+         * the value of {@code dispute_management}.
+         */
+        @SerializedName("smart_disputes_management")
+        Boolean smartDisputesManagement;
       }
     }
 
@@ -804,6 +821,46 @@ public class AccountSession extends ApiResource {
         /** Whether sending refunds is enabled. This is {@code true} by default. */
         @SerializedName("refund_management")
         Boolean refundManagement;
+
+        /**
+         * Whether to allow connected accounts to submit disputes using Smart Disputes. Defaults to
+         * the value of {@code dispute_management}.
+         */
+        @SerializedName("smart_disputes_management")
+        Boolean smartDisputesManagement;
+      }
+    }
+
+    /**
+     * For more details about PaymentMethodSettings, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class PaymentMethodSettings extends StripeObject {
+      /** Whether the embedded component is enabled. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      @SerializedName("features")
+      Features features;
+
+      /**
+       * For more details about Features, please refer to the <a
+       * href="https://docs.stripe.com/api">API Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Features extends StripeObject {
+        /**
+         * Whether Stripe user authentication is disabled. This value can only be {@code true} for
+         * accounts where {@code controller.requirement_collection} is {@code application} for the
+         * account. This is {@code false} by default.
+         */
+        @SerializedName("disable_stripe_user_authentication")
+        Boolean disableStripeUserAuthentication;
       }
     }
 
@@ -854,6 +911,13 @@ public class AccountSession extends ApiResource {
         /** Whether sending refunds is enabled. This is {@code true} by default. */
         @SerializedName("refund_management")
         Boolean refundManagement;
+
+        /**
+         * Whether to allow connected accounts to submit disputes using Smart Disputes. Defaults to
+         * the value of {@code dispute_management}.
+         */
+        @SerializedName("smart_disputes_management")
+        Boolean smartDisputesManagement;
       }
     }
 
@@ -958,9 +1022,9 @@ public class AccountSession extends ApiResource {
         Boolean externalAccountCollection;
 
         /**
-         * Whether to allow creation of instant payouts. Defaults to {@code true} when {@code
-         * controller.losses.payments} is set to {@code stripe} for the account, otherwise {@code
-         * false}.
+         * Whether to allow creation of instant payouts. The default value is {@code enabled} when
+         * Stripe is responsible for negative account balances, and {@code use_dashboard_rules}
+         * otherwise.
          */
         @SerializedName("instant_payouts")
         Boolean instantPayouts;

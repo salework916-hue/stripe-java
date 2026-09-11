@@ -23,9 +23,9 @@ import lombok.Setter;
 
 /**
  * The {@code Charge} object represents a single attempt to move money into your Stripe account.
- * PaymentIntent confirmation is the most common way to create Charges, but transferring money to a
- * different Stripe account through Connect also creates Charges. Some legacy payment flows create
- * Charges directly, which is not recommended for new integrations.
+ * PaymentIntent confirmation is the most common way to create Charges, but <a
+ * href="https://docs.stripe.com/connect/account-debits">Account Debits</a> may also create Charges.
+ * Some legacy payment flows create Charges directly, which is not recommended for new integrations.
  */
 @Getter
 @Setter
@@ -33,10 +33,10 @@ import lombok.Setter;
 public class Charge extends ApiResource implements MetadataStore<Charge>, BalanceTransactionSource {
   /**
    * Amount intended to be collected by this payment. A positive integer representing how much to
-   * charge in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+   * charge in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
    * unit</a> (e.g., 100 cents to charge $1.00 or 100 to charge ¥100, a zero-decimal currency). The
    * minimum amount is $0.50 US or <a
-   * href="https://stripe.com/docs/currencies#minimum-and-maximum-charge-amounts">equivalent in
+   * href="https://docs.stripe.com/currencies#minimum-and-maximum-charge-amounts">equivalent in
    * charge currency</a>. The amount value supports up to eight digits (e.g., a value of 99999999
    * for a USD charge of $999,999.99).
    */
@@ -65,7 +65,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * The application fee (if any) for the charge. <a
-   * href="https://stripe.com/docs/connect/direct-charges#collect-fees">See the Connect
+   * href="https://docs.stripe.com/connect/direct-charges#collect-fees">See the Connect
    * documentation</a> for details.
    */
   @SerializedName("application_fee")
@@ -75,7 +75,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * The amount of the application fee (if any) requested for the charge. <a
-   * href="https://stripe.com/docs/connect/direct-charges#collect-fees">See the Connect
+   * href="https://docs.stripe.com/connect/direct-charges#collect-fees">See the Connect
    * documentation</a> for details.
    */
   @SerializedName("application_fee_amount")
@@ -149,7 +149,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * Error code explaining reason for charge failure if available (see <a
-   * href="https://stripe.com/docs/error-codes">the errors section</a> for a list of codes).
+   * href="https://docs.stripe.com/error-codes">the errors section</a> for a list of codes).
    */
   @SerializedName("failure_code")
   String failureCode;
@@ -171,14 +171,14 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
   Level3 level3;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -196,7 +196,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * The account (if any) the charge was made on behalf of without triggering an automatic transfer.
-   * See the <a href="https://stripe.com/docs/connect/separate-charges-and-transfers">Connect
+   * See the <a href="https://docs.stripe.com/connect/separate-charges-and-transfers">Connect
    * documentation</a> for details.
    */
   @SerializedName("on_behalf_of")
@@ -206,7 +206,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * Details about whether the payment was accepted, and why. See <a
-   * href="https://stripe.com/docs/declines">understanding declines</a> for details.
+   * href="https://docs.stripe.com/declines">understanding declines</a> for details.
    */
   @SerializedName("outcome")
   Outcome outcome;
@@ -233,7 +233,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
   PresentmentDetails presentmentDetails;
 
   /**
-   * Options to configure Radar. See <a href="https://stripe.com/docs/radar/radar-session">Radar
+   * Options to configure Radar. See <a href="https://docs.stripe.com/radar/radar-session">Radar
    * Session</a> for more information.
    */
   @SerializedName("radar_options")
@@ -339,7 +339,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * An optional dictionary including the account to automatically transfer to as part of a
-   * destination charge. <a href="https://stripe.com/docs/connect/destination-charges">See the
+   * destination charge. <a href="https://docs.stripe.com/connect/destination-charges">See the
    * Connect documentation</a> for details.
    */
   @SerializedName("transfer_data")
@@ -347,7 +347,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
   /**
    * A string that identifies this transaction as part of a group. See the <a
-   * href="https://stripe.com/docs/connect/separate-charges-and-transfers#transfer-options">Connect
+   * href="https://docs.stripe.com/connect/separate-charges-and-transfers#transfer-options">Connect
    * documentation</a> for details.
    */
   @SerializedName("transfer_group")
@@ -1016,7 +1016,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
   public static class Outcome extends StripeObject {
     /**
      * An enumerated value providing a more detailed explanation on <a
-     * href="https://stripe.com/docs/declines#retrying-issuer-declines">how to proceed with an
+     * href="https://docs.stripe.com/declines#retrying-issuer-declines">how to proceed with an
      * error</a>.
      *
      * <p>One of {@code confirm_card_data}, {@code do_not_try_again}, or {@code try_again_later}.
@@ -1042,7 +1042,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
      * Possible values are {@code approved_by_network}, {@code declined_by_network}, {@code
      * not_sent_to_network}, and {@code reversed_after_approval}. The value {@code
      * reversed_after_approval} indicates the payment was <a
-     * href="https://stripe.com/docs/declines#blocked-payments">blocked by Stripe</a> after bank
+     * href="https://docs.stripe.com/declines#blocked-payments">blocked by Stripe</a> after bank
      * authorization, and may temporarily appear as &quot;pending&quot; on a cardholder's statement.
      */
     @SerializedName("network_status")
@@ -1055,7 +1055,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
      * elevated_risk_level}. Charges blocked because the payment is unlikely to be authorized have
      * the value {@code low_probability_of_authorization}. Charges authorized, blocked, or placed in
      * review by custom rules have the value {@code rule}. See <a
-     * href="https://stripe.com/docs/declines">understanding declines</a> for more details.
+     * href="https://docs.stripe.com/declines">understanding declines</a> for more details.
      */
     @SerializedName("reason")
     String reason;
@@ -1095,8 +1095,8 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     /**
      * Possible values are {@code authorized}, {@code manual_review}, {@code issuer_declined},
      * {@code blocked}, and {@code invalid}. See <a
-     * href="https://stripe.com/docs/declines">understanding declines</a> and <a
-     * href="https://stripe.com/docs/radar/reviews">Radar reviews</a> for details.
+     * href="https://docs.stripe.com/declines">understanding declines</a> and <a
+     * href="https://docs.stripe.com/radar/reviews">Radar reviews</a> for details.
      */
     @SerializedName("type")
     String type;
@@ -1186,6 +1186,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @SerializedName("billie")
     Billie billie;
 
+    @SerializedName("bizum")
+    Bizum bizum;
+
     @SerializedName("blik")
     Blik blik;
 
@@ -1240,6 +1243,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @SerializedName("link")
     Link link;
 
+    @SerializedName("mb_way")
+    MbWay mbWay;
+
     @SerializedName("mobilepay")
     Mobilepay mobilepay;
 
@@ -1270,6 +1276,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @SerializedName("paypal")
     Paypal paypal;
 
+    @SerializedName("payto")
+    Payto payto;
+
     @SerializedName("pix")
     Pix pix;
 
@@ -1285,6 +1294,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @SerializedName("satispay")
     Satispay satispay;
 
+    @SerializedName("scalapay")
+    Scalapay scalapay;
+
     @SerializedName("sepa_credit_transfer")
     SepaCreditTransfer sepaCreditTransfer;
 
@@ -1297,6 +1309,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @SerializedName("stripe_account")
     StripeAccount stripeAccount;
 
+    @SerializedName("sunbit")
+    Sunbit sunbit;
+
     @SerializedName("swish")
     Swish swish;
 
@@ -1305,13 +1320,16 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
     /**
      * The type of transaction-specific details of the payment method used in the payment. See <a
-     * href="https://stripe.com/docs/api/payment_methods/object#payment_method_object-type">PaymentMethod.type</a>
+     * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-type">PaymentMethod.type</a>
      * for the full list of possible types. An additional hash is included on {@code
      * payment_method_details} with a name matching this value. It contains information specific to
      * the payment method.
      */
     @SerializedName("type")
     String type;
+
+    @SerializedName("upi")
+    Upi upi;
 
     @SerializedName("us_bank_account")
     UsBankAccount usBankAccount;
@@ -1404,6 +1422,12 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       String bankName;
 
       /**
+       * Estimated date to debit the customer's bank account. A date string in YYYY-MM-DD format.
+       */
+      @SerializedName("expected_debit_date")
+      String expectedDebitDate;
+
+      /**
        * Uniquely identifies this particular bank account. You can use this attribute to check
        * whether two bank accounts are the same.
        */
@@ -1435,17 +1459,11 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Affirm extends StripeObject {
-      /**
-       * ID of the <a href="https://stripe.com/docs/api/terminal/locations">location</a> that this
-       * transaction's reader is assigned to.
-       */
+      /** ID of the location that this reader is assigned to. */
       @SerializedName("location")
       String location;
 
-      /**
-       * ID of the <a href="https://stripe.com/docs/api/terminal/readers">reader</a> this
-       * transaction was made on.
-       */
+      /** ID of the reader this transaction was made on. */
       @SerializedName("reader")
       String reader;
 
@@ -1466,7 +1484,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       @SerializedName("order_id")
       String orderId;
 
-      /** Order identifier shown to the merchant in Afterpay’s online portal. */
+      /** Order identifier shown to the merchant in Afterpay's online portal. */
       @SerializedName("reference")
       String reference;
     }
@@ -1570,9 +1588,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
         @EqualsAndHashCode(callSuper = false)
         public static class Card extends StripeObject {
           /**
-           * Card brand. Can be {@code amex}, {@code cartes_bancaires}, {@code diners}, {@code
-           * discover}, {@code eftpos_au}, {@code jcb}, {@code link}, {@code mastercard}, {@code
-           * unionpay}, {@code visa} or {@code unknown}.
+           * Card brand. Can be {@code American Express}, {@code Cartes Bancaires}, {@code Diners
+           * Club}, {@code Discover}, {@code Eftpos Australia}, {@code Girocard}, {@code JCB},
+           * {@code MasterCard}, {@code UnionPay}, {@code Visa}, or {@code Unknown}.
            */
           @SerializedName("brand")
           String brand;
@@ -1619,6 +1637,12 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       String bsbNumber;
 
       /**
+       * Estimated date to debit the customer's bank account. A date string in YYYY-MM-DD format.
+       */
+      @SerializedName("expected_debit_date")
+      String expectedDebitDate;
+
+      /**
        * Uniquely identifies this particular bank account. You can use this attribute to check
        * whether two bank accounts are the same.
        */
@@ -1642,6 +1666,12 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class BacsDebit extends StripeObject {
+      /**
+       * Estimated date to debit the customer's bank account. A date string in YYYY-MM-DD format.
+       */
+      @SerializedName("expected_debit_date")
+      String expectedDebitDate;
+
       /**
        * Uniquely identifies this particular bank account. You can use this attribute to check
        * whether two bank accounts are the same.
@@ -1770,6 +1800,23 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     }
 
     /**
+     * For more details about Bizum, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Bizum extends StripeObject {
+      /** A unique identifier for the buyer as determined by the local payment processor. */
+      @SerializedName("buyer_id")
+      String buyerId;
+
+      /** The Bizum transaction ID associated with this payment. */
+      @SerializedName("transaction_id")
+      String transactionId;
+    }
+
+    /**
      * For more details about Blik, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
@@ -1891,7 +1938,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
        * Installment details for this payment.
        *
        * <p>For more information, see the <a
-       * href="https://stripe.com/docs/payments/installments">installments integration guide</a>.
+       * href="https://docs.stripe.com/payments/installments">installments integration guide</a>.
        */
       @SerializedName("installments")
       Installments installments;
@@ -1957,6 +2004,15 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /** Populated if this transaction used 3D Secure authentication. */
       @SerializedName("three_d_secure")
       ThreeDSecure threeDSecure;
+
+      /**
+       * Transaction Link ID (TLID) is a unique identifier for a transaction. This is used by some
+       * card networks, such as Mastercard, for transaction linking, in addition to Network
+       * Transaction IDs. This value will be present if it is returned by the financial network in
+       * the authorization response, and null otherwise.
+       */
+      @SerializedName("transaction_link_id")
+      String transactionLinkId;
 
       /** If this Card is part of a card wallet, this contains the details of the card wallet. */
       @SerializedName("wallet")
@@ -2167,8 +2223,8 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
         /**
          * Indicates the outcome of 3D Secure authentication.
          *
-         * <p>One of {@code attempt_acknowledged}, {@code authenticated}, {@code exempted}, {@code
-         * failed}, {@code not_supported}, or {@code processing_error}.
+         * <p>One of {@code attempt_acknowledged}, {@code authenticated}, {@code data_share_only},
+         * {@code exempted}, {@code failed}, {@code not_supported}, or {@code processing_error}.
          */
         @SerializedName("result")
         String result;
@@ -2194,7 +2250,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
         /**
          * The version of 3D Secure that was used.
          *
-         * <p>One of {@code 1.0.2}, {@code 2.1.0}, or {@code 2.2.0}.
+         * <p>One of {@code 1.0.2}, {@code 2.1.0}, {@code 2.2.0}, {@code 2.3.0}, or {@code 2.3.1}.
          */
         @SerializedName("version")
         String version;
@@ -2276,7 +2332,14 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
         @Getter
         @Setter
         @EqualsAndHashCode(callSuper = false)
-        public static class Link extends StripeObject {}
+        public static class Link extends StripeObject {
+          /**
+           * The <a href="https://docs.stripe.com/payments/link/link-payment-methods">funding source
+           * group code</a> applied to this Link payment at confirmation time.
+           */
+          @SerializedName("funding_source_group")
+          String fundingSourceGroup;
+        }
 
         /**
          * For more details about Masterpass, please refer to the <a
@@ -2473,9 +2536,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       String iin;
 
       /**
-       * Whether this <a href="https://stripe.com/docs/api/payment_intents">PaymentIntent</a> is
+       * Whether this <a href="https://docs.stripe.com/api/payment_intents">PaymentIntent</a> is
        * eligible for incremental authorizations. Request support using <a
-       * href="https://stripe.com/docs/api/payment_intents/create#create_payment_intent-payment_method_options-card_present-request_incremental_authorization_support">request_incremental_authorization_support</a>.
+       * href="https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_options-card_present-request_incremental_authorization_support">request_incremental_authorization_support</a>.
        */
       @SerializedName("incremental_authorization_supported")
       Boolean incrementalAuthorizationSupported;
@@ -2490,6 +2553,13 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /** The last four digits of the card. */
       @SerializedName("last4")
       String last4;
+
+      /**
+       * ID of the <a href="https://docs.stripe.com/api/terminal/locations">location</a> that this
+       * transaction's reader is assigned to.
+       */
+      @SerializedName("location")
+      String location;
 
       /**
        * Identifies which network this charge was processed on. Can be {@code amex}, {@code
@@ -2532,6 +2602,13 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
        */
       @SerializedName("read_method")
       String readMethod;
+
+      /**
+       * ID of the <a href="https://docs.stripe.com/api/terminal/readers">reader</a> this
+       * transaction was made on.
+       */
+      @SerializedName("reader")
+      String reader;
 
       /**
        * A collection of fields required to be displayed on receipts. Only required for EMV
@@ -2687,7 +2764,8 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /**
        * The blockchain network that the transaction was sent on.
        *
-       * <p>One of {@code base}, {@code ethereum}, or {@code polygon}.
+       * <p>One of {@code base}, {@code ethereum}, {@code polygon}, {@code solana}, {@code sui}, or
+       * {@code tempo}.
        */
       @SerializedName("network")
       String network;
@@ -2695,7 +2773,8 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /**
        * The token currency that the transaction was sent with.
        *
-       * <p>One of {@code usdc}, {@code usdg}, or {@code usdp}.
+       * <p>One of {@code phantom_cash}, {@code usdc}, {@code usdg}, {@code usdp}, {@code usdsui},
+       * or {@code usdt}.
        */
       @SerializedName("token_currency")
       String tokenCurrency;
@@ -2763,10 +2842,10 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /**
        * The customer's bank. Can be one of {@code affin_bank}, {@code agrobank}, {@code
        * alliance_bank}, {@code ambank}, {@code bank_islam}, {@code bank_muamalat}, {@code
-       * bank_rakyat}, {@code bsn}, {@code cimb}, {@code hong_leong_bank}, {@code hsbc}, {@code
-       * kfh}, {@code maybank2u}, {@code ocbc}, {@code public_bank}, {@code rhb}, {@code
-       * standard_chartered}, {@code uob}, {@code deutsche_bank}, {@code maybank2e}, {@code
-       * pb_enterprise}, or {@code bank_of_china}.
+       * bnp_paribas}, {@code bank_rakyat}, {@code bsn}, {@code cimb}, {@code citibank}, {@code
+       * hong_leong_bank}, {@code hsbc}, {@code kfh}, {@code maybank2u}, {@code ocbc}, {@code
+       * public_bank}, {@code rhb}, {@code standard_chartered}, {@code uob}, {@code deutsche_bank},
+       * {@code maybank2e}, {@code mbsb_bank}, {@code pb_enterprise}, or {@code bank_of_china}.
        */
       @SerializedName("bank")
       String bank;
@@ -2827,10 +2906,11 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @EqualsAndHashCode(callSuper = false)
     public static class Ideal extends StripeObject {
       /**
-       * The customer's bank. Can be one of {@code abn_amro}, {@code asn_bank}, {@code bunq}, {@code
-       * buut}, {@code handelsbanken}, {@code ing}, {@code knab}, {@code moneyou}, {@code n26},
-       * {@code nn}, {@code rabobank}, {@code regiobank}, {@code revolut}, {@code sns_bank}, {@code
-       * triodos_bank}, {@code van_lanschot}, or {@code yoursafe}.
+       * The customer's bank. Can be one of {@code abn_amro}, {@code adyen}, {@code asn_bank},
+       * {@code bunq}, {@code buut}, {@code finom}, {@code handelsbanken}, {@code ing}, {@code
+       * knab}, {@code mollie}, {@code moneyou}, {@code n26}, {@code nn}, {@code rabobank}, {@code
+       * regiobank}, {@code revolut}, {@code sns_bank}, {@code triodos_bank}, {@code van_lanschot},
+       * or {@code yoursafe}.
        */
       @SerializedName("bank")
       String bank;
@@ -2838,10 +2918,11 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /**
        * The Bank Identifier Code of the customer's bank.
        *
-       * <p>One of {@code ABNANL2A}, {@code ASNBNL21}, {@code BITSNL2A}, {@code BUNQNL2A}, {@code
-       * BUUTNL2A}, {@code FVLBNL22}, {@code HANDNL2A}, {@code INGBNL2A}, {@code KNABNL2H}, {@code
-       * MOYONL21}, {@code NNBANL2G}, {@code NTSBDEB1}, {@code RABONL2U}, {@code RBRBNL21}, {@code
-       * REVOIE23}, {@code REVOLT21}, {@code SNSBNL2A}, or {@code TRIONL2U}.
+       * <p>One of {@code ABNANL2A}, {@code ADYBNL2A}, {@code ASNBNL21}, {@code BITSNL2A}, {@code
+       * BUNQNL2A}, {@code BUUTNL2A}, {@code FNOMNL22}, {@code FVLBNL22}, {@code HANDNL2A}, {@code
+       * INGBNL2A}, {@code KNABNL2H}, {@code MLLENL2A}, {@code MOYONL21}, {@code NNBANL2G}, {@code
+       * NTSBDEB1}, {@code RABONL2U}, {@code RBRBNL21}, {@code REVOIE23}, {@code REVOLT21}, {@code
+       * SNSBNL2A}, or {@code TRIONL2U}.
        */
       @SerializedName("bic")
       String bic;
@@ -2861,6 +2942,10 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /** Last four characters of the IBAN. */
       @SerializedName("iban_last4")
       String ibanLast4;
+
+      /** Unique transaction ID generated by iDEAL. */
+      @SerializedName("transaction_id")
+      String transactionId;
 
       /**
        * Owner's verified full name. Values are verified or provided by iDEAL directly (if
@@ -3008,6 +3093,13 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       String last4;
 
       /**
+       * ID of the <a href="https://docs.stripe.com/api/terminal/locations">location</a> that this
+       * transaction's reader is assigned to.
+       */
+      @SerializedName("location")
+      String location;
+
+      /**
        * Identifies which network this charge was processed on. Can be {@code amex}, {@code
        * cartes_bancaires}, {@code diners}, {@code discover}, {@code eftpos_au}, {@code interac},
        * {@code jcb}, {@code link}, {@code mastercard}, {@code unionpay}, {@code visa}, or {@code
@@ -3040,6 +3132,13 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
        */
       @SerializedName("read_method")
       String readMethod;
+
+      /**
+       * ID of the <a href="https://docs.stripe.com/api/terminal/readers">reader</a> this
+       * transaction was made on.
+       */
+      @SerializedName("reader")
+      String reader;
 
       /**
        * A collection of fields required to be displayed on receipts. Only required for EMV
@@ -3144,6 +3243,13 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Klarna extends StripeObject {
+      /**
+       * ID of the <a href="https://docs.stripe.com/api/terminal/locations">location</a> that this
+       * transaction's reader is assigned to.
+       */
+      @SerializedName("location")
+      String location;
+
       /** The payer details for this transaction. */
       @SerializedName("payer_details")
       PayerDetails payerDetails;
@@ -3168,6 +3274,13 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
        */
       @SerializedName("preferred_locale")
       String preferredLocale;
+
+      /**
+       * ID of the <a href="https://docs.stripe.com/api/terminal/readers">reader</a> this
+       * transaction was made on.
+       */
+      @SerializedName("reader")
+      String reader;
 
       /**
        * For more details about PayerDetails, please refer to the <a
@@ -3276,7 +3389,23 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
        */
       @SerializedName("country")
       String country;
+
+      /**
+       * The <a href="https://docs.stripe.com/payments/link/link-payment-methods">funding source
+       * group code</a> applied to this Link payment at confirmation time.
+       */
+      @SerializedName("funding_source_group")
+      String fundingSourceGroup;
     }
+
+    /**
+     * For more details about MbWay, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class MbWay extends StripeObject {}
 
     /**
      * For more details about Mobilepay, please refer to the <a
@@ -3381,6 +3510,12 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       @SerializedName("branch_code")
       String branchCode;
 
+      /**
+       * Estimated date to debit the customer's bank account. A date string in YYYY-MM-DD format.
+       */
+      @SerializedName("expected_debit_date")
+      String expectedDebitDate;
+
       /** Last four digits of the bank account number. */
       @SerializedName("last4")
       String last4;
@@ -3472,14 +3607,14 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @EqualsAndHashCode(callSuper = false)
     public static class Paynow extends StripeObject {
       /**
-       * ID of the <a href="https://stripe.com/docs/api/terminal/locations">location</a> that this
+       * ID of the <a href="https://docs.stripe.com/api/terminal/locations">location</a> that this
        * transaction's reader is assigned to.
        */
       @SerializedName("location")
       String location;
 
       /**
-       * ID of the <a href="https://stripe.com/docs/api/terminal/readers">reader</a> this
+       * ID of the <a href="https://docs.stripe.com/api/terminal/readers">reader</a> this
        * transaction was made on.
        */
       @SerializedName("reader")
@@ -3558,6 +3693,31 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     }
 
     /**
+     * For more details about Payto, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Payto extends StripeObject {
+      /** Bank-State-Branch number of the bank account. */
+      @SerializedName("bsb_number")
+      String bsbNumber;
+
+      /** Last four digits of the bank account number. */
+      @SerializedName("last4")
+      String last4;
+
+      /** ID of the mandate used to make this payment. */
+      @SerializedName("mandate")
+      String mandate;
+
+      /** The PayID alias for the bank account. */
+      @SerializedName("pay_id")
+      String payId;
+    }
+
+    /**
      * For more details about Pix, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
@@ -3568,6 +3728,17 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /** Unique transaction id generated by BCB. */
       @SerializedName("bank_transaction_id")
       String bankTransactionId;
+
+      /**
+       * Uniquely identifies this particular Pix account. You can use this attribute to check
+       * whether two Pix accounts are the same.
+       */
+      @SerializedName("fingerprint")
+      String fingerprint;
+
+      /** ID of the multi use Mandate generated by the PaymentIntent or SetupIntent. */
+      @SerializedName("mandate")
+      String mandate;
     }
 
     /**
@@ -3626,9 +3797,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
         @EqualsAndHashCode(callSuper = false)
         public static class Card extends StripeObject {
           /**
-           * Card brand. Can be {@code amex}, {@code cartes_bancaires}, {@code diners}, {@code
-           * discover}, {@code eftpos_au}, {@code jcb}, {@code link}, {@code mastercard}, {@code
-           * unionpay}, {@code visa} or {@code unknown}.
+           * Card brand. Can be {@code American Express}, {@code Cartes Bancaires}, {@code Diners
+           * Club}, {@code Discover}, {@code Eftpos Australia}, {@code Girocard}, {@code JCB},
+           * {@code MasterCard}, {@code UnionPay}, {@code Visa}, or {@code Unknown}.
            */
           @SerializedName("brand")
           String brand;
@@ -3693,6 +3864,19 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     }
 
     /**
+     * For more details about Scalapay, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Scalapay extends StripeObject {
+      /** The Scalapay transaction ID associated with this payment. */
+      @SerializedName("transaction_id")
+      String transactionId;
+    }
+
+    /**
      * For more details about SepaCreditTransfer, please refer to the <a
      * href="https://docs.stripe.com/api">API Reference.</a>
      */
@@ -3734,6 +3918,12 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       String country;
 
       /**
+       * Estimated date to debit the customer's bank account. A date string in YYYY-MM-DD format.
+       */
+      @SerializedName("expected_debit_date")
+      String expectedDebitDate;
+
+      /**
        * Uniquely identifies this particular bank account. You can use this attribute to check
        * whether two bank accounts are the same.
        */
@@ -3746,9 +3936,9 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
 
       /**
        * Find the ID of the mandate used for this payment under the <a
-       * href="https://stripe.com/docs/api/charges/object#charge_object-payment_method_details-sepa_debit-mandate">payment_method_details.sepa_debit.mandate</a>
+       * href="https://docs.stripe.com/api/charges/object#charge_object-payment_method_details-sepa_debit-mandate">payment_method_details.sepa_debit.mandate</a>
        * property on the Charge. Use this mandate ID to <a
-       * href="https://stripe.com/docs/api/mandates/retrieve">retrieve the Mandate</a>.
+       * href="https://docs.stripe.com/api/mandates/retrieve">retrieve the Mandate</a>.
        */
       @SerializedName("mandate")
       String mandate;
@@ -3863,6 +4053,19 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     public static class StripeAccount extends StripeObject {}
 
     /**
+     * For more details about Sunbit, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Sunbit extends StripeObject {
+      /** The Sunbit transaction ID associated with this payment. */
+      @SerializedName("transaction_id")
+      String transactionId;
+    }
+
+    /**
      * For more details about Swish, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
@@ -3893,7 +4096,24 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
     @Getter
     @Setter
     @EqualsAndHashCode(callSuper = false)
-    public static class Twint extends StripeObject {}
+    public static class Twint extends StripeObject {
+      /** ID of the multi use Mandate generated by the PaymentIntent or SetupIntent. */
+      @SerializedName("mandate")
+      String mandate;
+    }
+
+    /**
+     * For more details about Upi, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Upi extends StripeObject {
+      /** Customer's unique Virtual Payment Address. */
+      @SerializedName("vpa")
+      String vpa;
+    }
 
     /**
      * For more details about UsBankAccount, please refer to the <a
@@ -3922,6 +4142,12 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       /** Name of the bank associated with the bank account. */
       @SerializedName("bank_name")
       String bankName;
+
+      /**
+       * Estimated date to debit the customer's bank account. A date string in YYYY-MM-DD format.
+       */
+      @SerializedName("expected_debit_date")
+      String expectedDebitDate;
 
       /**
        * Uniquely identifies this particular bank account. You can use this attribute to check
@@ -3992,14 +4218,14 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
       String fingerprint;
 
       /**
-       * ID of the <a href="https://stripe.com/docs/api/terminal/locations">location</a> that this
+       * ID of the <a href="https://docs.stripe.com/api/terminal/locations">location</a> that this
        * transaction's reader is assigned to.
        */
       @SerializedName("location")
       String location;
 
       /**
-       * ID of the <a href="https://stripe.com/docs/api/terminal/readers">reader</a> this
+       * ID of the <a href="https://docs.stripe.com/api/terminal/readers">reader</a> this
        * transaction was made on.
        */
       @SerializedName("reader")
@@ -4040,7 +4266,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
   }
 
   /**
-   * Options to configure Radar. See <a href="https://stripe.com/docs/radar/radar-session">Radar
+   * Options to configure Radar. See <a href="https://docs.stripe.com/radar/radar-session">Radar
    * Session</a> for more information.
    */
   @Getter
@@ -4048,7 +4274,7 @@ public class Charge extends ApiResource implements MetadataStore<Charge>, Balanc
   @EqualsAndHashCode(callSuper = false)
   public static class RadarOptions extends StripeObject {
     /**
-     * A <a href="https://stripe.com/docs/radar/radar-session">Radar Session</a> is a snapshot of
+     * A <a href="https://docs.stripe.com/radar/radar-session">Radar Session</a> is a snapshot of
      * the browser metadata and device details that help Radar make more accurate predictions on
      * your payments.
      */

@@ -30,7 +30,7 @@ public class AuthorizationFinalizeAmountParams extends ApiRequestParams {
   /**
    * <strong>Required.</strong> The final authorization amount that will be captured by the
    * merchant. This amount is in the authorization currency and in the <a
-   * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("final_amount")
   Long finalAmount;
@@ -132,7 +132,7 @@ public class AuthorizationFinalizeAmountParams extends ApiRequestParams {
     /**
      * <strong>Required.</strong> The final authorization amount that will be captured by the
      * merchant. This amount is in the authorization currency and in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
      */
     public Builder setFinalAmount(Long finalAmount) {
       this.finalAmount = finalAmount;
@@ -557,8 +557,8 @@ public class AuthorizationFinalizeAmountParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost, inclusive of
-         * taxes.
+         * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost, inclusive
+         * of taxes.
          */
         @SerializedName("gross_amount_decimal")
         BigDecimal grossAmountDecimal;
@@ -614,7 +614,7 @@ public class AuthorizationFinalizeAmountParams extends ApiRequestParams {
           }
 
           /**
-           * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost, inclusive
+           * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost, inclusive
            * of taxes.
            */
           public Builder setGrossAmountDecimal(BigDecimal grossAmountDecimal) {

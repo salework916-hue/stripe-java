@@ -24,21 +24,21 @@ import lombok.Setter;
 
 /**
  * Invoice Items represent the component lines of an <a
- * href="https://stripe.com/docs/api/invoices">invoice</a>. When you create an invoice item with an
+ * href="https://docs.stripe.com/api/invoices">invoice</a>. When you create an invoice item with an
  * {@code invoice} field, it is attached to the specified invoice and included as <a
- * href="https://stripe.com/docs/api/invoices/line_item">an invoice line item</a> within <a
- * href="https://stripe.com/docs/api/invoices/object#invoice_object-lines">invoice.lines</a>.
+ * href="https://docs.stripe.com/api/invoices/line_item">an invoice line item</a> within <a
+ * href="https://docs.stripe.com/api/invoices/object#invoice_object-lines">invoice.lines</a>.
  *
  * <p>Invoice Items can be created before you are ready to actually send the invoice. This can be
  * particularly useful when combined with a <a
- * href="https://stripe.com/docs/api/subscriptions">subscription</a>. Sometimes you want to add a
+ * href="https://docs.stripe.com/api/subscriptions">subscription</a>. Sometimes you want to add a
  * charge or credit to a customer, but actually charge or credit the customer's card only at the end
  * of a regular billing cycle. This is useful for combining several charges (to minimize
  * per-transaction fees), or for having Stripe tabulate your usage-based billing totals.
  *
- * <p>Related guides: <a href="https://stripe.com/docs/invoicing/integration">Integrate with the
+ * <p>Related guides: <a href="https://docs.stripe.com/invoicing/integration">Integrate with the
  * Invoicing API</a>, <a
- * href="https://stripe.com/docs/billing/invoices/subscription#adding-upcoming-invoice-items">Subscription
+ * href="https://docs.stripe.com/billing/invoices/subscription#adding-upcoming-invoice-items">Subscription
  * Invoices</a>.
  */
 @Getter
@@ -59,11 +59,15 @@ public class InvoiceItem extends ApiResource implements HasId, MetadataStore<Inv
   @SerializedName("currency")
   String currency;
 
-  /** The ID of the customer who will be billed when this invoice item is billed. */
+  /** The ID of the customer to bill for this invoice item. */
   @SerializedName("customer")
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Customer> customer;
+
+  /** The ID of the account to bill for this invoice item. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /** Time at which the object was created. Measured in seconds since the Unix epoch. */
   @SerializedName("date")
@@ -88,6 +92,13 @@ public class InvoiceItem extends ApiResource implements HasId, MetadataStore<Inv
   @SerializedName("discounts")
   List<ExpandableField<Discount>> discounts;
 
+  /**
+   * Array of field names that can't be modified. Attempting to update a frozen field returns an
+   * error.
+   */
+  @SerializedName("frozen_fields")
+  List<String> frozenFields;
+
   /** Unique identifier for the object. */
   @Getter(onMethod_ = {@Override})
   @SerializedName("id")
@@ -100,20 +111,27 @@ public class InvoiceItem extends ApiResource implements HasId, MetadataStore<Inv
   ExpandableField<Invoice> invoice;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
   @Getter(onMethod_ = {@Override})
   @SerializedName("metadata")
   Map<String, String> metadata;
+
+  /**
+   * The amount after discounts, but before credits and taxes. This field is {@code null} for {@code
+   * discountable=true} items.
+   */
+  @SerializedName("net_amount")
+  Long netAmount;
 
   /**
    * String representing the object's type. Objects of the same type share the same value.
@@ -141,12 +159,24 @@ public class InvoiceItem extends ApiResource implements HasId, MetadataStore<Inv
   @SerializedName("proration")
   Boolean proration;
 
+  @SerializedName("proration_details")
+  ProrationDetails prorationDetails;
+
   /**
-   * Quantity of units for the invoice item. If the invoice item is a proration, the quantity of the
-   * subscription that the proration was computed for.
+   * Quantity of units for the invoice item in integer format, with any decimal precision truncated.
+   * For the item's full-precision decimal quantity, use {@code quantity_decimal}. This field will
+   * be deprecated in favor of {@code quantity_decimal} in a future version. If the invoice item is
+   * a proration, the quantity of the subscription that the proration was computed for.
    */
   @SerializedName("quantity")
   Long quantity;
+
+  /**
+   * Non-negative decimal with at most 12 decimal places. The quantity of units for the invoice
+   * item.
+   */
+  @SerializedName("quantity_decimal")
+  BigDecimal quantityDecimal;
 
   /**
    * The tax rates which apply to the invoice item. When set, the {@code default_tax_rates} on the
@@ -563,11 +593,136 @@ public class InvoiceItem extends ApiResource implements HasId, MetadataStore<Inv
     public static class PriceDetails extends StripeObject {
       /** The ID of the price this item is associated with. */
       @SerializedName("price")
-      String price;
+      @Getter(lombok.AccessLevel.NONE)
+      @Setter(lombok.AccessLevel.NONE)
+      ExpandableField<Price> price;
 
       /** The ID of the product this item is associated with. */
       @SerializedName("product")
       String product;
+
+      /** Get ID of expandable {@code price} object. */
+      public String getPrice() {
+        return (this.price != null) ? this.price.getId() : null;
+      }
+
+      public void setPrice(String id) {
+        this.price = ApiResource.setExpandableFieldId(id, this.price);
+      }
+
+      /** Get expanded {@code price}. */
+      public Price getPriceObject() {
+        return (this.price != null) ? this.price.getExpanded() : null;
+      }
+
+      public void setPriceObject(Price expandableObject) {
+        this.price = new ExpandableField<Price>(expandableObject.getId(), expandableObject);
+      }
+    }
+  }
+
+  /**
+   * For more details about ProrationDetails, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class ProrationDetails extends StripeObject {
+    /**
+     * For a credit proration, links to the debit invoice line items or invoice item that the credit
+     * applies to.
+     */
+    @SerializedName("credited_items")
+    CreditedItems creditedItems;
+
+    /** Discount amounts applied when the proration was created. */
+    @SerializedName("discount_amounts")
+    List<InvoiceItem.ProrationDetails.DiscountAmount> discountAmounts;
+
+    /**
+     * For more details about CreditedItems, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class CreditedItems extends StripeObject {
+      /**
+       * When {@code type} is {@code invoice_item}, the invoice item id for the debited invoice item
+       * corresponding to this credit proration.
+       */
+      @SerializedName("invoice_item")
+      String invoiceItem;
+
+      @SerializedName("invoice_line_item_details")
+      InvoiceLineItemDetails invoiceLineItemDetails;
+
+      /**
+       * Whether the credit references a pending invoice item or one or more invoice line items on
+       * an invoice.
+       *
+       * <p>One of {@code invoice_item}, or {@code invoice_line_items}.
+       */
+      @SerializedName("type")
+      String type;
+
+      /**
+       * For more details about InvoiceLineItemDetails, please refer to the <a
+       * href="https://docs.stripe.com/api">API Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class InvoiceLineItemDetails extends StripeObject {
+        /** The invoice id for the debited line item(s). */
+        @SerializedName("invoice")
+        String invoice;
+
+        /**
+         * IDs of the debited invoice line item(s) on the invoice that correspond to the credit
+         * proration.
+         */
+        @SerializedName("invoice_line_items")
+        List<String> invoiceLineItems;
+      }
+    }
+
+    /**
+     * For more details about DiscountAmount, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DiscountAmount extends StripeObject {
+      /** The amount, in cents (or local equivalent), of the discount. */
+      @SerializedName("amount")
+      Long amount;
+
+      /** The discount that was applied to get this discount amount. */
+      @SerializedName("discount")
+      @Getter(lombok.AccessLevel.NONE)
+      @Setter(lombok.AccessLevel.NONE)
+      ExpandableField<Discount> discount;
+
+      /** Get ID of expandable {@code discount} object. */
+      public String getDiscount() {
+        return (this.discount != null) ? this.discount.getId() : null;
+      }
+
+      public void setDiscount(String id) {
+        this.discount = ApiResource.setExpandableFieldId(id, this.discount);
+      }
+
+      /** Get expanded {@code discount}. */
+      public Discount getDiscountObject() {
+        return (this.discount != null) ? this.discount.getExpanded() : null;
+      }
+
+      public void setDiscountObject(Discount expandableObject) {
+        this.discount = new ExpandableField<Discount>(expandableObject.getId(), expandableObject);
+      }
     }
   }
 
@@ -579,6 +734,7 @@ public class InvoiceItem extends ApiResource implements HasId, MetadataStore<Inv
     trySetResponseGetter(parent, responseGetter);
     trySetResponseGetter(period, responseGetter);
     trySetResponseGetter(pricing, responseGetter);
+    trySetResponseGetter(prorationDetails, responseGetter);
     trySetResponseGetter(testClock, responseGetter);
   }
 }

@@ -14,7 +14,11 @@ import lombok.Getter;
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public class CustomerCreateParams extends ApiRequestParams {
-  /** The customer's address. */
+  /**
+   * The customer's address. Learn about <a
+   * href="https://docs.stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+   * requirements for calculating tax</a>.
+   */
   @SerializedName("address")
   Object address;
 
@@ -26,6 +30,10 @@ public class CustomerCreateParams extends ApiRequestParams {
    */
   @SerializedName("balance")
   Long balance;
+
+  /** The customer's business name. This may be up to <em>150 characters</em>. */
+  @SerializedName("business_name")
+  Object businessName;
 
   /** Balance information and default balance settings for this customer. */
   @SerializedName("cash_balance")
@@ -58,6 +66,10 @@ public class CustomerCreateParams extends ApiRequestParams {
   @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
   Map<String, Object> extraParams;
 
+  /** The customer's full name. This may be up to <em>150 characters</em>. */
+  @SerializedName("individual_name")
+  Object individualName;
+
   /**
    * The prefix for the customer used to generate unique invoice numbers. Must be 3–12 uppercase
    * letters or numbers.
@@ -70,7 +82,7 @@ public class CustomerCreateParams extends ApiRequestParams {
   InvoiceSettings invoiceSettings;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -126,11 +138,13 @@ public class CustomerCreateParams extends ApiRequestParams {
   private CustomerCreateParams(
       Object address,
       Long balance,
+      Object businessName,
       CashBalance cashBalance,
       String description,
       String email,
       List<String> expand,
       Map<String, Object> extraParams,
+      Object individualName,
       String invoicePrefix,
       InvoiceSettings invoiceSettings,
       Object metadata,
@@ -148,11 +162,13 @@ public class CustomerCreateParams extends ApiRequestParams {
       Boolean validate) {
     this.address = address;
     this.balance = balance;
+    this.businessName = businessName;
     this.cashBalance = cashBalance;
     this.description = description;
     this.email = email;
     this.expand = expand;
     this.extraParams = extraParams;
+    this.individualName = individualName;
     this.invoicePrefix = invoicePrefix;
     this.invoiceSettings = invoiceSettings;
     this.metadata = metadata;
@@ -179,6 +195,8 @@ public class CustomerCreateParams extends ApiRequestParams {
 
     private Long balance;
 
+    private Object businessName;
+
     private CashBalance cashBalance;
 
     private String description;
@@ -188,6 +206,8 @@ public class CustomerCreateParams extends ApiRequestParams {
     private List<String> expand;
 
     private Map<String, Object> extraParams;
+
+    private Object individualName;
 
     private String invoicePrefix;
 
@@ -224,11 +244,13 @@ public class CustomerCreateParams extends ApiRequestParams {
       return new CustomerCreateParams(
           this.address,
           this.balance,
+          this.businessName,
           this.cashBalance,
           this.description,
           this.email,
           this.expand,
           this.extraParams,
+          this.individualName,
           this.invoicePrefix,
           this.invoiceSettings,
           this.metadata,
@@ -246,13 +268,21 @@ public class CustomerCreateParams extends ApiRequestParams {
           this.validate);
     }
 
-    /** The customer's address. */
+    /**
+     * The customer's address. Learn about <a
+     * href="https://docs.stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+     * requirements for calculating tax</a>.
+     */
     public Builder setAddress(CustomerCreateParams.Address address) {
       this.address = address;
       return this;
     }
 
-    /** The customer's address. */
+    /**
+     * The customer's address. Learn about <a
+     * href="https://docs.stripe.com/invoicing/taxes?dashboard-or-api=dashboard#set-up-customer">country-specific
+     * requirements for calculating tax</a>.
+     */
     public Builder setAddress(EmptyParam address) {
       this.address = address;
       return this;
@@ -266,6 +296,18 @@ public class CustomerCreateParams extends ApiRequestParams {
      */
     public Builder setBalance(Long balance) {
       this.balance = balance;
+      return this;
+    }
+
+    /** The customer's business name. This may be up to <em>150 characters</em>. */
+    public Builder setBusinessName(String businessName) {
+      this.businessName = businessName;
+      return this;
+    }
+
+    /** The customer's business name. This may be up to <em>150 characters</em>. */
+    public Builder setBusinessName(EmptyParam businessName) {
+      this.businessName = businessName;
       return this;
     }
 
@@ -345,6 +387,18 @@ public class CustomerCreateParams extends ApiRequestParams {
       return this;
     }
 
+    /** The customer's full name. This may be up to <em>150 characters</em>. */
+    public Builder setIndividualName(String individualName) {
+      this.individualName = individualName;
+      return this;
+    }
+
+    /** The customer's full name. This may be up to <em>150 characters</em>. */
+    public Builder setIndividualName(EmptyParam individualName) {
+      this.individualName = individualName;
+      return this;
+    }
+
     /**
      * The prefix for the customer used to generate unique invoice numbers. Must be 3–12 uppercase
      * letters or numbers.
@@ -389,7 +443,7 @@ public class CustomerCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -400,7 +454,7 @@ public class CustomerCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -556,11 +610,11 @@ public class CustomerCreateParams extends ApiRequestParams {
     @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
     Map<String, Object> extraParams;
 
-    /** Address line 1 (e.g., street, PO Box, or company name). */
+    /** Address line 1, such as the street, PO Box, or company name. */
     @SerializedName("line1")
     String line1;
 
-    /** Address line 2 (e.g., apartment, suite, unit, or building). */
+    /** Address line 2, such as the apartment, suite, unit, or building. */
     @SerializedName("line2")
     String line2;
 
@@ -568,7 +622,10 @@ public class CustomerCreateParams extends ApiRequestParams {
     @SerializedName("postal_code")
     String postalCode;
 
-    /** State, county, province, or region. */
+    /**
+     * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+     * 3166-2</a>).
+     */
     @SerializedName("state")
     String state;
 
@@ -662,13 +719,13 @@ public class CustomerCreateParams extends ApiRequestParams {
         return this;
       }
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       public Builder setLine1(String line1) {
         this.line1 = line1;
         return this;
       }
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       public Builder setLine2(String line2) {
         this.line2 = line2;
         return this;
@@ -680,7 +737,10 @@ public class CustomerCreateParams extends ApiRequestParams {
         return this;
       }
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       public Builder setState(String state) {
         this.state = state;
         return this;
@@ -778,7 +838,7 @@ public class CustomerCreateParams extends ApiRequestParams {
        * Controls how funds transferred by the customer are applied to payment intents and invoices.
        * Valid options are {@code automatic}, {@code manual}, or {@code merchant_default}. For more
        * information about these reconciliation modes, see <a
-       * href="https://stripe.com/docs/payments/customer-balance/reconciliation">Reconciliation</a>.
+       * href="https://docs.stripe.com/payments/customer-balance/reconciliation">Reconciliation</a>.
        */
       @SerializedName("reconciliation_mode")
       ReconciliationMode reconciliationMode;
@@ -835,7 +895,7 @@ public class CustomerCreateParams extends ApiRequestParams {
          * Controls how funds transferred by the customer are applied to payment intents and
          * invoices. Valid options are {@code automatic}, {@code manual}, or {@code
          * merchant_default}. For more information about these reconciliation modes, see <a
-         * href="https://stripe.com/docs/payments/customer-balance/reconciliation">Reconciliation</a>.
+         * href="https://docs.stripe.com/payments/customer-balance/reconciliation">Reconciliation</a>.
          */
         public Builder setReconciliationMode(
             CustomerCreateParams.CashBalance.Settings.ReconciliationMode reconciliationMode) {
@@ -1382,11 +1442,11 @@ public class CustomerCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -1394,7 +1454,10 @@ public class CustomerCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -1490,13 +1553,13 @@ public class CustomerCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -1508,7 +1571,10 @@ public class CustomerCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -1665,19 +1731,20 @@ public class CustomerCreateParams extends ApiRequestParams {
      * ca_pst_bc}, {@code ca_pst_mb}, {@code ca_pst_sk}, {@code ca_qst}, {@code cd_nif}, {@code
      * ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code cn_tin}, {@code co_nit},
      * {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn}, {@code ec_ruc}, {@code
-     * eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code eu_vat}, {@code gb_vat},
-     * {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code
-     * id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code jp_cn}, {@code jp_rn},
-     * {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code
-     * kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code ma_vat}, {@code md_vat},
-     * {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code my_frp}, {@code
-     * my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec}, {@code np_pan},
-     * {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code ro_tin}, {@code
-     * rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code sg_gst}, {@code sg_uen},
-     * {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code th_vat}, {@code
-     * tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat}, {@code ug_tin},
-     * {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code
-     * vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
+     * eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code eu_vat}, {@code fo_vat},
+     * {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code gn_nif}, {@code hk_br}, {@code
+     * hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp}, {@code il_vat}, {@code in_gst},
+     * {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin},
+     * {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code
+     * li_uid}, {@code li_vat}, {@code lk_vat}, {@code ma_vat}, {@code md_vat}, {@code me_pib},
+     * {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code my_frp}, {@code my_itn}, {@code
+     * my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec}, {@code np_pan}, {@code nz_gst},
+     * {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code pl_nip}, {@code py_ruc}, {@code
+     * ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code sg_gst},
+     * {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code
+     * th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat},
+     * {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code
+     * ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
      */
     @SerializedName("type")
     Type type;
@@ -1744,18 +1811,20 @@ public class CustomerCreateParams extends ApiRequestParams {
        * {@code cd_nif}, {@code ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code
        * cn_tin}, {@code co_nit}, {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn},
        * {@code ec_ruc}, {@code eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code
-       * eu_vat}, {@code gb_vat}, {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code hr_oib},
-       * {@code hu_tin}, {@code id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code
-       * jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin},
-       * {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code
-       * ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc},
-       * {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code
-       * no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin},
-       * {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code
-       * sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit},
-       * {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code
-       * ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat},
-       * {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
+       * eu_vat}, {@code fo_vat}, {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code gn_nif},
+       * {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp}, {@code
+       * il_vat}, {@code in_gst}, {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code jp_rn},
+       * {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code
+       * kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code lk_vat}, {@code ma_vat},
+       * {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code
+       * my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec},
+       * {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code
+       * pl_nip}, {@code py_ruc}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp},
+       * {@code sa_vat}, {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code
+       * sr_fin}, {@code sv_nit}, {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat},
+       * {@code tz_vat}, {@code ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code
+       * uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or
+       * {@code zw_tin}
        */
       public Builder setType(CustomerCreateParams.TaxIdData.Type type) {
         this.type = type;
@@ -1905,11 +1974,17 @@ public class CustomerCreateParams extends ApiRequestParams {
       @SerializedName("eu_vat")
       EU_VAT("eu_vat"),
 
+      @SerializedName("fo_vat")
+      FO_VAT("fo_vat"),
+
       @SerializedName("gb_vat")
       GB_VAT("gb_vat"),
 
       @SerializedName("ge_vat")
       GE_VAT("ge_vat"),
+
+      @SerializedName("gi_tin")
+      GI_TIN("gi_tin"),
 
       @SerializedName("gn_nif")
       GN_NIF("gn_nif"),
@@ -1923,6 +1998,9 @@ public class CustomerCreateParams extends ApiRequestParams {
       @SerializedName("hu_tin")
       HU_TIN("hu_tin"),
 
+      @SerializedName("ic_nif")
+      IC_NIF("ic_nif"),
+
       @SerializedName("id_npwp")
       ID_NPWP("id_npwp"),
 
@@ -1934,6 +2012,9 @@ public class CustomerCreateParams extends ApiRequestParams {
 
       @SerializedName("is_vat")
       IS_VAT("is_vat"),
+
+      @SerializedName("it_cf")
+      IT_CF("it_cf"),
 
       @SerializedName("jp_cn")
       JP_CN("jp_cn"),
@@ -1967,6 +2048,9 @@ public class CustomerCreateParams extends ApiRequestParams {
 
       @SerializedName("li_vat")
       LI_VAT("li_vat"),
+
+      @SerializedName("lk_vat")
+      LK_VAT("lk_vat"),
 
       @SerializedName("ma_vat")
       MA_VAT("ma_vat"),
@@ -2018,6 +2102,12 @@ public class CustomerCreateParams extends ApiRequestParams {
 
       @SerializedName("ph_tin")
       PH_TIN("ph_tin"),
+
+      @SerializedName("pl_nip")
+      PL_NIP("pl_nip"),
+
+      @SerializedName("py_ruc")
+      PY_RUC("py_ruc"),
 
       @SerializedName("ro_tin")
       RO_TIN("ro_tin"),

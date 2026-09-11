@@ -22,7 +22,7 @@ import lombok.Setter;
 /**
  * You can use Tax {@code Settings} to manage configurations used by Stripe Tax calculations.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/tax/settings-api">Using the Settings API</a>
+ * <p>Related guide: <a href="https://docs.stripe.com/tax/settings-api">Using the Settings API</a>
  */
 @Getter
 @Setter
@@ -36,8 +36,8 @@ public class Settings extends ApiResource {
   HeadOffice headOffice;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -149,6 +149,15 @@ public class Settings extends ApiResource {
   @Setter
   @EqualsAndHashCode(callSuper = false)
   public static class Defaults extends StripeObject {
+    /**
+     * The tax calculation provider this account uses. Defaults to {@code stripe} when not using a
+     * <a href="https://stripe.com/tax/third-party-apps">third-party provider</a>.
+     *
+     * <p>One of {@code anrok}, {@code avalara}, {@code sphere}, or {@code stripe}.
+     */
+    @SerializedName("provider")
+    String provider;
+
     /**
      * Default <a
      * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#tax-behavior">tax

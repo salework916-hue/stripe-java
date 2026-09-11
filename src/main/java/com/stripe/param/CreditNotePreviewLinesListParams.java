@@ -89,7 +89,7 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
   String memo;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -523,27 +523,37 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
     @SerializedName("invoice_line_item")
     String invoiceLineItem;
 
+    /**
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
+     * to an object. This can be useful for storing additional information about the object in a
+     * structured format. Individual keys can be unset by posting an empty value to them. All keys
+     * can be unset by posting an empty value to {@code metadata}.
+     */
+    @SerializedName("metadata")
+    Map<String, String> metadata;
+
     /** The line item quantity to credit. */
     @SerializedName("quantity")
     Long quantity;
 
     /**
-     * A list of up to 10 tax amounts for the credit note line item. Cannot be mixed with {@code
-     * tax_rates}.
+     * A list of up to 20 tax amounts for the credit note line item. Not valid when {@code
+     * tax_rates} is used or if invoice is set up with {@code automatic_tax[enabled]=true}.
      */
     @SerializedName("tax_amounts")
     Object taxAmounts;
 
     /**
      * The tax rates which apply to the credit note line item. Only valid when the {@code type} is
-     * {@code custom_line_item} and cannot be mixed with {@code tax_amounts}.
+     * {@code custom_line_item} and {@code tax_amounts} is not used.
      */
     @SerializedName("tax_rates")
     Object taxRates;
 
     /**
      * <strong>Required.</strong> Type of the credit note line item, one of {@code
-     * invoice_line_item} or {@code custom_line_item}
+     * invoice_line_item} or {@code custom_line_item}. {@code custom_line_item} is not valid when
+     * the invoice is set up with {@code automatic_tax[enabled]=true}.
      */
     @SerializedName("type")
     Type type;
@@ -569,6 +579,7 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
         String description,
         Map<String, Object> extraParams,
         String invoiceLineItem,
+        Map<String, String> metadata,
         Long quantity,
         Object taxAmounts,
         Object taxRates,
@@ -579,6 +590,7 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
       this.description = description;
       this.extraParams = extraParams;
       this.invoiceLineItem = invoiceLineItem;
+      this.metadata = metadata;
       this.quantity = quantity;
       this.taxAmounts = taxAmounts;
       this.taxRates = taxRates;
@@ -600,6 +612,8 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
 
       private String invoiceLineItem;
 
+      private Map<String, String> metadata;
+
       private Long quantity;
 
       private Object taxAmounts;
@@ -619,6 +633,7 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
             this.description,
             this.extraParams,
             this.invoiceLineItem,
+            this.metadata,
             this.quantity,
             this.taxAmounts,
             this.taxRates,
@@ -680,6 +695,32 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
         return this;
       }
 
+      /**
+       * Add a key/value pair to `metadata` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * CreditNotePreviewLinesListParams.Line#metadata} for the field documentation.
+       */
+      public Builder putMetadata(String key, String value) {
+        if (this.metadata == null) {
+          this.metadata = new HashMap<>();
+        }
+        this.metadata.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `metadata` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link CreditNotePreviewLinesListParams.Line#metadata} for the field documentation.
+       */
+      public Builder putAllMetadata(Map<String, String> map) {
+        if (this.metadata == null) {
+          this.metadata = new HashMap<>();
+        }
+        this.metadata.putAll(map);
+        return this;
+      }
+
       /** The line item quantity to credit. */
       public Builder setQuantity(Long quantity) {
         this.quantity = quantity;
@@ -716,8 +757,8 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
       }
 
       /**
-       * A list of up to 10 tax amounts for the credit note line item. Cannot be mixed with {@code
-       * tax_rates}.
+       * A list of up to 20 tax amounts for the credit note line item. Not valid when {@code
+       * tax_rates} is used or if invoice is set up with {@code automatic_tax[enabled]=true}.
        */
       public Builder setTaxAmounts(EmptyParam taxAmounts) {
         this.taxAmounts = taxAmounts;
@@ -725,8 +766,8 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
       }
 
       /**
-       * A list of up to 10 tax amounts for the credit note line item. Cannot be mixed with {@code
-       * tax_rates}.
+       * A list of up to 20 tax amounts for the credit note line item. Not valid when {@code
+       * tax_rates} is used or if invoice is set up with {@code automatic_tax[enabled]=true}.
        */
       public Builder setTaxAmounts(
           List<CreditNotePreviewLinesListParams.Line.TaxAmount> taxAmounts) {
@@ -764,7 +805,7 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
 
       /**
        * The tax rates which apply to the credit note line item. Only valid when the {@code type} is
-       * {@code custom_line_item} and cannot be mixed with {@code tax_amounts}.
+       * {@code custom_line_item} and {@code tax_amounts} is not used.
        */
       public Builder setTaxRates(EmptyParam taxRates) {
         this.taxRates = taxRates;
@@ -773,7 +814,7 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
 
       /**
        * The tax rates which apply to the credit note line item. Only valid when the {@code type} is
-       * {@code custom_line_item} and cannot be mixed with {@code tax_amounts}.
+       * {@code custom_line_item} and {@code tax_amounts} is not used.
        */
       public Builder setTaxRates(List<String> taxRates) {
         this.taxRates = taxRates;
@@ -782,7 +823,8 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
 
       /**
        * <strong>Required.</strong> Type of the credit note line item, one of {@code
-       * invoice_line_item} or {@code custom_line_item}
+       * invoice_line_item} or {@code custom_line_item}. {@code custom_line_item} is not valid when
+       * the invoice is set up with {@code automatic_tax[enabled]=true}.
        */
       public Builder setType(CreditNotePreviewLinesListParams.Line.Type type) {
         this.type = type;
@@ -957,16 +999,37 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
     Map<String, Object> extraParams;
 
     /**
+     * The PaymentRecord refund details to link to this credit note. Required when {@code type} is
+     * {@code payment_record_refund}.
+     */
+    @SerializedName("payment_record_refund")
+    PaymentRecordRefund paymentRecordRefund;
+
+    /**
      * ID of an existing refund to link this credit note to. Required when {@code type} is {@code
      * refund}.
      */
     @SerializedName("refund")
     String refund;
 
-    private Refund(Long amountRefunded, Map<String, Object> extraParams, String refund) {
+    /**
+     * Type of the refund, one of {@code refund} or {@code payment_record_refund}. Defaults to
+     * {@code refund}.
+     */
+    @SerializedName("type")
+    Type type;
+
+    private Refund(
+        Long amountRefunded,
+        Map<String, Object> extraParams,
+        PaymentRecordRefund paymentRecordRefund,
+        String refund,
+        Type type) {
       this.amountRefunded = amountRefunded;
       this.extraParams = extraParams;
+      this.paymentRecordRefund = paymentRecordRefund;
       this.refund = refund;
+      this.type = type;
     }
 
     public static Builder builder() {
@@ -978,12 +1041,20 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
 
       private Map<String, Object> extraParams;
 
+      private PaymentRecordRefund paymentRecordRefund;
+
       private String refund;
+
+      private Type type;
 
       /** Finalize and obtain parameter instance from this builder. */
       public CreditNotePreviewLinesListParams.Refund build() {
         return new CreditNotePreviewLinesListParams.Refund(
-            this.amountRefunded, this.extraParams, this.refund);
+            this.amountRefunded,
+            this.extraParams,
+            this.paymentRecordRefund,
+            this.refund,
+            this.type);
       }
 
       /**
@@ -1023,12 +1094,148 @@ public class CreditNotePreviewLinesListParams extends ApiRequestParams {
       }
 
       /**
+       * The PaymentRecord refund details to link to this credit note. Required when {@code type} is
+       * {@code payment_record_refund}.
+       */
+      public Builder setPaymentRecordRefund(
+          CreditNotePreviewLinesListParams.Refund.PaymentRecordRefund paymentRecordRefund) {
+        this.paymentRecordRefund = paymentRecordRefund;
+        return this;
+      }
+
+      /**
        * ID of an existing refund to link this credit note to. Required when {@code type} is {@code
        * refund}.
        */
       public Builder setRefund(String refund) {
         this.refund = refund;
         return this;
+      }
+
+      /**
+       * Type of the refund, one of {@code refund} or {@code payment_record_refund}. Defaults to
+       * {@code refund}.
+       */
+      public Builder setType(CreditNotePreviewLinesListParams.Refund.Type type) {
+        this.type = type;
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class PaymentRecordRefund {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * <strong>Required.</strong> The ID of the PaymentRecord with the refund to link to this
+       * credit note.
+       */
+      @SerializedName("payment_record")
+      String paymentRecord;
+
+      /**
+       * <strong>Required.</strong> The PaymentRecord refund group to link to this credit note. For
+       * refunds processed off-Stripe, this will correspond to the {@code
+       * processor_details.custom.refund_reference} field provided when reporting the refund on the
+       * PaymentRecord.
+       */
+      @SerializedName("refund_group")
+      String refundGroup;
+
+      private PaymentRecordRefund(
+          Map<String, Object> extraParams, String paymentRecord, String refundGroup) {
+        this.extraParams = extraParams;
+        this.paymentRecord = paymentRecord;
+        this.refundGroup = refundGroup;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private String paymentRecord;
+
+        private String refundGroup;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public CreditNotePreviewLinesListParams.Refund.PaymentRecordRefund build() {
+          return new CreditNotePreviewLinesListParams.Refund.PaymentRecordRefund(
+              this.extraParams, this.paymentRecord, this.refundGroup);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CreditNotePreviewLinesListParams.Refund.PaymentRecordRefund#extraParams}
+         * for the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CreditNotePreviewLinesListParams.Refund.PaymentRecordRefund#extraParams}
+         * for the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * <strong>Required.</strong> The ID of the PaymentRecord with the refund to link to this
+         * credit note.
+         */
+        public Builder setPaymentRecord(String paymentRecord) {
+          this.paymentRecord = paymentRecord;
+          return this;
+        }
+
+        /**
+         * <strong>Required.</strong> The PaymentRecord refund group to link to this credit note.
+         * For refunds processed off-Stripe, this will correspond to the {@code
+         * processor_details.custom.refund_reference} field provided when reporting the refund on
+         * the PaymentRecord.
+         */
+        public Builder setRefundGroup(String refundGroup) {
+          this.refundGroup = refundGroup;
+          return this;
+        }
+      }
+    }
+
+    public enum Type implements ApiRequestParams.EnumParam {
+      @SerializedName("payment_record_refund")
+      PAYMENT_RECORD_REFUND("payment_record_refund"),
+
+      @SerializedName("refund")
+      REFUND("refund");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      Type(String value) {
+        this.value = value;
       }
     }
   }

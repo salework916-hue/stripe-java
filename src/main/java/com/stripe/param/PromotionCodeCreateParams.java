@@ -20,23 +20,26 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
   /**
    * The customer-facing code. Regardless of case, this code must be unique across all active
    * promotion codes for a specific customer. Valid characters are lower case letters (a-z), upper
-   * case letters (A-Z), and digits (0-9).
+   * case letters (A-Z), digits (0-9), and dashes (-).
    *
    * <p>If left blank, we will generate one automatically.
    */
   @SerializedName("code")
   String code;
 
-  /** <strong>Required.</strong> The coupon for this promotion code. */
-  @SerializedName("coupon")
-  String coupon;
-
   /**
-   * The customer that this promotion code can be used by. If not set, the promotion code can be
-   * used by all customers.
+   * The customer who can use this promotion code. If not set, all customers can use the promotion
+   * code.
    */
   @SerializedName("customer")
   String customer;
+
+  /**
+   * The account representing the customer who can use this promotion code. If not set, all
+   * customers can use the promotion code.
+   */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /** Specifies which fields in the response should be expanded. */
   @SerializedName("expand")
@@ -67,13 +70,17 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
   Long maxRedemptions;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
    */
   @SerializedName("metadata")
   Map<String, String> metadata;
+
+  /** <strong>Required.</strong> The promotion referenced by this promotion code. */
+  @SerializedName("promotion")
+  Promotion promotion;
 
   /** Settings that restrict the redemption of the promotion code. */
   @SerializedName("restrictions")
@@ -82,23 +89,25 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
   private PromotionCodeCreateParams(
       Boolean active,
       String code,
-      String coupon,
       String customer,
+      String customerAccount,
       List<String> expand,
       Long expiresAt,
       Map<String, Object> extraParams,
       Long maxRedemptions,
       Map<String, String> metadata,
+      Promotion promotion,
       Restrictions restrictions) {
     this.active = active;
     this.code = code;
-    this.coupon = coupon;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.expand = expand;
     this.expiresAt = expiresAt;
     this.extraParams = extraParams;
     this.maxRedemptions = maxRedemptions;
     this.metadata = metadata;
+    this.promotion = promotion;
     this.restrictions = restrictions;
   }
 
@@ -111,9 +120,9 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
 
     private String code;
 
-    private String coupon;
-
     private String customer;
+
+    private String customerAccount;
 
     private List<String> expand;
 
@@ -125,6 +134,8 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
 
     private Map<String, String> metadata;
 
+    private Promotion promotion;
+
     private Restrictions restrictions;
 
     /** Finalize and obtain parameter instance from this builder. */
@@ -132,13 +143,14 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
       return new PromotionCodeCreateParams(
           this.active,
           this.code,
-          this.coupon,
           this.customer,
+          this.customerAccount,
           this.expand,
           this.expiresAt,
           this.extraParams,
           this.maxRedemptions,
           this.metadata,
+          this.promotion,
           this.restrictions);
     }
 
@@ -151,7 +163,7 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
     /**
      * The customer-facing code. Regardless of case, this code must be unique across all active
      * promotion codes for a specific customer. Valid characters are lower case letters (a-z), upper
-     * case letters (A-Z), and digits (0-9).
+     * case letters (A-Z), digits (0-9), and dashes (-).
      *
      * <p>If left blank, we will generate one automatically.
      */
@@ -160,18 +172,21 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
       return this;
     }
 
-    /** <strong>Required.</strong> The coupon for this promotion code. */
-    public Builder setCoupon(String coupon) {
-      this.coupon = coupon;
+    /**
+     * The customer who can use this promotion code. If not set, all customers can use the promotion
+     * code.
+     */
+    public Builder setCustomer(String customer) {
+      this.customer = customer;
       return this;
     }
 
     /**
-     * The customer that this promotion code can be used by. If not set, the promotion code can be
-     * used by all customers.
+     * The account representing the customer who can use this promotion code. If not set, all
+     * customers can use the promotion code.
      */
-    public Builder setCustomer(String customer) {
-      this.customer = customer;
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 
@@ -272,6 +287,12 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
       return this;
     }
 
+    /** <strong>Required.</strong> The promotion referenced by this promotion code. */
+    public Builder setPromotion(PromotionCodeCreateParams.Promotion promotion) {
+      this.promotion = promotion;
+      return this;
+    }
+
     /** Settings that restrict the redemption of the promotion code. */
     public Builder setRestrictions(PromotionCodeCreateParams.Restrictions restrictions) {
       this.restrictions = restrictions;
@@ -281,11 +302,106 @@ public class PromotionCodeCreateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Promotion {
+    /** If promotion {@code type} is {@code coupon}, the coupon for this promotion code. */
+    @SerializedName("coupon")
+    String coupon;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    /** <strong>Required.</strong> Specifies the type of promotion. */
+    @SerializedName("type")
+    Type type;
+
+    private Promotion(String coupon, Map<String, Object> extraParams, Type type) {
+      this.coupon = coupon;
+      this.extraParams = extraParams;
+      this.type = type;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private String coupon;
+
+      private Map<String, Object> extraParams;
+
+      private Type type;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PromotionCodeCreateParams.Promotion build() {
+        return new PromotionCodeCreateParams.Promotion(this.coupon, this.extraParams, this.type);
+      }
+
+      /** If promotion {@code type} is {@code coupon}, the coupon for this promotion code. */
+      public Builder setCoupon(String coupon) {
+        this.coupon = coupon;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PromotionCodeCreateParams.Promotion#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PromotionCodeCreateParams.Promotion#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+
+      /** <strong>Required.</strong> Specifies the type of promotion. */
+      public Builder setType(PromotionCodeCreateParams.Promotion.Type type) {
+        this.type = type;
+        return this;
+      }
+    }
+
+    public enum Type implements ApiRequestParams.EnumParam {
+      @SerializedName("coupon")
+      COUPON("coupon");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      Type(String value) {
+        this.value = value;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class Restrictions {
     /**
      * Promotion codes defined in each available currency option. Each key must be a three-letter <a
      * href="https://www.iso.org/iso-4217-currency-codes.html">ISO currency code</a> and a <a
-     * href="https://stripe.com/docs/currencies">supported currency</a>.
+     * href="https://stripe.com/docs/currencies">supported currency</a>. Each currency must be
+     * different from the {@code minimum_amount_currency} set on the promotion code.
      */
     @SerializedName("currency_options")
     Map<String, PromotionCodeCreateParams.Restrictions.CurrencyOption> currencyOptions;

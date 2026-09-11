@@ -14,7 +14,10 @@ import lombok.Getter;
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public class MeterEventStreamCreateParams extends ApiRequestParams {
-  /** <strong>Required.</strong> List of meter events to include in the request. */
+  /**
+   * <strong>Required.</strong> List of meter events to include in the request. Supports up to 100
+   * events per request.
+   */
   @SerializedName("events")
   List<MeterEventStreamCreateParams.Event> events;
 
@@ -121,7 +124,7 @@ public class MeterEventStreamCreateParams extends ApiRequestParams {
 
     /**
      * A unique identifier for the event. If not provided, one will be generated. We recommend using
-     * a globally unique identifier for this. We’ll enforce uniqueness within a rolling 24 hour
+     * a globally unique identifier for this. We'll enforce uniqueness within a rolling 24 hour
      * period.
      */
     @SerializedName("identifier")
@@ -129,7 +132,7 @@ public class MeterEventStreamCreateParams extends ApiRequestParams {
 
     /**
      * <strong>Required.</strong> The payload of the event. This must contain the fields
-     * corresponding to a meter’s {@code customer_mapping.event_payload_key} (default is {@code
+     * corresponding to a meter's {@code customer_mapping.event_payload_key} (default is {@code
      * stripe_customer_id}) and {@code value_settings.event_payload_key} (default is {@code value}).
      * Read more about the <a
      * href="https://docs.stripe.com/billing/subscriptions/usage-based/recording-usage#payload-key-overrides">payload</a>.
@@ -215,7 +218,7 @@ public class MeterEventStreamCreateParams extends ApiRequestParams {
 
       /**
        * A unique identifier for the event. If not provided, one will be generated. We recommend
-       * using a globally unique identifier for this. We’ll enforce uniqueness within a rolling 24
+       * using a globally unique identifier for this. We'll enforce uniqueness within a rolling 24
        * hour period.
        */
       public Builder setIdentifier(String identifier) {

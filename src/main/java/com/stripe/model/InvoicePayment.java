@@ -19,7 +19,7 @@ import lombok.Setter;
 /**
  * Invoice Payments represent payments made against invoices. Invoice Payments can be accessed in
  * two ways: 1. By expanding the {@code payments} field on the <a
- * href="https://stripe.com/docs/api#invoice">Invoice</a> resource. 2. By using the Invoice Payment
+ * href="https://api.stripe.com#invoice">Invoice</a> resource. 2. By using the Invoice Payment
  * retrieve and list endpoints.
  *
  * <p>Invoice Payments include the mapping between payment objects, such as Payment Intent, and
@@ -74,8 +74,8 @@ public class InvoicePayment extends ApiResource implements HasId {
   Boolean isDefault;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -233,9 +233,18 @@ public class InvoicePayment extends ApiResource implements HasId {
     ExpandableField<PaymentIntent> paymentIntent;
 
     /**
+     * ID of the PaymentRecord associated with this payment when {@code type} is {@code
+     * payment_record}.
+     */
+    @SerializedName("payment_record")
+    @Getter(lombok.AccessLevel.NONE)
+    @Setter(lombok.AccessLevel.NONE)
+    ExpandableField<PaymentRecord> paymentRecord;
+
+    /**
      * Type of payment object associated with this invoice payment.
      *
-     * <p>One of {@code charge}, or {@code payment_intent}.
+     * <p>One of {@code charge}, {@code payment_intent}, or {@code payment_record}.
      */
     @SerializedName("type")
     String type;
@@ -275,6 +284,25 @@ public class InvoicePayment extends ApiResource implements HasId {
     public void setPaymentIntentObject(PaymentIntent expandableObject) {
       this.paymentIntent =
           new ExpandableField<PaymentIntent>(expandableObject.getId(), expandableObject);
+    }
+
+    /** Get ID of expandable {@code paymentRecord} object. */
+    public String getPaymentRecord() {
+      return (this.paymentRecord != null) ? this.paymentRecord.getId() : null;
+    }
+
+    public void setPaymentRecord(String id) {
+      this.paymentRecord = ApiResource.setExpandableFieldId(id, this.paymentRecord);
+    }
+
+    /** Get expanded {@code paymentRecord}. */
+    public PaymentRecord getPaymentRecordObject() {
+      return (this.paymentRecord != null) ? this.paymentRecord.getExpanded() : null;
+    }
+
+    public void setPaymentRecordObject(PaymentRecord expandableObject) {
+      this.paymentRecord =
+          new ExpandableField<PaymentRecord>(expandableObject.getId(), expandableObject);
     }
   }
 

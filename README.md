@@ -1,8 +1,11 @@
 # Stripe Java client library
 
-[![Maven Central](https://img.shields.io/badge/maven--central-v29.5.0-blue)](https://mvnrepository.com/artifact/com.stripe/stripe-java)
+[![Maven Central](https://img.shields.io/badge/maven--central-v33.4.2-blue)](https://mvnrepository.com/artifact/com.stripe/stripe-java)
 [![JavaDoc](http://img.shields.io/badge/javadoc-reference-blue.svg)](https://stripe.dev/stripe-java)
 [![Build Status](https://github.com/stripe/stripe-java/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/stripe/stripe-java/actions?query=branch%3Amaster)
+
+> [!TIP]
+> Want to chat live with Stripe engineers? Join us on our [Discord server](https://stripe.com/go/discord/java).
 
 The official [Stripe][stripe] Java client library.
 
@@ -10,14 +13,20 @@ The official [Stripe][stripe] Java client library.
 
 ### Requirements
 
-- Java 1.8 or later
+We support LTS versions of the JDK. Currently, that's Java versions:
+
+- 8 (1.8)
+- 11
+- 17
+- 21
+- 25
 
 ### Gradle users
 
 Add this dependency to your project's build file:
 
 ```groovy
-implementation "com.stripe:stripe-java:29.5.0"
+implementation "com.stripe:stripe-java:33.4.2"
 ```
 
 ### Maven users
@@ -28,7 +37,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.stripe</groupId>
   <artifactId>stripe-java</artifactId>
-  <version>29.5.0</version>
+  <version>33.4.2</version>
 </dependency>
 ```
 
@@ -37,8 +46,8 @@ Add this dependency to your project's POM:
 If you are not using Gradle or Maven, you will need to manually install the following JARs:
 
 1. The Stripe JAR:
-   - Download the latest release version from [Maven Central](https://repo1.maven.org/maven2/com/stripe/stripe-java/29.0.0/stripe-java-29.0.0.jar)
-   - Current release version: 29.0.0
+   - Download the latest release version from [Maven Central](https://repo1.maven.org/maven2/com/stripe/stripe-java/33.4.2/stripe-java-33.4.2.jar)
+   - Current release version: 33.4.2
 
 2. Google Gson:
    - The Stripe JAR builds and tests with Gson version 2.10.1
@@ -46,6 +55,7 @@ If you are not using Gradle or Maven, you will need to manually install the foll
    - We recommend using the same version of Gson if possible to guarantee compatibility, but you should be able to use any stable version of Gson that is 2.10.1 or newer
 
 To use these JARs:
+
 1. Download the JARs from the links provided above
 2. Add the JARs to your project's classpath
 
@@ -93,7 +103,7 @@ public class StripeExample {
                 .build();
 
         try {
-            Customer customer = client.customers().create(params);
+            Customer customer = client.v1().customers().create(params);
             System.out.println(customer);
         } catch (StripeException e) {
             e.printStackTrace();
@@ -112,7 +122,7 @@ Once the legacy pattern is deprecated, new API endpoints will only be accessible
 
 ### Per-request Configuration
 
-All of the request methods accept an optional `RequestOptions` object. This is
+All the request methods accept an optional `RequestOptions` object. This is
 used if you want to set an [idempotency key][idempotency-keys], if you are
 using [Stripe Connect][connect-auth], or if you want to pass the secret API
 key on each method.
@@ -124,9 +134,9 @@ RequestOptions requestOptions = RequestOptions.builder()
     .setStripeAccount("acct_...")
     .build();
 
-client.customers().list(requestOptions);
+client.v1().customers().list(requestOptions);
 
-client.customers().retrieve("cus_123456789", requestOptions);
+client.v1().customers().retrieve("cus_123456789", requestOptions);
 ```
 
 ### Configuring automatic retries
@@ -147,7 +157,7 @@ Or on a finer grain level using `RequestOptions`:
 RequestOptions options = RequestOptions.builder()
     .setMaxNetworkRetries(2)
     .build();
-client.customers().create(params, options);
+client.v1().customers().create(params, options);
 ```
 
 [Idempotency keys][idempotency-keys] are added to requests to guarantee that
@@ -171,7 +181,7 @@ RequestOptions options = RequestOptions.builder()
     .setConnectTimeout(30 * 1000) // in milliseconds
     .setReadTimeout(80 * 1000)
     .build();
-client.customers().create(params, options);
+client.v1().customers().create(params, options);
 ```
 
 Please take care to set conservative read timeouts. Some API requests can take
@@ -207,7 +217,7 @@ CustomerCreateParams params =
     .putExtraParam("secret_parameter[secondary]", "secondary value")
     .build();
 
-client.customers().create(params);
+client.v1().customers().create(params);
 ```
 
 #### Properties
@@ -215,7 +225,7 @@ client.customers().create(params);
 To retrieve undocumented properties from Stripe using Java you can use an option in the library to return the raw JSON object and return the property as a native type. An example of this is shown below:
 
 ```java
-final Customer customer = client.customers().retrieve("cus_1234");
+final Customer customer = client.v1().customers().retrieve("cus_1234");
 Boolean featureEnabled =
   customer.getRawJsonObject()
     .getAsJsonPrimitive("secret_feature_enabled")
@@ -231,6 +241,32 @@ String secondaryValue =
     .getAsJsonPrimitive("secondary")
     .getAsString();
 ```
+
+> [!NOTE]
+> `.getRawJsonObject()` is only available on the top-level object returned by an API call. For most requests (like `.retrieve()` or `.create()`) you'll get the object itself. But for `.list()` calls, the top level object is a `List<T>`, so you can only access the raw json of an individual object by going through the list itself.
+>
+> ```java
+> var cards = stripeClient
+>   .v1()
+>   .issuing()
+>   .cards()
+>   .list(params);
+>
+> // doesn't work:
+> cards
+>   .getData()
+>   .get(0)
+>   .getRawJsonObject(); // null
+>
+> // instead, go through the list:
+> cards
+>  .getRawJsonObject()
+>  .getAsJsonArray("data")
+>  .get(0)
+>  .getAsJsonObject()
+>  .getAsJsonPrimitive("undocumented-val")
+>  .getAsString(); // "some-val"
+> ```
 
 ### Writing a plugin
 
@@ -260,7 +296,7 @@ Stripe.enableTelemetry = false;
 Stripe has features in the [public preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-beta.X` suffix like `25.2.0-beta.2`.
 We would love for you to try these as we incrementally release new features and improve them based on your feedback.
 
- To install, pick the latest version with the `beta` suffix by reviewing the [releases page](https://github.com/stripe/stripe-java/releases/) and then use it [installation steps above](#installation).
+To install, pick the latest version with the `beta` suffix by reviewing the [releases page](https://github.com/stripe/stripe-java/releases/) and then use it [installation steps above](#installation).
 
 > **Note**
 > There can be breaking changes between two versions of the public preview SDKs without a bump in the major version. Therefore we recommend pinning the package version to a specific version. This way you can install the same version each time without breaking changes unless you are intentionally looking for the latest public preview SDK.
@@ -270,11 +306,14 @@ Some preview features require a name and version to be set in the `Stripe-Versio
 ```java
 Stripe.addBetaVersion("feature_beta", "v3");
 ```
+
 ### Private Preview SDKs
 
-Stripe has features in the [private preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-alpha.X` suffix like `25.2.0-alpha.2`. These are invite-only features. Once invited, you can install the private preview SDKs by following the same instructions as for the [public preview SDKs](https://github.com/stripe/stripe-java?tab=readme-ov-file#public-preview-sdks) above and replacing the term `beta` with `alpha`.
+Stripe has features in the [private preview phase](https://docs.stripe.com/release-phases) that can be accessed via versions of this package that have the `-alpha.X` suffix like `25.2.0-alpha.2`. You can install the private preview SDKs by following the same instructions as for the [public preview SDKs](https://github.com/stripe/stripe-java?tab=readme-ov-file#public-preview-sdks) above and replacing the term `beta` with `alpha`. Note that access to specific private preview API features may require separate approval.
 
 ### Custom requests
+
+> This feature is only available from version 27 of this SDK.
 
 If you would like to send a request to an undocumented API (for example you are in a private beta), or if you prefer to bypass the method definitions in the library and specify your request details directly, you can use the `rawRequest` method on `StripeClient`.
 
@@ -306,6 +345,9 @@ Customer customer = (Customer) client.deserialize(response.body(), ApiMode.V1);
 New features and bug fixes are released on the latest major version of the Stripe Java client library. If you are on an older major version, we recommend that you upgrade to the latest in order to use the new features and bug fixes including those for security vulnerabilities. Older major versions of the package will continue to be available for use, but will not be receiving any updates.
 
 ## Development
+
+> [!WARNING]
+> External contributions to this repo from first-time contributors are currently on hiatus. If you'd like to see a change made to the package, please open an issue.
 
 [Contribution guidelines for this project](CONTRIBUTING.md)
 

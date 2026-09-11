@@ -40,7 +40,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
   Map<String, Object> extraParams;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -49,32 +49,8 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
   Map<String, String> metadata;
 
   /**
-   * Use {@code allow_incomplete} to transition the subscription to {@code status=past_due} if a
-   * payment is required but cannot be paid. This allows you to manage scenarios where additional
-   * user actions are needed to pay a subscription's invoice. For example, SCA regulation may
-   * require 3DS authentication to complete payment. See the <a
-   * href="https://stripe.com/docs/billing/migration/strong-customer-authentication">SCA Migration
-   * Guide</a> for Billing to learn more. This is the default behavior.
-   *
-   * <p>Use {@code default_incomplete} to transition the subscription to {@code status=past_due}
-   * when payment is required and await explicit confirmation of the invoice's payment intent. This
-   * allows simpler management of scenarios where additional user actions are needed to pay a
-   * subscription’s invoice. Such as failed payments, <a
-   * href="https://stripe.com/docs/billing/migration/strong-customer-authentication">SCA
-   * regulation</a>, or collecting a mandate for a bank debit payment method.
-   *
-   * <p>Use {@code pending_if_incomplete} to update the subscription using <a
-   * href="https://stripe.com/docs/billing/subscriptions/pending-updates">pending updates</a>. When
-   * you use {@code pending_if_incomplete} you can only pass the parameters <a
-   * href="https://stripe.com/docs/billing/pending-updates-reference#supported-attributes">supported
-   * by pending updates</a>.
-   *
-   * <p>Use {@code error_if_incomplete} if you want Stripe to return an HTTP 402 status code if a
-   * subscription's invoice cannot be paid. For example, if a payment method requires 3DS
-   * authentication due to SCA regulation and further user action is needed, this parameter does not
-   * update the subscription and returns an error instead. This was the default behavior for API
-   * versions prior to 2019-03-14. See the <a
-   * href="https://docs.stripe.com/changelog/2019-03-14">changelog</a> to learn more.
+   * Controls how Stripe handles payment when a subscription update requires payment and {@code
+   * collection_method=charge_automatically}.
    */
   @SerializedName("payment_behavior")
   PaymentBehavior paymentBehavior;
@@ -88,7 +64,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
   String price;
 
   /**
-   * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+   * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
    * inline.
    */
   @SerializedName("price_data")
@@ -96,7 +72,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
 
   /**
    * Determines how to handle <a
-   * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the billing
+   * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when the billing
    * cycle changes (e.g., when switching plans, resetting {@code billing_cycle_anchor=now}, or
    * starting a trial), or if an item's {@code quantity} changes. The default value is {@code
    * create_prorations}.
@@ -107,7 +83,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
   /**
    * If set, the proration will be calculated as though the subscription was updated at the given
    * time. This can be used to apply the same proration that was previewed with the <a
-   * href="https://stripe.com/docs/api#retrieve_customer_invoice">upcoming invoice</a> endpoint.
+   * href="https://stripe.com/api/invoices/create_preview">upcoming invoice</a> endpoint.
    */
   @SerializedName("proration_date")
   Long prorationDate;
@@ -121,9 +97,9 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
   String subscription;
 
   /**
-   * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax Rates
+   * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax Rates
    * will override the <a
-   * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+   * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
    * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
    * previously-defined tax rates.
    */
@@ -351,32 +327,8 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Use {@code allow_incomplete} to transition the subscription to {@code status=past_due} if a
-     * payment is required but cannot be paid. This allows you to manage scenarios where additional
-     * user actions are needed to pay a subscription's invoice. For example, SCA regulation may
-     * require 3DS authentication to complete payment. See the <a
-     * href="https://stripe.com/docs/billing/migration/strong-customer-authentication">SCA Migration
-     * Guide</a> for Billing to learn more. This is the default behavior.
-     *
-     * <p>Use {@code default_incomplete} to transition the subscription to {@code status=past_due}
-     * when payment is required and await explicit confirmation of the invoice's payment intent.
-     * This allows simpler management of scenarios where additional user actions are needed to pay a
-     * subscription’s invoice. Such as failed payments, <a
-     * href="https://stripe.com/docs/billing/migration/strong-customer-authentication">SCA
-     * regulation</a>, or collecting a mandate for a bank debit payment method.
-     *
-     * <p>Use {@code pending_if_incomplete} to update the subscription using <a
-     * href="https://stripe.com/docs/billing/subscriptions/pending-updates">pending updates</a>.
-     * When you use {@code pending_if_incomplete} you can only pass the parameters <a
-     * href="https://stripe.com/docs/billing/pending-updates-reference#supported-attributes">supported
-     * by pending updates</a>.
-     *
-     * <p>Use {@code error_if_incomplete} if you want Stripe to return an HTTP 402 status code if a
-     * subscription's invoice cannot be paid. For example, if a payment method requires 3DS
-     * authentication due to SCA regulation and further user action is needed, this parameter does
-     * not update the subscription and returns an error instead. This was the default behavior for
-     * API versions prior to 2019-03-14. See the <a
-     * href="https://docs.stripe.com/changelog/2019-03-14">changelog</a> to learn more.
+     * Controls how Stripe handles payment when a subscription update requires payment and {@code
+     * collection_method=charge_automatically}.
      */
     public Builder setPaymentBehavior(
         SubscriptionItemCreateParams.PaymentBehavior paymentBehavior) {
@@ -397,7 +349,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+     * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
      * inline.
      */
     public Builder setPriceData(SubscriptionItemCreateParams.PriceData priceData) {
@@ -407,7 +359,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
 
     /**
      * Determines how to handle <a
-     * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the
+     * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when the
      * billing cycle changes (e.g., when switching plans, resetting {@code
      * billing_cycle_anchor=now}, or starting a trial), or if an item's {@code quantity} changes.
      * The default value is {@code create_prorations}.
@@ -421,7 +373,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
     /**
      * If set, the proration will be calculated as though the subscription was updated at the given
      * time. This can be used to apply the same proration that was previewed with the <a
-     * href="https://stripe.com/docs/api#retrieve_customer_invoice">upcoming invoice</a> endpoint.
+     * href="https://stripe.com/api/invoices/create_preview">upcoming invoice</a> endpoint.
      */
     public Builder setProrationDate(Long prorationDate) {
       this.prorationDate = prorationDate;
@@ -469,9 +421,9 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax Rates
+     * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax Rates
      * will override the <a
-     * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+     * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
      * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
      * previously-defined tax rates.
      */
@@ -481,9 +433,9 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * A list of <a href="https://stripe.com/docs/api/tax_rates">Tax Rate</a> ids. These Tax Rates
+     * A list of <a href="https://docs.stripe.com/api/tax_rates">Tax Rate</a> ids. These Tax Rates
      * will override the <a
-     * href="https://stripe.com/docs/api/subscriptions/create#create_subscription-default_tax_rates">{@code
+     * href="https://docs.stripe.com/api/subscriptions/create#create_subscription-default_tax_rates">{@code
      * default_tax_rates}</a> on the Subscription. When updating, pass an empty string to remove
      * previously-defined tax rates.
      */
@@ -508,7 +460,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
     /**
      * <strong>Required.</strong> Number of units that meets the billing threshold to advance the
      * subscription to a new billing period (e.g., it takes 10 $5 units to meet a $50 <a
-     * href="https://stripe.com/docs/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
+     * href="https://docs.stripe.com/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
      * threshold</a>)
      */
     @SerializedName("usage_gte")
@@ -563,7 +515,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
       /**
        * <strong>Required.</strong> Number of units that meets the billing threshold to advance the
        * subscription to a new billing period (e.g., it takes 10 $5 units to meet a $50 <a
-       * href="https://stripe.com/docs/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
+       * href="https://docs.stripe.com/api/subscriptions/update#update_subscription-billing_thresholds-amount_gte">monetary
        * threshold</a>)
        */
       public Builder setUsageGte(Long usageGte) {
@@ -707,7 +659,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
 
     /**
      * Only required if a <a
-     * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+     * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
      * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price is
      * considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
      * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -836,7 +788,7 @@ public class SubscriptionItemCreateParams extends ApiRequestParams {
 
       /**
        * Only required if a <a
-       * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+       * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
        * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price
        * is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
        * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code

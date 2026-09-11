@@ -46,7 +46,10 @@ public class CalculationCreateParams extends ApiRequestParams {
   @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
   Map<String, Object> extraParams;
 
-  /** <strong>Required.</strong> A list of items the customer is purchasing. */
+  /**
+   * <strong>Required.</strong> A list of items the customer is purchasing. You can pass up to 100
+   * line items, or 1,000 if your account has an increased limit.
+   */
   @SerializedName("line_items")
   List<CalculationCreateParams.LineItem> lineItems;
 
@@ -59,9 +62,11 @@ public class CalculationCreateParams extends ApiRequestParams {
   ShippingCost shippingCost;
 
   /**
-   * Timestamp of date at which the tax rules and rates in effect applies for the calculation.
-   * Measured in seconds since the Unix epoch. Can be up to 48 hours in the past, and up to 48 hours
-   * in the future.
+   * The calculation uses the tax rules and rates that are in effect at this timestamp. You can use
+   * a date up to 31 days in the past or up to 31 days in the future. If you use a future date,
+   * Stripe doesn't guarantee that the expected tax rules and rate being used match the actual rules
+   * and rate that will be in effect on that date. We deploy tax changes before their effective
+   * date, but not within a fixed window.
    */
   @SerializedName("tax_date")
   Long taxDate;
@@ -240,9 +245,11 @@ public class CalculationCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Timestamp of date at which the tax rules and rates in effect applies for the calculation.
-     * Measured in seconds since the Unix epoch. Can be up to 48 hours in the past, and up to 48
-     * hours in the future.
+     * The calculation uses the tax rules and rates that are in effect at this timestamp. You can
+     * use a date up to 31 days in the past or up to 31 days in the future. If you use a future
+     * date, Stripe doesn't guarantee that the expected tax rules and rate being used match the
+     * actual rules and rate that will be in effect on that date. We deploy tax changes before their
+     * effective date, but not within a fixed window.
      */
     public Builder setTaxDate(Long taxDate) {
       this.taxDate = taxDate;
@@ -442,11 +449,11 @@ public class CalculationCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       Object line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       Object line2;
 
@@ -559,25 +566,25 @@ public class CalculationCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(EmptyParam line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(EmptyParam line2) {
           this.line2 = line2;
           return this;
@@ -639,18 +646,20 @@ public class CalculationCreateParams extends ApiRequestParams {
        * {@code cd_nif}, {@code ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code
        * cn_tin}, {@code co_nit}, {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn},
        * {@code ec_ruc}, {@code eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat}, {@code
-       * eu_vat}, {@code gb_vat}, {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code hr_oib},
-       * {@code hu_tin}, {@code id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code
-       * jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin},
-       * {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code
-       * ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc},
-       * {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code
-       * no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin},
-       * {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat}, {@code
-       * sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code sv_nit},
-       * {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code
-       * ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code uz_vat},
-       * {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code zw_tin}
+       * eu_vat}, {@code fo_vat}, {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code gn_nif},
+       * {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp}, {@code
+       * il_vat}, {@code in_gst}, {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code jp_rn},
+       * {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn}, {@code
+       * kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code lk_vat}, {@code ma_vat},
+       * {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc}, {@code
+       * my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code no_voec},
+       * {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin}, {@code
+       * pl_nip}, {@code py_ruc}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp},
+       * {@code sa_vat}, {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code
+       * sr_fin}, {@code sv_nit}, {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat},
+       * {@code tz_vat}, {@code ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code
+       * uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or
+       * {@code zw_tin}
        */
       @SerializedName("type")
       Type type;
@@ -720,19 +729,20 @@ public class CalculationCreateParams extends ApiRequestParams {
          * {@code cd_nif}, {@code ch_uid}, {@code ch_vat}, {@code cl_tin}, {@code cm_niu}, {@code
          * cn_tin}, {@code co_nit}, {@code cr_tin}, {@code cv_nif}, {@code de_stn}, {@code do_rcn},
          * {@code ec_ruc}, {@code eg_tin}, {@code es_cif}, {@code et_tin}, {@code eu_oss_vat},
-         * {@code eu_vat}, {@code gb_vat}, {@code ge_vat}, {@code gn_nif}, {@code hk_br}, {@code
-         * hr_oib}, {@code hu_tin}, {@code id_npwp}, {@code il_vat}, {@code in_gst}, {@code is_vat},
-         * {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code
-         * kh_tin}, {@code kr_brn}, {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat},
-         * {@code ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code
-         * mx_rfc}, {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat},
-         * {@code no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code
-         * ph_tin}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code ru_kpp}, {@code sa_vat},
-         * {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code sn_ninea}, {@code sr_fin}, {@code
-         * sv_nit}, {@code th_vat}, {@code tj_tin}, {@code tr_tin}, {@code tw_vat}, {@code tz_vat},
-         * {@code ua_vat}, {@code ug_tin}, {@code us_ein}, {@code uy_ruc}, {@code uz_tin}, {@code
-         * uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code za_vat}, {@code zm_tin}, or {@code
-         * zw_tin}
+         * {@code eu_vat}, {@code fo_vat}, {@code gb_vat}, {@code ge_vat}, {@code gi_tin}, {@code
+         * gn_nif}, {@code hk_br}, {@code hr_oib}, {@code hu_tin}, {@code ic_nif}, {@code id_npwp},
+         * {@code il_vat}, {@code in_gst}, {@code is_vat}, {@code it_cf}, {@code jp_cn}, {@code
+         * jp_rn}, {@code jp_trn}, {@code ke_pin}, {@code kg_tin}, {@code kh_tin}, {@code kr_brn},
+         * {@code kz_bin}, {@code la_tin}, {@code li_uid}, {@code li_vat}, {@code lk_vat}, {@code
+         * ma_vat}, {@code md_vat}, {@code me_pib}, {@code mk_vat}, {@code mr_nif}, {@code mx_rfc},
+         * {@code my_frp}, {@code my_itn}, {@code my_sst}, {@code ng_tin}, {@code no_vat}, {@code
+         * no_voec}, {@code np_pan}, {@code nz_gst}, {@code om_vat}, {@code pe_ruc}, {@code ph_tin},
+         * {@code pl_nip}, {@code py_ruc}, {@code ro_tin}, {@code rs_pib}, {@code ru_inn}, {@code
+         * ru_kpp}, {@code sa_vat}, {@code sg_gst}, {@code sg_uen}, {@code si_tin}, {@code
+         * sn_ninea}, {@code sr_fin}, {@code sv_nit}, {@code th_vat}, {@code tj_tin}, {@code
+         * tr_tin}, {@code tw_vat}, {@code tz_vat}, {@code ua_vat}, {@code ug_tin}, {@code us_ein},
+         * {@code uy_ruc}, {@code uz_tin}, {@code uz_vat}, {@code ve_rif}, {@code vn_tin}, {@code
+         * za_vat}, {@code zm_tin}, or {@code zw_tin}
          */
         public Builder setType(CalculationCreateParams.CustomerDetails.TaxId.Type type) {
           this.type = type;
@@ -882,11 +892,17 @@ public class CalculationCreateParams extends ApiRequestParams {
         @SerializedName("eu_vat")
         EU_VAT("eu_vat"),
 
+        @SerializedName("fo_vat")
+        FO_VAT("fo_vat"),
+
         @SerializedName("gb_vat")
         GB_VAT("gb_vat"),
 
         @SerializedName("ge_vat")
         GE_VAT("ge_vat"),
+
+        @SerializedName("gi_tin")
+        GI_TIN("gi_tin"),
 
         @SerializedName("gn_nif")
         GN_NIF("gn_nif"),
@@ -900,6 +916,9 @@ public class CalculationCreateParams extends ApiRequestParams {
         @SerializedName("hu_tin")
         HU_TIN("hu_tin"),
 
+        @SerializedName("ic_nif")
+        IC_NIF("ic_nif"),
+
         @SerializedName("id_npwp")
         ID_NPWP("id_npwp"),
 
@@ -911,6 +930,9 @@ public class CalculationCreateParams extends ApiRequestParams {
 
         @SerializedName("is_vat")
         IS_VAT("is_vat"),
+
+        @SerializedName("it_cf")
+        IT_CF("it_cf"),
 
         @SerializedName("jp_cn")
         JP_CN("jp_cn"),
@@ -944,6 +966,9 @@ public class CalculationCreateParams extends ApiRequestParams {
 
         @SerializedName("li_vat")
         LI_VAT("li_vat"),
+
+        @SerializedName("lk_vat")
+        LK_VAT("lk_vat"),
 
         @SerializedName("ma_vat")
         MA_VAT("ma_vat"),
@@ -995,6 +1020,12 @@ public class CalculationCreateParams extends ApiRequestParams {
 
         @SerializedName("ph_tin")
         PH_TIN("ph_tin"),
+
+        @SerializedName("pl_nip")
+        PL_NIP("pl_nip"),
+
+        @SerializedName("py_ruc")
+        PY_RUC("py_ruc"),
 
         @SerializedName("ro_tin")
         RO_TIN("ro_tin"),
@@ -1125,7 +1156,7 @@ public class CalculationCreateParams extends ApiRequestParams {
   public static class LineItem {
     /**
      * <strong>Required.</strong> A positive integer representing the line item's total price in the
-     * <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>. If
+     * <a href="https://docs.stripe.com/currencies#minor-units">smallest currency unit</a>. If
      * {@code tax_behavior=inclusive}, then this amount includes taxes. Otherwise, taxes are
      * calculated on top of this amount.
      */
@@ -1142,7 +1173,7 @@ public class CalculationCreateParams extends ApiRequestParams {
     Map<String, Object> extraParams;
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format.
      */
@@ -1166,7 +1197,7 @@ public class CalculationCreateParams extends ApiRequestParams {
     /**
      * A custom identifier for this line item, which must be unique across the line items in the
      * calculation. The reference helps identify each line item in exported <a
-     * href="https://stripe.com/docs/tax/reports">tax reports</a>.
+     * href="https://docs.stripe.com/tax/reports">tax reports</a>.
      */
     @SerializedName("reference")
     String reference;
@@ -1176,7 +1207,7 @@ public class CalculationCreateParams extends ApiRequestParams {
     TaxBehavior taxBehavior;
 
     /**
-     * A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID to use for this line
+     * A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID to use for this line
      * item. If not provided, we will use the tax code from the provided {@code product} param. If
      * neither {@code tax_code} nor {@code product} is provided, we will use the default tax code
      * from your Tax Settings.
@@ -1239,8 +1270,8 @@ public class CalculationCreateParams extends ApiRequestParams {
 
       /**
        * <strong>Required.</strong> A positive integer representing the line item's total price in
-       * the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
-       * If {@code tax_behavior=inclusive}, then this amount includes taxes. Otherwise, taxes are
+       * the <a href="https://docs.stripe.com/currencies#minor-units">smallest currency unit</a>. If
+       * {@code tax_behavior=inclusive}, then this amount includes taxes. Otherwise, taxes are
        * calculated on top of this amount.
        */
       public Builder setAmount(Long amount) {
@@ -1322,7 +1353,7 @@ public class CalculationCreateParams extends ApiRequestParams {
       /**
        * A custom identifier for this line item, which must be unique across the line items in the
        * calculation. The reference helps identify each line item in exported <a
-       * href="https://stripe.com/docs/tax/reports">tax reports</a>.
+       * href="https://docs.stripe.com/tax/reports">tax reports</a>.
        */
       public Builder setReference(String reference) {
         this.reference = reference;
@@ -1336,7 +1367,7 @@ public class CalculationCreateParams extends ApiRequestParams {
       }
 
       /**
-       * A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID to use for this line
+       * A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID to use for this line
        * item. If not provided, we will use the tax code from the provided {@code product} param. If
        * neither {@code tax_code} nor {@code product} is provided, we will use the default tax code
        * from your Tax Settings.
@@ -1455,11 +1486,11 @@ public class CalculationCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       Object line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       Object line2;
 
@@ -1469,7 +1500,7 @@ public class CalculationCreateParams extends ApiRequestParams {
 
       /**
        * State/province as an <a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>
-       * subdivision code, without country prefix. Example: &quot;NY&quot; or &quot;TX&quot;.
+       * subdivision code, without country prefix, such as &quot;NY&quot; or &quot;TX&quot;.
        */
       @SerializedName("state")
       Object state;
@@ -1571,25 +1602,25 @@ public class CalculationCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(EmptyParam line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(EmptyParam line2) {
           this.line2 = line2;
           return this;
@@ -1609,7 +1640,7 @@ public class CalculationCreateParams extends ApiRequestParams {
 
         /**
          * State/province as an <a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>
-         * subdivision code, without country prefix. Example: &quot;NY&quot; or &quot;TX&quot;.
+         * subdivision code, without country prefix, such as &quot;NY&quot; or &quot;TX&quot;.
          */
         public Builder setState(String state) {
           this.state = state;
@@ -1618,7 +1649,7 @@ public class CalculationCreateParams extends ApiRequestParams {
 
         /**
          * State/province as an <a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>
-         * subdivision code, without country prefix. Example: &quot;NY&quot; or &quot;TX&quot;.
+         * subdivision code, without country prefix, such as &quot;NY&quot; or &quot;TX&quot;.
          */
         public Builder setState(EmptyParam state) {
           this.state = state;
@@ -1632,7 +1663,7 @@ public class CalculationCreateParams extends ApiRequestParams {
   @EqualsAndHashCode(callSuper = false)
   public static class ShippingCost {
     /**
-     * A positive integer in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest
+     * A positive integer in the <a href="https://docs.stripe.com/currencies#minor-units">smallest
      * currency unit</a> representing the shipping charge. If {@code tax_behavior=inclusive}, then
      * this amount includes taxes. Otherwise, taxes are calculated on top of this amount.
      */
@@ -1649,7 +1680,7 @@ public class CalculationCreateParams extends ApiRequestParams {
     Map<String, Object> extraParams;
 
     /**
-     * If provided, the <a href="https://stripe.com/docs/api/shipping_rates/object">shipping
+     * If provided, the <a href="https://docs.stripe.com/api/shipping_rates/object">shipping
      * rate</a>'s {@code amount}, {@code tax_code} and {@code tax_behavior} are used. If you provide
      * a shipping rate, then you cannot pass the {@code amount}, {@code tax_code}, or {@code
      * tax_behavior} parameters.
@@ -1665,7 +1696,7 @@ public class CalculationCreateParams extends ApiRequestParams {
     TaxBehavior taxBehavior;
 
     /**
-     * The <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> used to calculate tax
+     * The <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> used to calculate tax
      * on shipping. If not provided, the default shipping tax code from your <a
      * href="https://dashboard.stripe.com/settings/tax">Tax Settings</a> is used.
      */
@@ -1707,10 +1738,9 @@ public class CalculationCreateParams extends ApiRequestParams {
       }
 
       /**
-       * A positive integer in the <a
-       * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>
-       * representing the shipping charge. If {@code tax_behavior=inclusive}, then this amount
-       * includes taxes. Otherwise, taxes are calculated on top of this amount.
+       * A positive integer in the <a href="https://docs.stripe.com/currencies#minor-units">smallest
+       * currency unit</a> representing the shipping charge. If {@code tax_behavior=inclusive}, then
+       * this amount includes taxes. Otherwise, taxes are calculated on top of this amount.
        */
       public Builder setAmount(Long amount) {
         this.amount = amount;
@@ -1744,7 +1774,7 @@ public class CalculationCreateParams extends ApiRequestParams {
       }
 
       /**
-       * If provided, the <a href="https://stripe.com/docs/api/shipping_rates/object">shipping
+       * If provided, the <a href="https://docs.stripe.com/api/shipping_rates/object">shipping
        * rate</a>'s {@code amount}, {@code tax_code} and {@code tax_behavior} are used. If you
        * provide a shipping rate, then you cannot pass the {@code amount}, {@code tax_code}, or
        * {@code tax_behavior} parameters.
@@ -1764,7 +1794,7 @@ public class CalculationCreateParams extends ApiRequestParams {
       }
 
       /**
-       * The <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> used to calculate tax
+       * The <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> used to calculate tax
        * on shipping. If not provided, the default shipping tax code from your <a
        * href="https://dashboard.stripe.com/settings/tax">Tax Settings</a> is used.
        */

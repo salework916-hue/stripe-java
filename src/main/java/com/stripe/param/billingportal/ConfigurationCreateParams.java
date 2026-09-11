@@ -21,7 +21,7 @@ public class ConfigurationCreateParams extends ApiRequestParams {
   /**
    * The default URL to redirect customers to when they click on the portal's link to return to your
    * website. This can be <a
-   * href="https://stripe.com/docs/api/customer_portal/sessions/create#create_portal_session-return_url">overriden</a>
+   * href="https://docs.stripe.com/api/customer_portal/sessions/create#create_portal_session-return_url">overridden</a>
    * when creating the session.
    */
   @SerializedName("default_return_url")
@@ -53,7 +53,7 @@ public class ConfigurationCreateParams extends ApiRequestParams {
   LoginPage loginPage;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -127,7 +127,7 @@ public class ConfigurationCreateParams extends ApiRequestParams {
     /**
      * The default URL to redirect customers to when they click on the portal's link to return to
      * your website. This can be <a
-     * href="https://stripe.com/docs/api/customer_portal/sessions/create#create_portal_session-return_url">overriden</a>
+     * href="https://docs.stripe.com/api/customer_portal/sessions/create#create_portal_session-return_url">overridden</a>
      * when creating the session.
      */
     public Builder setDefaultReturnUrl(String defaultReturnUrl) {
@@ -138,7 +138,7 @@ public class ConfigurationCreateParams extends ApiRequestParams {
     /**
      * The default URL to redirect customers to when they click on the portal's link to return to
      * your website. This can be <a
-     * href="https://stripe.com/docs/api/customer_portal/sessions/create#create_portal_session-return_url">overriden</a>
+     * href="https://docs.stripe.com/api/customer_portal/sessions/create#create_portal_session-return_url">overridden</a>
      * when creating the session.
      */
     public Builder setDefaultReturnUrl(EmptyParam defaultReturnUrl) {
@@ -752,9 +752,21 @@ public class ConfigurationCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      private PaymentMethodUpdate(Boolean enabled, Map<String, Object> extraParams) {
+      /**
+       * The <a href="https://stripe.com/api/payment_method_configurations">Payment Method
+       * Configuration</a> to use for this portal session. When specified, customers will be able to
+       * update their payment method to one of the options specified by the payment method
+       * configuration. If not set or set to an empty string, the default payment method
+       * configuration is used.
+       */
+      @SerializedName("payment_method_configuration")
+      Object paymentMethodConfiguration;
+
+      private PaymentMethodUpdate(
+          Boolean enabled, Map<String, Object> extraParams, Object paymentMethodConfiguration) {
         this.enabled = enabled;
         this.extraParams = extraParams;
+        this.paymentMethodConfiguration = paymentMethodConfiguration;
       }
 
       public static Builder builder() {
@@ -766,10 +778,12 @@ public class ConfigurationCreateParams extends ApiRequestParams {
 
         private Map<String, Object> extraParams;
 
+        private Object paymentMethodConfiguration;
+
         /** Finalize and obtain parameter instance from this builder. */
         public ConfigurationCreateParams.Features.PaymentMethodUpdate build() {
           return new ConfigurationCreateParams.Features.PaymentMethodUpdate(
-              this.enabled, this.extraParams);
+              this.enabled, this.extraParams, this.paymentMethodConfiguration);
         }
 
         /** <strong>Required.</strong> Whether the feature is enabled. */
@@ -803,6 +817,30 @@ public class ConfigurationCreateParams extends ApiRequestParams {
             this.extraParams = new HashMap<>();
           }
           this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * The <a href="https://stripe.com/api/payment_method_configurations">Payment Method
+         * Configuration</a> to use for this portal session. When specified, customers will be able
+         * to update their payment method to one of the options specified by the payment method
+         * configuration. If not set or set to an empty string, the default payment method
+         * configuration is used.
+         */
+        public Builder setPaymentMethodConfiguration(String paymentMethodConfiguration) {
+          this.paymentMethodConfiguration = paymentMethodConfiguration;
+          return this;
+        }
+
+        /**
+         * The <a href="https://stripe.com/api/payment_method_configurations">Payment Method
+         * Configuration</a> to use for this portal session. When specified, customers will be able
+         * to update their payment method to one of the options specified by the payment method
+         * configuration. If not set or set to an empty string, the default payment method
+         * configuration is used.
+         */
+        public Builder setPaymentMethodConfiguration(EmptyParam paymentMethodConfiguration) {
+          this.paymentMethodConfiguration = paymentMethodConfiguration;
           return this;
         }
       }
@@ -964,6 +1002,10 @@ public class ConfigurationCreateParams extends ApiRequestParams {
         @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
         Map<String, Object> extraParams;
 
+        /** The IDs of custom feedback options to use for this cancellation reason. */
+        @SerializedName("feedback_options")
+        Object feedbackOptions;
+
         /**
          * <strong>Required.</strong> Which cancellation reasons will be given as options to the
          * customer.
@@ -972,9 +1014,13 @@ public class ConfigurationCreateParams extends ApiRequestParams {
         Object options;
 
         private CancellationReason(
-            Boolean enabled, Map<String, Object> extraParams, Object options) {
+            Boolean enabled,
+            Map<String, Object> extraParams,
+            Object feedbackOptions,
+            Object options) {
           this.enabled = enabled;
           this.extraParams = extraParams;
+          this.feedbackOptions = feedbackOptions;
           this.options = options;
         }
 
@@ -987,12 +1033,14 @@ public class ConfigurationCreateParams extends ApiRequestParams {
 
           private Map<String, Object> extraParams;
 
+          private Object feedbackOptions;
+
           private Object options;
 
           /** Finalize and obtain parameter instance from this builder. */
           public ConfigurationCreateParams.Features.SubscriptionCancel.CancellationReason build() {
             return new ConfigurationCreateParams.Features.SubscriptionCancel.CancellationReason(
-                this.enabled, this.extraParams, this.options);
+                this.enabled, this.extraParams, this.feedbackOptions, this.options);
           }
 
           /** <strong>Required.</strong> Whether the feature is enabled. */
@@ -1028,6 +1076,50 @@ public class ConfigurationCreateParams extends ApiRequestParams {
               this.extraParams = new HashMap<>();
             }
             this.extraParams.putAll(map);
+            return this;
+          }
+
+          /**
+           * Add an element to `feedbackOptions` list. A list is initialized for the first
+           * `add/addAll` call, and subsequent calls adds additional elements to the original list.
+           * See {@link
+           * ConfigurationCreateParams.Features.SubscriptionCancel.CancellationReason#feedbackOptions}
+           * for the field documentation.
+           */
+          @SuppressWarnings("unchecked")
+          public Builder addFeedbackOption(String element) {
+            if (this.feedbackOptions == null || this.feedbackOptions instanceof EmptyParam) {
+              this.feedbackOptions = new ArrayList<String>();
+            }
+            ((List<String>) this.feedbackOptions).add(element);
+            return this;
+          }
+
+          /**
+           * Add all elements to `feedbackOptions` list. A list is initialized for the first
+           * `add/addAll` call, and subsequent calls adds additional elements to the original list.
+           * See {@link
+           * ConfigurationCreateParams.Features.SubscriptionCancel.CancellationReason#feedbackOptions}
+           * for the field documentation.
+           */
+          @SuppressWarnings("unchecked")
+          public Builder addAllFeedbackOption(List<String> elements) {
+            if (this.feedbackOptions == null || this.feedbackOptions instanceof EmptyParam) {
+              this.feedbackOptions = new ArrayList<String>();
+            }
+            ((List<String>) this.feedbackOptions).addAll(elements);
+            return this;
+          }
+
+          /** The IDs of custom feedback options to use for this cancellation reason. */
+          public Builder setFeedbackOptions(EmptyParam feedbackOptions) {
+            this.feedbackOptions = feedbackOptions;
+            return this;
+          }
+
+          /** The IDs of custom feedback options to use for this cancellation reason. */
+          public Builder setFeedbackOptions(List<String> feedbackOptions) {
+            this.feedbackOptions = feedbackOptions;
             return this;
           }
 
@@ -1168,6 +1260,16 @@ public class ConfigurationCreateParams extends ApiRequestParams {
     @EqualsAndHashCode(callSuper = false)
     public static class SubscriptionUpdate {
       /**
+       * Determines the value to use for the billing cycle anchor on subscription updates. Valid
+       * values are {@code now} or {@code unchanged}, and the default value is {@code unchanged}.
+       * Setting the value to {@code now} resets the subscription's billing cycle anchor to the
+       * current time (in UTC). For more information, see the billing cycle <a
+       * href="https://docs.stripe.com/billing/subscriptions/billing-cycle">documentation</a>.
+       */
+      @SerializedName("billing_cycle_anchor")
+      BillingCycleAnchor billingCycleAnchor;
+
+      /**
        * The types of subscription updates that are supported. When empty, subscriptions are not
        * updateable.
        */
@@ -1205,19 +1307,27 @@ public class ConfigurationCreateParams extends ApiRequestParams {
       @SerializedName("schedule_at_period_end")
       ScheduleAtPeriodEnd scheduleAtPeriodEnd;
 
+      /** The behavior when updating a subscription that is trialing. */
+      @SerializedName("trial_update_behavior")
+      TrialUpdateBehavior trialUpdateBehavior;
+
       private SubscriptionUpdate(
+          BillingCycleAnchor billingCycleAnchor,
           Object defaultAllowedUpdates,
           Boolean enabled,
           Map<String, Object> extraParams,
           Object products,
           ProrationBehavior prorationBehavior,
-          ScheduleAtPeriodEnd scheduleAtPeriodEnd) {
+          ScheduleAtPeriodEnd scheduleAtPeriodEnd,
+          TrialUpdateBehavior trialUpdateBehavior) {
+        this.billingCycleAnchor = billingCycleAnchor;
         this.defaultAllowedUpdates = defaultAllowedUpdates;
         this.enabled = enabled;
         this.extraParams = extraParams;
         this.products = products;
         this.prorationBehavior = prorationBehavior;
         this.scheduleAtPeriodEnd = scheduleAtPeriodEnd;
+        this.trialUpdateBehavior = trialUpdateBehavior;
       }
 
       public static Builder builder() {
@@ -1225,6 +1335,8 @@ public class ConfigurationCreateParams extends ApiRequestParams {
       }
 
       public static class Builder {
+        private BillingCycleAnchor billingCycleAnchor;
+
         private Object defaultAllowedUpdates;
 
         private Boolean enabled;
@@ -1237,15 +1349,33 @@ public class ConfigurationCreateParams extends ApiRequestParams {
 
         private ScheduleAtPeriodEnd scheduleAtPeriodEnd;
 
+        private TrialUpdateBehavior trialUpdateBehavior;
+
         /** Finalize and obtain parameter instance from this builder. */
         public ConfigurationCreateParams.Features.SubscriptionUpdate build() {
           return new ConfigurationCreateParams.Features.SubscriptionUpdate(
+              this.billingCycleAnchor,
               this.defaultAllowedUpdates,
               this.enabled,
               this.extraParams,
               this.products,
               this.prorationBehavior,
-              this.scheduleAtPeriodEnd);
+              this.scheduleAtPeriodEnd,
+              this.trialUpdateBehavior);
+        }
+
+        /**
+         * Determines the value to use for the billing cycle anchor on subscription updates. Valid
+         * values are {@code now} or {@code unchanged}, and the default value is {@code unchanged}.
+         * Setting the value to {@code now} resets the subscription's billing cycle anchor to the
+         * current time (in UTC). For more information, see the billing cycle <a
+         * href="https://docs.stripe.com/billing/subscriptions/billing-cycle">documentation</a>.
+         */
+        public Builder setBillingCycleAnchor(
+            ConfigurationCreateParams.Features.SubscriptionUpdate.BillingCycleAnchor
+                billingCycleAnchor) {
+          this.billingCycleAnchor = billingCycleAnchor;
+          return this;
         }
 
         /**
@@ -1413,6 +1543,14 @@ public class ConfigurationCreateParams extends ApiRequestParams {
             ConfigurationCreateParams.Features.SubscriptionUpdate.ScheduleAtPeriodEnd
                 scheduleAtPeriodEnd) {
           this.scheduleAtPeriodEnd = scheduleAtPeriodEnd;
+          return this;
+        }
+
+        /** The behavior when updating a subscription that is trialing. */
+        public Builder setTrialUpdateBehavior(
+            ConfigurationCreateParams.Features.SubscriptionUpdate.TrialUpdateBehavior
+                trialUpdateBehavior) {
+          this.trialUpdateBehavior = trialUpdateBehavior;
           return this;
         }
       }
@@ -1868,6 +2006,21 @@ public class ConfigurationCreateParams extends ApiRequestParams {
         }
       }
 
+      public enum BillingCycleAnchor implements ApiRequestParams.EnumParam {
+        @SerializedName("now")
+        NOW("now"),
+
+        @SerializedName("unchanged")
+        UNCHANGED("unchanged");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        BillingCycleAnchor(String value) {
+          this.value = value;
+        }
+      }
+
       public enum DefaultAllowedUpdate implements ApiRequestParams.EnumParam {
         @SerializedName("price")
         PRICE("price"),
@@ -1903,6 +2056,21 @@ public class ConfigurationCreateParams extends ApiRequestParams {
           this.value = value;
         }
       }
+
+      public enum TrialUpdateBehavior implements ApiRequestParams.EnumParam {
+        @SerializedName("continue_trial")
+        CONTINUE_TRIAL("continue_trial"),
+
+        @SerializedName("end_trial")
+        END_TRIAL("end_trial");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        TrialUpdateBehavior(String value) {
+          this.value = value;
+        }
+      }
     }
   }
 
@@ -1911,7 +2079,7 @@ public class ConfigurationCreateParams extends ApiRequestParams {
   public static class LoginPage {
     /**
      * <strong>Required.</strong> Set to {@code true} to generate a shareable URL <a
-     * href="https://stripe.com/docs/api/customer_portal/configuration#portal_configuration_object-login_page-url">{@code
+     * href="https://docs.stripe.com/api/customer_portal/configuration#portal_configuration_object-login_page-url">{@code
      * login_page.url}</a> that will take your customers to a hosted login page for the customer
      * portal.
      */
@@ -1948,7 +2116,7 @@ public class ConfigurationCreateParams extends ApiRequestParams {
 
       /**
        * <strong>Required.</strong> Set to {@code true} to generate a shareable URL <a
-       * href="https://stripe.com/docs/api/customer_portal/configuration#portal_configuration_object-login_page-url">{@code
+       * href="https://docs.stripe.com/api/customer_portal/configuration#portal_configuration_object-login_page-url">{@code
        * login_page.url}</a> that will take your customers to a hosted login page for the customer
        * portal.
        */

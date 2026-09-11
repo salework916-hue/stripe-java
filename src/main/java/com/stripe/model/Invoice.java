@@ -37,12 +37,12 @@ import lombok.Setter;
  * Invoices are statements of amounts owed by a customer, and are either generated one-off, or
  * generated periodically from a subscription.
  *
- * <p>They contain <a href="https://stripe.com/docs/api#invoiceitems">invoice items</a>, and
- * proration adjustments that may be caused by subscription upgrades/downgrades (if necessary).
+ * <p>They contain <a href="https://api.stripe.com#invoiceitems">invoice items</a>, and proration
+ * adjustments that may be caused by subscription upgrades/downgrades (if necessary).
  *
  * <p>If your invoice is configured to be billed through automatic charges, Stripe automatically
  * finalizes your invoice and attempts payment. Note that finalizing the invoice, <a
- * href="https://stripe.com/docs/invoicing/integration/automatic-advancement-collection">when
+ * href="https://docs.stripe.com/invoicing/integration/automatic-advancement-collection">when
  * automatic</a>, does not happen immediately as the invoice is created. Stripe waits until one hour
  * after the last webhook was successfully sent (or the last webhook timed out after failing). If
  * you (and the platforms you may have connected to) have no webhooks configured, Stripe waits one
@@ -61,9 +61,9 @@ import lombok.Setter;
  * the customer's credit balance which is applied to the next invoice.
  *
  * <p>More details on the customer's credit balance are <a
- * href="https://stripe.com/docs/billing/customer/balance">here</a>.
+ * href="https://docs.stripe.com/billing/customer/balance">here</a>.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/billing/invoices/sending">Send invoices to
+ * <p>Related guide: <a href="https://docs.stripe.com/billing/invoices/sending">Send invoices to
  * customers</a>
  */
 @Getter
@@ -110,6 +110,10 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   @SerializedName("amount_paid")
   Long amountPaid;
 
+  /** Amount, in cents (or local equivalent), that was paid on the invoice outside of Stripe. */
+  @SerializedName("amount_paid_off_stripe")
+  Long amountPaidOffStripe;
+
   /** The difference between amount_due and amount_paid, in cents (or local equivalent). */
   @SerializedName("amount_remaining")
   Long amountRemaining;
@@ -146,7 +150,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Controls whether Stripe performs <a
-   * href="https://stripe.com/docs/invoicing/integration/automatic-advancement-collection">automatic
+   * href="https://docs.stripe.com/invoicing/integration/automatic-advancement-collection">automatic
    * collection</a> of the invoice. If {@code false}, the invoice's state doesn't automatically
    * advance without an explicit action.
    */
@@ -174,7 +178,8 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
    * A new subscription was created. * {@code subscription_cycle}: A subscription advanced into a
    * new period. * {@code subscription_threshold}: A subscription reached a billing threshold. *
    * {@code subscription_update}: A subscription was updated. * {@code upcoming}: Reserved for
-   * simulated invoices, per the upcoming invoice endpoint.
+   * upcoming invoices created through the Create Preview Invoice API or when an {@code
+   * invoice.upcoming} event is generated for an upcoming invoice on a subscription.
    *
    * <p>One of {@code automatic_pending_invoice_item_invoice}, {@code manual}, {@code quote_accept},
    * {@code subscription}, {@code subscription_create}, {@code subscription_cycle}, {@code
@@ -215,11 +220,15 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   @SerializedName("custom_fields")
   List<Invoice.CustomField> customFields;
 
-  /** The ID of the customer who will be billed. */
+  /** The ID of the customer to bill. */
   @SerializedName("customer")
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Customer> customer;
+
+  /** The ID of the account representing the customer to bill. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * The customer's address. Until the invoice is finalized, this field will equal {@code
@@ -344,7 +353,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Details of the invoice that was cloned. See the <a
-   * href="https://stripe.com/docs/invoicing/invoice-revisions">revision documentation</a> for more
+   * href="https://docs.stripe.com/invoicing/invoice-revisions">revision documentation</a> for more
    * details.
    */
   @SerializedName("from_invoice")
@@ -399,14 +408,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   InvoiceLineItemCollection lines;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -439,7 +448,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   /**
    * The account (if any) for which the funds of the invoice payment are intended. If set, the
    * invoice will be presented with the branding and support information of the specified account.
-   * See the <a href="https://stripe.com/docs/billing/invoices/connect">Invoices with Connect</a>
+   * See the <a href="https://docs.stripe.com/billing/invoices/connect">Invoices with Connect</a>
    * documentation for details.
    */
   @SerializedName("on_behalf_of")
@@ -454,13 +463,15 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   @SerializedName("payment_settings")
   PaymentSettings paymentSettings;
 
-  /** Payments for this invoice. */
+  /**
+   * Payments for this invoice. Use <a href="https://stripe.com/api/invoice-payment">invoice
+   * payment</a> to get more details.
+   */
   @SerializedName("payments")
   InvoicePaymentCollection payments;
 
   /**
-   * End of the usage period during which invoice items were added to this invoice. This looks back
-   * one period for a subscription invoice. Use the <a
+   * The latest timestamp at which invoice items can be associated with this invoice. Use the <a
    * href="https://stripe.com/api/invoices/line_item#invoice_line_item_object-period">line item
    * period</a> to get the service period for each price.
    */
@@ -468,8 +479,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   Long periodEnd;
 
   /**
-   * Start of the usage period during which invoice items were added to this invoice. This looks
-   * back one period for a subscription invoice. Use the <a
+   * The earliest timestamp at which invoice items can be associated with this invoice. Use the <a
    * href="https://stripe.com/api/invoices/line_item#invoice_line_item_object-period">line item
    * period</a> to get the service period for each price.
    */
@@ -521,7 +531,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   /**
    * The status of the invoice, one of {@code draft}, {@code open}, {@code paid}, {@code
    * uncollectible}, or {@code void}. <a
-   * href="https://stripe.com/docs/billing/invoices/workflow#workflow-overview">Learn more</a>
+   * href="https://docs.stripe.com/billing/invoices/workflow#workflow-overview">Learn more</a>
    */
   @SerializedName("status")
   String status;
@@ -581,7 +591,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
   /**
    * Invoices are automatically paid or sent 1 hour after webhooks are delivered, or until all
    * webhook delivery attempts have <a
-   * href="https://stripe.com/docs/billing/webhooks#understand">been exhausted</a>. This field
+   * href="https://docs.stripe.com/billing/webhooks#understand">been exhausted</a>. This field
    * tracks the time when webhooks for this invoice were successfully delivered. If the invoice had
    * no webhooks to deliver, this will be set while the invoice is being created.
    */
@@ -969,9 +979,9 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * This endpoint creates a draft invoice for a given customer. The invoice remains a draft until
-   * you <a href="https://stripe.com/docs/api#finalize_invoice">finalize</a> the invoice, which
-   * allows you to <a href="https://stripe.com/docs/api#pay_invoice">pay</a> or <a
-   * href="https://stripe.com/docs/api#send_invoice">send</a> the invoice to your customers.
+   * you <a href="https://stripe.com/api/invoices/finalize">finalize</a> the invoice, which allows
+   * you to <a href="https://stripe.com/api/invoices/pay">pay</a> or <a
+   * href="https://stripe.com/api/invoices/send">send</a> the invoice to your customers.
    */
   public static Invoice create(Map<String, Object> params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -979,9 +989,9 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * This endpoint creates a draft invoice for a given customer. The invoice remains a draft until
-   * you <a href="https://stripe.com/docs/api#finalize_invoice">finalize</a> the invoice, which
-   * allows you to <a href="https://stripe.com/docs/api#pay_invoice">pay</a> or <a
-   * href="https://stripe.com/docs/api#send_invoice">send</a> the invoice to your customers.
+   * you <a href="https://stripe.com/api/invoices/finalize">finalize</a> the invoice, which allows
+   * you to <a href="https://stripe.com/api/invoices/pay">pay</a> or <a
+   * href="https://stripe.com/api/invoices/send">send</a> the invoice to your customers.
    */
   public static Invoice create(Map<String, Object> params, RequestOptions options)
       throws StripeException {
@@ -993,9 +1003,9 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * This endpoint creates a draft invoice for a given customer. The invoice remains a draft until
-   * you <a href="https://stripe.com/docs/api#finalize_invoice">finalize</a> the invoice, which
-   * allows you to <a href="https://stripe.com/docs/api#pay_invoice">pay</a> or <a
-   * href="https://stripe.com/docs/api#send_invoice">send</a> the invoice to your customers.
+   * you <a href="https://stripe.com/api/invoices/finalize">finalize</a> the invoice, which allows
+   * you to <a href="https://stripe.com/api/invoices/pay">pay</a> or <a
+   * href="https://stripe.com/api/invoices/send">send</a> the invoice to your customers.
    */
   public static Invoice create(InvoiceCreateParams params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -1003,9 +1013,9 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * This endpoint creates a draft invoice for a given customer. The invoice remains a draft until
-   * you <a href="https://stripe.com/docs/api#finalize_invoice">finalize</a> the invoice, which
-   * allows you to <a href="https://stripe.com/docs/api#pay_invoice">pay</a> or <a
-   * href="https://stripe.com/docs/api#send_invoice">send</a> the invoice to your customers.
+   * you <a href="https://stripe.com/api/invoices/finalize">finalize</a> the invoice, which allows
+   * you to <a href="https://stripe.com/api/invoices/pay">pay</a> or <a
+   * href="https://stripe.com/api/invoices/send">send</a> the invoice to your customers.
    */
   public static Invoice create(InvoiceCreateParams params, RequestOptions options)
       throws StripeException {
@@ -1207,7 +1217,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
    * Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices
    * that are no longer in a draft state will fail; once an invoice has been finalized or if an
    * invoice is for a subscription, it must be <a
-   * href="https://stripe.com/docs/api#void_invoice">voided</a>.
+   * href="https://stripe.com/api/invoices/void">voided</a>.
    */
   public Invoice delete() throws StripeException {
     return delete((Map<String, Object>) null, (RequestOptions) null);
@@ -1217,7 +1227,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
    * Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices
    * that are no longer in a draft state will fail; once an invoice has been finalized or if an
    * invoice is for a subscription, it must be <a
-   * href="https://stripe.com/docs/api#void_invoice">voided</a>.
+   * href="https://stripe.com/api/invoices/void">voided</a>.
    */
   public Invoice delete(RequestOptions options) throws StripeException {
     return delete((Map<String, Object>) null, options);
@@ -1227,7 +1237,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
    * Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices
    * that are no longer in a draft state will fail; once an invoice has been finalized or if an
    * invoice is for a subscription, it must be <a
-   * href="https://stripe.com/docs/api#void_invoice">voided</a>.
+   * href="https://stripe.com/api/invoices/void">voided</a>.
    */
   public Invoice delete(Map<String, Object> params) throws StripeException {
     return delete(params, (RequestOptions) null);
@@ -1237,7 +1247,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
    * Permanently deletes a one-off invoice draft. This cannot be undone. Attempts to delete invoices
    * that are no longer in a draft state will fail; once an invoice has been finalized or if an
    * invoice is for a subscription, it must be <a
-   * href="https://stripe.com/docs/api#void_invoice">voided</a>.
+   * href="https://stripe.com/api/invoices/void">voided</a>.
    */
   public Invoice delete(Map<String, Object> params, RequestOptions options) throws StripeException {
     String path = String.format("/v1/invoices/%s", ApiResource.urlEncodeId(this.getId()));
@@ -1858,14 +1868,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a
-   * href="https://stripe.com/docs/api#delete_invoice">deletion</a>, however it only applies to
+   * href="https://stripe.com/api/invoices/delete">deletion</a>, however it only applies to
    * finalized invoices and maintains a papertrail where the invoice can still be found.
    *
    * <p>Consult with local regulations to determine whether and how an invoice might be amended,
    * canceled, or voided in the jurisdiction you’re doing business in. You might need to <a
-   * href="https://stripe.com/docs/api#create_invoice">issue another invoice</a> or <a
-   * href="https://stripe.com/docs/api#create_credit_note">credit note</a> instead. Stripe
-   * recommends that you consult with your legal counsel for advice specific to your business.
+   * href="https://stripe.com/api/invoices/create">issue another invoice</a> or <a
+   * href="https://stripe.com/api/credit_notes/create">credit note</a> instead. Stripe recommends
+   * that you consult with your legal counsel for advice specific to your business.
    */
   public Invoice voidInvoice() throws StripeException {
     return voidInvoice((Map<String, Object>) null, (RequestOptions) null);
@@ -1873,14 +1883,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a
-   * href="https://stripe.com/docs/api#delete_invoice">deletion</a>, however it only applies to
+   * href="https://stripe.com/api/invoices/delete">deletion</a>, however it only applies to
    * finalized invoices and maintains a papertrail where the invoice can still be found.
    *
    * <p>Consult with local regulations to determine whether and how an invoice might be amended,
    * canceled, or voided in the jurisdiction you’re doing business in. You might need to <a
-   * href="https://stripe.com/docs/api#create_invoice">issue another invoice</a> or <a
-   * href="https://stripe.com/docs/api#create_credit_note">credit note</a> instead. Stripe
-   * recommends that you consult with your legal counsel for advice specific to your business.
+   * href="https://stripe.com/api/invoices/create">issue another invoice</a> or <a
+   * href="https://stripe.com/api/credit_notes/create">credit note</a> instead. Stripe recommends
+   * that you consult with your legal counsel for advice specific to your business.
    */
   public Invoice voidInvoice(RequestOptions options) throws StripeException {
     return voidInvoice((Map<String, Object>) null, options);
@@ -1888,14 +1898,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a
-   * href="https://stripe.com/docs/api#delete_invoice">deletion</a>, however it only applies to
+   * href="https://stripe.com/api/invoices/delete">deletion</a>, however it only applies to
    * finalized invoices and maintains a papertrail where the invoice can still be found.
    *
    * <p>Consult with local regulations to determine whether and how an invoice might be amended,
    * canceled, or voided in the jurisdiction you’re doing business in. You might need to <a
-   * href="https://stripe.com/docs/api#create_invoice">issue another invoice</a> or <a
-   * href="https://stripe.com/docs/api#create_credit_note">credit note</a> instead. Stripe
-   * recommends that you consult with your legal counsel for advice specific to your business.
+   * href="https://stripe.com/api/invoices/create">issue another invoice</a> or <a
+   * href="https://stripe.com/api/credit_notes/create">credit note</a> instead. Stripe recommends
+   * that you consult with your legal counsel for advice specific to your business.
    */
   public Invoice voidInvoice(Map<String, Object> params) throws StripeException {
     return voidInvoice(params, (RequestOptions) null);
@@ -1903,14 +1913,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a
-   * href="https://stripe.com/docs/api#delete_invoice">deletion</a>, however it only applies to
+   * href="https://stripe.com/api/invoices/delete">deletion</a>, however it only applies to
    * finalized invoices and maintains a papertrail where the invoice can still be found.
    *
    * <p>Consult with local regulations to determine whether and how an invoice might be amended,
    * canceled, or voided in the jurisdiction you’re doing business in. You might need to <a
-   * href="https://stripe.com/docs/api#create_invoice">issue another invoice</a> or <a
-   * href="https://stripe.com/docs/api#create_credit_note">credit note</a> instead. Stripe
-   * recommends that you consult with your legal counsel for advice specific to your business.
+   * href="https://stripe.com/api/invoices/create">issue another invoice</a> or <a
+   * href="https://stripe.com/api/credit_notes/create">credit note</a> instead. Stripe recommends
+   * that you consult with your legal counsel for advice specific to your business.
    */
   public Invoice voidInvoice(Map<String, Object> params, RequestOptions options)
       throws StripeException {
@@ -1922,14 +1932,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a
-   * href="https://stripe.com/docs/api#delete_invoice">deletion</a>, however it only applies to
+   * href="https://stripe.com/api/invoices/delete">deletion</a>, however it only applies to
    * finalized invoices and maintains a papertrail where the invoice can still be found.
    *
    * <p>Consult with local regulations to determine whether and how an invoice might be amended,
    * canceled, or voided in the jurisdiction you’re doing business in. You might need to <a
-   * href="https://stripe.com/docs/api#create_invoice">issue another invoice</a> or <a
-   * href="https://stripe.com/docs/api#create_credit_note">credit note</a> instead. Stripe
-   * recommends that you consult with your legal counsel for advice specific to your business.
+   * href="https://stripe.com/api/invoices/create">issue another invoice</a> or <a
+   * href="https://stripe.com/api/credit_notes/create">credit note</a> instead. Stripe recommends
+   * that you consult with your legal counsel for advice specific to your business.
    */
   public Invoice voidInvoice(InvoiceVoidInvoiceParams params) throws StripeException {
     return voidInvoice(params, (RequestOptions) null);
@@ -1937,14 +1947,14 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
 
   /**
    * Mark a finalized invoice as void. This cannot be undone. Voiding an invoice is similar to <a
-   * href="https://stripe.com/docs/api#delete_invoice">deletion</a>, however it only applies to
+   * href="https://stripe.com/api/invoices/delete">deletion</a>, however it only applies to
    * finalized invoices and maintains a papertrail where the invoice can still be found.
    *
    * <p>Consult with local regulations to determine whether and how an invoice might be amended,
    * canceled, or voided in the jurisdiction you’re doing business in. You might need to <a
-   * href="https://stripe.com/docs/api#create_invoice">issue another invoice</a> or <a
-   * href="https://stripe.com/docs/api#create_credit_note">credit note</a> instead. Stripe
-   * recommends that you consult with your legal counsel for advice specific to your business.
+   * href="https://stripe.com/api/invoices/create">issue another invoice</a> or <a
+   * href="https://stripe.com/api/credit_notes/create">credit note</a> instead. Stripe recommends
+   * that you consult with your legal counsel for advice specific to your business.
    */
   public Invoice voidInvoice(InvoiceVoidInvoiceParams params, RequestOptions options)
       throws StripeException {
@@ -1980,7 +1990,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
     /**
      * Whether Stripe automatically computes tax on this invoice. Note that incompatible invoice
      * items (invoice items with manually specified <a
-     * href="https://stripe.com/docs/api/tax_rates">tax rates</a>, negative amounts, or {@code
+     * href="https://docs.stripe.com/api/tax_rates">tax rates</a>, negative amounts, or {@code
      * tax_behavior=unspecified}) cannot be added to automatic tax invoices.
      */
     @SerializedName("enabled")
@@ -2100,21 +2110,22 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
      * ro_tin}, {@code rs_pib}, {@code sv_nit}, {@code uy_ruc}, {@code ve_rif}, {@code vn_tin},
      * {@code gb_vat}, {@code nz_gst}, {@code au_abn}, {@code au_arn}, {@code in_gst}, {@code
      * no_vat}, {@code no_voec}, {@code za_vat}, {@code ch_vat}, {@code mx_rfc}, {@code sg_uen},
-     * {@code ru_inn}, {@code ru_kpp}, {@code ca_bn}, {@code hk_br}, {@code es_cif}, {@code tw_vat},
-     * {@code th_vat}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code li_uid}, {@code li_vat},
-     * {@code my_itn}, {@code us_ein}, {@code kr_brn}, {@code ca_qst}, {@code ca_gst_hst}, {@code
-     * ca_pst_bc}, {@code ca_pst_mb}, {@code ca_pst_sk}, {@code my_sst}, {@code sg_gst}, {@code
-     * ae_trn}, {@code cl_tin}, {@code sa_vat}, {@code id_npwp}, {@code my_frp}, {@code il_vat},
-     * {@code ge_vat}, {@code ua_vat}, {@code is_vat}, {@code bg_uic}, {@code hu_tin}, {@code
-     * si_tin}, {@code ke_pin}, {@code tr_tin}, {@code eg_tin}, {@code ph_tin}, {@code al_tin},
-     * {@code bh_vat}, {@code kz_bin}, {@code ng_tin}, {@code om_vat}, {@code de_stn}, {@code
-     * ch_uid}, {@code tz_vat}, {@code uz_vat}, {@code uz_tin}, {@code md_vat}, {@code ma_vat},
-     * {@code by_tin}, {@code ao_tin}, {@code bs_tin}, {@code bb_tin}, {@code cd_nif}, {@code
-     * mr_nif}, {@code me_pib}, {@code zw_tin}, {@code ba_tin}, {@code gn_nif}, {@code mk_vat},
-     * {@code sr_fin}, {@code sn_ninea}, {@code am_tin}, {@code np_pan}, {@code tj_tin}, {@code
-     * ug_tin}, {@code zm_tin}, {@code kh_tin}, {@code aw_tin}, {@code az_tin}, {@code bd_bin},
-     * {@code bj_ifu}, {@code et_tin}, {@code kg_tin}, {@code la_tin}, {@code cm_niu}, {@code
-     * cv_nif}, {@code bf_ifu}, or {@code unknown}.
+     * {@code ru_inn}, {@code ru_kpp}, {@code ca_bn}, {@code hk_br}, {@code es_cif}, {@code pl_nip},
+     * {@code it_cf}, {@code fo_vat}, {@code gi_tin}, {@code py_ruc}, {@code tw_vat}, {@code
+     * th_vat}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code li_uid}, {@code li_vat}, {@code
+     * lk_vat}, {@code my_itn}, {@code us_ein}, {@code kr_brn}, {@code ca_qst}, {@code ca_gst_hst},
+     * {@code ca_pst_bc}, {@code ca_pst_mb}, {@code ca_pst_sk}, {@code my_sst}, {@code sg_gst},
+     * {@code ae_trn}, {@code cl_tin}, {@code sa_vat}, {@code id_npwp}, {@code my_frp}, {@code
+     * il_vat}, {@code ge_vat}, {@code ua_vat}, {@code is_vat}, {@code bg_uic}, {@code hu_tin},
+     * {@code si_tin}, {@code ke_pin}, {@code tr_tin}, {@code eg_tin}, {@code ph_tin}, {@code
+     * al_tin}, {@code bh_vat}, {@code kz_bin}, {@code ng_tin}, {@code om_vat}, {@code de_stn},
+     * {@code ch_uid}, {@code tz_vat}, {@code uz_vat}, {@code uz_tin}, {@code md_vat}, {@code
+     * ma_vat}, {@code by_tin}, {@code ao_tin}, {@code bs_tin}, {@code bb_tin}, {@code cd_nif},
+     * {@code mr_nif}, {@code me_pib}, {@code zw_tin}, {@code ba_tin}, {@code gn_nif}, {@code
+     * mk_vat}, {@code sr_fin}, {@code sn_ninea}, {@code am_tin}, {@code np_pan}, {@code tj_tin},
+     * {@code ug_tin}, {@code zm_tin}, {@code kh_tin}, {@code aw_tin}, {@code az_tin}, {@code
+     * bd_bin}, {@code bj_ifu}, {@code et_tin}, {@code kg_tin}, {@code la_tin}, {@code cm_niu},
+     * {@code cv_nif}, {@code bf_ifu}, {@code ic_nif}, or {@code unknown}.
      */
     @SerializedName("type")
     String type;
@@ -2248,7 +2259,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
     @EqualsAndHashCode(callSuper = false)
     public static class SubscriptionDetails extends StripeObject {
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> defined as
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> defined as
        * subscription metadata when an invoice is created. Becomes an immutable snapshot of the
        * subscription metadata at the time of invoice finalization. <em>Note: This attribute is
        * populated only for invoices created on or after June 29, 2023.</em>
@@ -2342,6 +2353,13 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
       Bancontact bancontact;
 
       /**
+       * If paying by {@code billie}, this sub-hash contains details about the Billie payment method
+       * options to pass to the invoice’s PaymentIntent.
+       */
+      @SerializedName("billie")
+      Billie billie;
+
+      /**
        * If paying by {@code card}, this sub-hash contains details about the Card payment method
        * options to pass to the invoice’s PaymentIntent.
        */
@@ -2363,11 +2381,32 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
       Konbini konbini;
 
       /**
+       * If paying by {@code payto}, this sub-hash contains details about the PayTo payment method
+       * options to pass to the invoice’s PaymentIntent.
+       */
+      @SerializedName("payto")
+      Payto payto;
+
+      /**
+       * If paying by {@code pix}, this sub-hash contains details about the Pix payment method
+       * options to pass to the invoice’s PaymentIntent.
+       */
+      @SerializedName("pix")
+      Pix pix;
+
+      /**
        * If paying by {@code sepa_debit}, this sub-hash contains details about the SEPA Direct Debit
        * payment method options to pass to the invoice’s PaymentIntent.
        */
       @SerializedName("sepa_debit")
       SepaDebit sepaDebit;
+
+      /**
+       * If paying by {@code upi}, this sub-hash contains details about the UPI payment method
+       * options to pass to the invoice’s PaymentIntent.
+       */
+      @SerializedName("upi")
+      Upi upi;
 
       /**
        * If paying by {@code us_bank_account}, this sub-hash contains details about the ACH direct
@@ -2388,7 +2427,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
         MandateOptions mandateOptions;
 
         /**
-         * Bank account verification method.
+         * Bank account verification method. The default value is {@code automatic}.
          *
          * <p>One of {@code automatic}, {@code instant}, or {@code microdeposits}.
          */
@@ -2432,6 +2471,15 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
       }
 
       /**
+       * For more details about Billie, please refer to the <a
+       * href="https://docs.stripe.com/api">API Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Billie extends StripeObject {}
+
+      /**
        * For more details about Card, please refer to the <a href="https://docs.stripe.com/api">API
        * Reference.</a>
        */
@@ -2445,10 +2493,10 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
         /**
          * We strongly recommend that you rely on our SCA Engine to automatically prompt your
          * customers for authentication based on risk level and <a
-         * href="https://stripe.com/docs/strong-customer-authentication">other requirements</a>.
+         * href="https://docs.stripe.com/strong-customer-authentication">other requirements</a>.
          * However, if you wish to request 3D Secure based on logic from your own fraud engine,
          * provide this option. Read our guide on <a
-         * href="https://stripe.com/docs/payments/3d-secure/authentication-flow#manual-three-ds">manually
+         * href="https://docs.stripe.com/payments/3d-secure/authentication-flow#manual-three-ds">manually
          * requesting 3D Secure</a> for more information on how this configuration interacts with
          * Radar and our SCA Engine.
          *
@@ -2520,7 +2568,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
           public static class EuBankTransfer extends StripeObject {
             /**
              * The desired country code of the bank account information. Permitted values include:
-             * {@code BE}, {@code DE}, {@code ES}, {@code FR}, {@code IE}, or {@code NL}.
+             * {@code DE}, {@code FR}, {@code IE}, or {@code NL}.
              *
              * <p>One of {@code BE}, {@code DE}, {@code ES}, {@code FR}, {@code IE}, or {@code NL}.
              */
@@ -2540,6 +2588,77 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
       public static class Konbini extends StripeObject {}
 
       /**
+       * For more details about Payto, please refer to the <a href="https://docs.stripe.com/api">API
+       * Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Payto extends StripeObject {
+        @SerializedName("mandate_options")
+        MandateOptions mandateOptions;
+
+        /**
+         * For more details about MandateOptions, please refer to the <a
+         * href="https://docs.stripe.com/api">API Reference.</a>
+         */
+        @Getter
+        @Setter
+        @EqualsAndHashCode(callSuper = false)
+        public static class MandateOptions extends StripeObject {
+          /**
+           * The maximum amount that can be collected in a single invoice. If you don't specify a
+           * maximum, then there is no limit.
+           */
+          @SerializedName("amount")
+          Long amount;
+
+          /**
+           * Only {@code maximum} is supported.
+           *
+           * <p>One of {@code fixed}, or {@code maximum}.
+           */
+          @SerializedName("amount_type")
+          String amountType;
+
+          /**
+           * The purpose for which payments are made. Has a default value based on your merchant
+           * category code.
+           *
+           * <p>One of {@code dependant_support}, {@code government}, {@code loan}, {@code
+           * mortgage}, {@code other}, {@code pension}, {@code personal}, {@code retail}, {@code
+           * salary}, {@code tax}, or {@code utility}.
+           */
+          @SerializedName("purpose")
+          String purpose;
+        }
+      }
+
+      /**
+       * For more details about Pix, please refer to the <a href="https://docs.stripe.com/api">API
+       * Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Pix extends StripeObject {
+        /**
+         * Determines if the amount includes the IOF tax.
+         *
+         * <p>One of {@code always}, or {@code never}.
+         */
+        @SerializedName("amount_includes_iof")
+        String amountIncludesIof;
+
+        /**
+         * The number of seconds (between 10 and 1209600) after which Pix payment will expire.
+         * Defaults to 86400 seconds.
+         */
+        @SerializedName("expires_after_seconds")
+        Long expiresAfterSeconds;
+      }
+
+      /**
        * For more details about SepaDebit, please refer to the <a
        * href="https://docs.stripe.com/api">API Reference.</a>
        */
@@ -2547,6 +2666,50 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
       @Setter
       @EqualsAndHashCode(callSuper = false)
       public static class SepaDebit extends StripeObject {}
+
+      /**
+       * For more details about Upi, please refer to the <a href="https://docs.stripe.com/api">API
+       * Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Upi extends StripeObject {
+        @SerializedName("mandate_options")
+        MandateOptions mandateOptions;
+
+        /**
+         * For more details about MandateOptions, please refer to the <a
+         * href="https://docs.stripe.com/api">API Reference.</a>
+         */
+        @Getter
+        @Setter
+        @EqualsAndHashCode(callSuper = false)
+        public static class MandateOptions extends StripeObject {
+          /** Amount to be charged for future payments. */
+          @SerializedName("amount")
+          Long amount;
+
+          /**
+           * One of {@code fixed} or {@code maximum}. If {@code fixed}, the {@code amount} param
+           * refers to the exact amount to be charged in future payments. If {@code maximum}, the
+           * amount charged can be up to the value passed for the {@code amount} param.
+           */
+          @SerializedName("amount_type")
+          String amountType;
+
+          /**
+           * A description of the mandate or subscription that is meant to be displayed to the
+           * customer.
+           */
+          @SerializedName("description")
+          String description;
+
+          /** End date of the mandate or subscription. */
+          @SerializedName("end_date")
+          Long endDate;
+        }
+      }
 
       /**
        * For more details about UsBankAccount, please refer to the <a
@@ -2560,7 +2723,7 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
         FinancialConnections financialConnections;
 
         /**
-         * Bank account verification method.
+         * Bank account verification method. The default value is {@code automatic}.
          *
          * <p>One of {@code automatic}, {@code instant}, or {@code microdeposits}.
          */
@@ -2974,8 +3137,29 @@ public class Invoice extends ApiResource implements HasId, MetadataStore<Invoice
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class TaxRateDetails extends StripeObject {
+      /** ID of the tax rate. */
       @SerializedName("tax_rate")
-      String taxRate;
+      @Getter(lombok.AccessLevel.NONE)
+      @Setter(lombok.AccessLevel.NONE)
+      ExpandableField<TaxRate> taxRate;
+
+      /** Get ID of expandable {@code taxRate} object. */
+      public String getTaxRate() {
+        return (this.taxRate != null) ? this.taxRate.getId() : null;
+      }
+
+      public void setTaxRate(String id) {
+        this.taxRate = ApiResource.setExpandableFieldId(id, this.taxRate);
+      }
+
+      /** Get expanded {@code taxRate}. */
+      public TaxRate getTaxRateObject() {
+        return (this.taxRate != null) ? this.taxRate.getExpanded() : null;
+      }
+
+      public void setTaxRateObject(TaxRate expandableObject) {
+        this.taxRate = new ExpandableField<TaxRate>(expandableObject.getId(), expandableObject);
+      }
     }
   }
 

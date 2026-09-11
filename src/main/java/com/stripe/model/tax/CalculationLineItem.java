@@ -15,7 +15,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 public class CalculationLineItem extends StripeObject implements HasId {
   /**
-   * The line item amount in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest
+   * The line item amount in the <a href="https://docs.stripe.com/currencies#minor-units">smallest
    * currency unit</a>. If {@code tax_behavior=inclusive}, then this amount includes taxes.
    * Otherwise, taxes were calculated on top of this amount.
    */
@@ -24,7 +24,7 @@ public class CalculationLineItem extends StripeObject implements HasId {
 
   /**
    * The amount of tax calculated for this line item, in the <a
-   * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * href="https://docs.stripe.com/currencies#minor-units">smallest currency unit</a>.
    */
   @SerializedName("amount_tax")
   Long amountTax;
@@ -35,14 +35,14 @@ public class CalculationLineItem extends StripeObject implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -57,7 +57,7 @@ public class CalculationLineItem extends StripeObject implements HasId {
   @SerializedName("object")
   String object;
 
-  /** The ID of an existing <a href="https://stripe.com/docs/api/products/object">Product</a>. */
+  /** The ID of an existing <a href="https://docs.stripe.com/api/products/object">Product</a>. */
   @SerializedName("product")
   String product;
 
@@ -85,7 +85,7 @@ public class CalculationLineItem extends StripeObject implements HasId {
   List<CalculationLineItem.TaxBreakdown> taxBreakdown;
 
   /**
-   * The <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID used for this
+   * The <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID used for this
    * resource.
    */
   @SerializedName("tax_code")
@@ -100,7 +100,7 @@ public class CalculationLineItem extends StripeObject implements HasId {
   @EqualsAndHashCode(callSuper = false)
   public static class TaxBreakdown extends StripeObject {
     /**
-     * The amount of tax, in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest
+     * The amount of tax, in the <a href="https://docs.stripe.com/currencies#minor-units">smallest
      * currency unit</a>.
      */
     @SerializedName("amount")
@@ -140,7 +140,7 @@ public class CalculationLineItem extends StripeObject implements HasId {
 
     /**
      * The amount on which tax is calculated, in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#minor-units">smallest currency unit</a>.
      */
     @SerializedName("taxable_amount")
     Long taxableAmount;
@@ -207,8 +207,9 @@ public class CalculationLineItem extends StripeObject implements HasId {
        * The tax type, such as {@code vat} or {@code sales_tax}.
        *
        * <p>One of {@code amusement_tax}, {@code communications_tax}, {@code gst}, {@code hst},
-       * {@code igst}, {@code jct}, {@code lease_tax}, {@code pst}, {@code qst}, {@code
-       * retail_delivery_fee}, {@code rst}, {@code sales_tax}, {@code service_tax}, or {@code vat}.
+       * {@code igst}, {@code jct}, {@code lease_tax}, {@code mass_transit_parking_tax}, {@code
+       * parking_tax}, {@code pst}, {@code qst}, {@code retail_delivery_fee}, {@code rst}, {@code
+       * sales_tax}, {@code service_tax}, or {@code vat}.
        */
       @SerializedName("tax_type")
       String taxType;

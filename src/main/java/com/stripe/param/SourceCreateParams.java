@@ -119,7 +119,7 @@ public class SourceCreateParams extends ApiRequestParams {
   /**
    * The {@code type} of the source to create. Required unless {@code customer} and {@code
    * original_source} are specified (see the <a
-   * href="https://stripe.com/docs/sources/connect#cloning-card-sources">Cloning card Sources</a>
+   * href="https://docs.stripe.com/sources/connect#cloning-card-sources">Cloning card Sources</a>
    * guide)
    */
   @SerializedName("type")
@@ -417,7 +417,7 @@ public class SourceCreateParams extends ApiRequestParams {
     /**
      * The {@code type} of the source to create. Required unless {@code customer} and {@code
      * original_source} are specified (see the <a
-     * href="https://stripe.com/docs/sources/connect#cloning-card-sources">Cloning card Sources</a>
+     * href="https://docs.stripe.com/sources/connect#cloning-card-sources">Cloning card Sources</a>
      * guide)
      */
     public Builder setType(String type) {
@@ -1196,11 +1196,11 @@ public class SourceCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -1208,7 +1208,10 @@ public class SourceCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -1303,13 +1306,13 @@ public class SourceCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -1321,7 +1324,10 @@ public class SourceCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -1951,11 +1957,13 @@ public class SourceCreateParams extends ApiRequestParams {
         @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
         Map<String, Object> extraParams;
 
-        /** <strong>Required.</strong> Address line 1 (e.g., street, PO Box, or company name). */
+        /**
+         * <strong>Required.</strong> Address line 1, such as the street, PO Box, or company name.
+         */
         @SerializedName("line1")
         String line1;
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         @SerializedName("line2")
         String line2;
 
@@ -1963,7 +1971,10 @@ public class SourceCreateParams extends ApiRequestParams {
         @SerializedName("postal_code")
         String postalCode;
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         @SerializedName("state")
         String state;
 
@@ -2058,13 +2069,15 @@ public class SourceCreateParams extends ApiRequestParams {
             return this;
           }
 
-          /** <strong>Required.</strong> Address line 1 (e.g., street, PO Box, or company name). */
+          /**
+           * <strong>Required.</strong> Address line 1, such as the street, PO Box, or company name.
+           */
           public Builder setLine1(String line1) {
             this.line1 = line1;
             return this;
           }
 
-          /** Address line 2 (e.g., apartment, suite, unit, or building). */
+          /** Address line 2, such as the apartment, suite, unit, or building. */
           public Builder setLine2(String line2) {
             this.line2 = line2;
             return this;
@@ -2076,7 +2089,10 @@ public class SourceCreateParams extends ApiRequestParams {
             return this;
           }
 
-          /** State, county, province, or region. */
+          /**
+           * State, county, province, or region (<a
+           * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+           */
           public Builder setState(String state) {
             this.state = state;
             return this;

@@ -3,6 +3,7 @@ package com.stripe.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
+import java.util.Map;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +13,9 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(callSuper = false)
 public class LineItem extends StripeObject implements HasId {
+  @SerializedName("adjustable_quantity")
+  AdjustableQuantity adjustableQuantity;
+
   /** Total discount amount applied. If no discounts were applied, defaults to 0. */
   @SerializedName("amount_discount")
   Long amountDiscount;
@@ -52,6 +56,14 @@ public class LineItem extends StripeObject implements HasId {
   String id;
 
   /**
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
+   * to an object. This can be useful for storing additional information about the object in a
+   * structured format.
+   */
+  @SerializedName("metadata")
+  Map<String, String> metadata;
+
+  /**
    * String representing the object's type. Objects of the same type share the same value.
    *
    * <p>Equal to {@code item}.
@@ -72,6 +84,24 @@ public class LineItem extends StripeObject implements HasId {
   List<LineItem.Tax> taxes;
 
   /**
+   * For more details about AdjustableQuantity, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class AdjustableQuantity extends StripeObject {
+    @SerializedName("enabled")
+    Boolean enabled;
+
+    @SerializedName("maximum")
+    Long maximum;
+
+    @SerializedName("minimum")
+    Long minimum;
+  }
+
+  /**
    * For more details about Discount, please refer to the <a href="https://docs.stripe.com/api">API
    * Reference.</a>
    */
@@ -85,11 +115,11 @@ public class LineItem extends StripeObject implements HasId {
 
     /**
      * A discount represents the actual application of a <a
-     * href="https://stripe.com/docs/api#coupons">coupon</a> or <a
-     * href="https://stripe.com/docs/api#promotion_codes">promotion code</a>. It contains
-     * information about when the discount began, when it will end, and what it is applied to.
+     * href="https://api.stripe.com#coupons">coupon</a> or <a
+     * href="https://api.stripe.com#promotion_codes">promotion code</a>. It contains information
+     * about when the discount began, when it will end, and what it is applied to.
      *
-     * <p>Related guide: <a href="https://stripe.com/docs/billing/subscriptions/discounts">Applying
+     * <p>Related guide: <a href="https://docs.stripe.com/billing/subscriptions/discounts">Applying
      * discounts to subscriptions</a>
      */
     @SerializedName("discount")

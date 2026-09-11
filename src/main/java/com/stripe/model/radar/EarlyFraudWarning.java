@@ -24,7 +24,7 @@ import lombok.Setter;
  * An early fraud warning indicates that the card issuer has notified us that a charge may be
  * fraudulent.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/disputes/measuring#early-fraud-warnings">Early
+ * <p>Related guide: <a href="https://docs.stripe.com/disputes/measuring#early-fraud-warnings">Early
  * fraud warnings</a>
  */
 @Getter
@@ -63,8 +63,8 @@ public class EarlyFraudWarning extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

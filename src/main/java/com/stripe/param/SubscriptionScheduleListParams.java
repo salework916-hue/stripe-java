@@ -25,9 +25,16 @@ public class SubscriptionScheduleListParams extends ApiRequestParams {
   @SerializedName("created")
   Object created;
 
-  /** Only return subscription schedules for the given customer. */
+  /**
+   * Only return subscription schedules for the given customer. The response will not include
+   * subscription schedules for customers with a test clock attached if this parameter is not set.
+   */
   @SerializedName("customer")
   String customer;
+
+  /** Only return subscription schedules for the given account. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * A cursor for use in pagination. {@code ending_before} is an object ID that defines your place
@@ -80,6 +87,7 @@ public class SubscriptionScheduleListParams extends ApiRequestParams {
       Object completedAt,
       Object created,
       String customer,
+      String customerAccount,
       String endingBefore,
       List<String> expand,
       Map<String, Object> extraParams,
@@ -91,6 +99,7 @@ public class SubscriptionScheduleListParams extends ApiRequestParams {
     this.completedAt = completedAt;
     this.created = created;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.endingBefore = endingBefore;
     this.expand = expand;
     this.extraParams = extraParams;
@@ -113,6 +122,8 @@ public class SubscriptionScheduleListParams extends ApiRequestParams {
 
     private String customer;
 
+    private String customerAccount;
+
     private String endingBefore;
 
     private List<String> expand;
@@ -134,6 +145,7 @@ public class SubscriptionScheduleListParams extends ApiRequestParams {
           this.completedAt,
           this.created,
           this.customer,
+          this.customerAccount,
           this.endingBefore,
           this.expand,
           this.extraParams,
@@ -179,9 +191,18 @@ public class SubscriptionScheduleListParams extends ApiRequestParams {
       return this;
     }
 
-    /** Only return subscription schedules for the given customer. */
+    /**
+     * Only return subscription schedules for the given customer. The response will not include
+     * subscription schedules for customers with a test clock attached if this parameter is not set.
+     */
     public Builder setCustomer(String customer) {
       this.customer = customer;
+      return this;
+    }
+
+    /** Only return subscription schedules for the given account. */
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 

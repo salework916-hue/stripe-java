@@ -9,6 +9,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * A Meter Event Session is an authentication session for the high-throughput meter event API. Meter
+ * Event Sessions provide temporary authentication tokens with expiration times, enabling secure and
+ * efficient bulk submission of usage events.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -24,11 +29,11 @@ public class MeterEventSession extends StripeObject implements HasId {
   @SerializedName("created")
   Instant created;
 
-  /** The time at which this session will expire. */
+  /** The time at which this session expires. */
   @SerializedName("expires_at")
   Instant expiresAt;
 
-  /** The unique id of this auth session. */
+  /** The unique ID of this auth session. */
   @Getter(onMethod_ = {@Override})
   @SerializedName("id")
   String id;

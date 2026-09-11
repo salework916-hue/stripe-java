@@ -5,12 +5,21 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.stripe.BaseStripeTest;
 import com.stripe.events.V1BillingMeterErrorReportTriggeredEvent;
 import com.stripe.exception.StripeException;
+import com.stripe.model.StripeObject;
 import com.stripe.model.billing.Meter;
+import com.stripe.model.v2.core.Event;
+import com.stripe.model.v2.core.Event.RelatedSingletonObject;
+import com.stripe.model.v2.core.EventNotification;
 import com.stripe.net.ApiResource;
+import com.stripe.net.HttpHeaders;
+import com.stripe.net.StripeResponse;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 
 public class EventTests extends BaseStripeTest {
   public static String v2PayloadNoData = null;
@@ -114,16 +123,17 @@ public class EventTests extends BaseStripeTest {
     V1BillingMeterErrorReportTriggeredEvent event =
         (V1BillingMeterErrorReportTriggeredEvent) Event.parse(v2PayloadNoData);
     event.setResponseGetter(networkSpy);
-    stubRequest(
-        ApiResource.RequestMethod.GET,
-        "/v1/billing/meters/meter_123",
-        null,
-        Meter.class,
-        getResourceAsString("/api_fixtures/billing_meter.json"));
+    String fixtureJson = getResourceAsString("/api_fixtures/billing_meter.json");
+    Mockito.doAnswer(
+            (Answer<StripeResponse>)
+                invocation ->
+                    new StripeResponse(200, HttpHeaders.of(Collections.emptyMap()), fixtureJson))
+        .when(httpClientSpy)
+        .request(Mockito.any());
 
-    assertEquals("/v1/billing/meters/meter_123", event.getRelatedObject().url);
-    assertEquals("meter_123", event.getRelatedObject().id);
-    assertEquals("billing.meter", event.getRelatedObject().type);
+    assertEquals("/v1/billing/meters/meter_123", event.getRelatedObject().getUrl());
+    assertEquals("meter_123", event.getRelatedObject().getId());
+    assertEquals("billing.meter", event.getRelatedObject().getType());
 
     Meter meter = event.fetchRelatedObject();
 
@@ -140,6 +150,51 @@ public class EventTests extends BaseStripeTest {
     assertEquals("active", meter.getStatus());
     assertNull(meter.getStatusTransitions().getDeactivatedAt());
     assertEquals(1727303036, meter.getUpdated());
+
+    verifyStripeRequest(
+        req ->
+            assertEquals(
+                "event=evt_234", req.headers().firstValue("Stripe-Request-Trigger").orElse(null)));
+  }
+
+  /**
+   * The type singleton events point at instead of {@link Event.RelatedObject}. There's no generated
+   * singleton event yet, so exercise the type directly.
+   */
+  @Test
+  public void deserializesRelatedSingletonObject() {
+    String json = "{\n" + "  \"type\": \"balance\",\n" + "  \"url\": \"/v1/balance\"\n" + "}";
+
+    RelatedSingletonObject relatedObject =
+        ApiResource.GSON.fromJson(json, RelatedSingletonObject.class);
+
+    assertEquals("balance", relatedObject.getType());
+    assertEquals("/v1/balance", relatedObject.getUrl());
+
+    // the whole point of the type: no `id` field, and so no accessor for one either
+    assertThrows(
+        NoSuchFieldException.class, () -> RelatedSingletonObject.class.getDeclaredField("id"));
+    assertThrows(
+        NoSuchMethodException.class, () -> RelatedSingletonObject.class.getMethod("getId"));
+  }
+
+  /**
+   * Generated singleton event classes call {@code super.fetchRelatedObject(this.relatedObject)}, so
+   * both base classes need an overload that takes the singleton type. Asserted reflectively because
+   * no generated singleton event exists to exercise it yet.
+   */
+  @Test
+  public void baseClassesAcceptRelatedSingletonObject() throws NoSuchMethodException {
+    assertEquals(
+        StripeObject.class,
+        Event.class
+            .getDeclaredMethod("fetchRelatedObject", RelatedSingletonObject.class)
+            .getReturnType());
+    assertEquals(
+        StripeObject.class,
+        EventNotification.class
+            .getDeclaredMethod("fetchRelatedObject", RelatedSingletonObject.class)
+            .getReturnType());
   }
 
   // FIXME (jar) this should no longer be possible; confirm this and remove before merge

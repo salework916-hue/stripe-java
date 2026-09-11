@@ -35,7 +35,7 @@ import lombok.Setter;
  * might have different permissions.
  *
  * <p>Related guide: <a
- * href="https://stripe.com/docs/stripe-apps/store-auth-data-custom-objects">Store data between page
+ * href="https://docs.stripe.com/stripe-apps/store-auth-data-custom-objects">Store data between page
  * reloads</a>
  */
 @Getter
@@ -60,8 +60,8 @@ public class Secret extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

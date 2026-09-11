@@ -162,7 +162,10 @@ public class AlertCreateParams extends ApiRequestParams {
     @SerializedName("filters")
     List<AlertCreateParams.UsageThreshold.Filter> filters;
 
-    /** <strong>Required.</strong> Defines at which value the alert will fire. */
+    /**
+     * <strong>Required.</strong> Defines the threshold value that triggers the alert. The value
+     * must be greater than 0.
+     */
     @SerializedName("gte")
     Long gte;
 
@@ -173,10 +176,7 @@ public class AlertCreateParams extends ApiRequestParams {
     @SerializedName("meter")
     String meter;
 
-    /**
-     * <strong>Required.</strong> Whether the alert should only fire only once, or once per billing
-     * cycle.
-     */
+    /** <strong>Required.</strong> Defines how the alert will behave. */
     @SerializedName("recurrence")
     Recurrence recurrence;
 
@@ -266,7 +266,10 @@ public class AlertCreateParams extends ApiRequestParams {
         return this;
       }
 
-      /** <strong>Required.</strong> Defines at which value the alert will fire. */
+      /**
+       * <strong>Required.</strong> Defines the threshold value that triggers the alert. The value
+       * must be greater than 0.
+       */
       public Builder setGte(Long gte) {
         this.gte = gte;
         return this;
@@ -281,10 +284,7 @@ public class AlertCreateParams extends ApiRequestParams {
         return this;
       }
 
-      /**
-       * <strong>Required.</strong> Whether the alert should only fire only once, or once per
-       * billing cycle.
-       */
+      /** <strong>Required.</strong> Defines how the alert will behave. */
       public Builder setRecurrence(AlertCreateParams.UsageThreshold.Recurrence recurrence) {
         this.recurrence = recurrence;
         return this;

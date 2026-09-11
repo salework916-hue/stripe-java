@@ -25,13 +25,17 @@ public class CreditGrantCreateParams extends ApiRequestParams {
   @SerializedName("applicability_config")
   ApplicabilityConfig applicabilityConfig;
 
-  /** <strong>Required.</strong> The category of this credit grant. */
+  /** The category of this credit grant. It defaults to {@code paid} if not specified. */
   @SerializedName("category")
   Category category;
 
-  /** <strong>Required.</strong> ID of the customer to receive the billing credits. */
+  /** ID of the customer receiving the billing credits. */
   @SerializedName("customer")
   String customer;
+
+  /** ID of the account representing the customer receiving the billing credits. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * The time when the billing credits become effective-when they're eligible for use. It defaults
@@ -82,6 +86,7 @@ public class CreditGrantCreateParams extends ApiRequestParams {
       ApplicabilityConfig applicabilityConfig,
       Category category,
       String customer,
+      String customerAccount,
       Long effectiveAt,
       List<String> expand,
       Long expiresAt,
@@ -93,6 +98,7 @@ public class CreditGrantCreateParams extends ApiRequestParams {
     this.applicabilityConfig = applicabilityConfig;
     this.category = category;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.effectiveAt = effectiveAt;
     this.expand = expand;
     this.expiresAt = expiresAt;
@@ -115,6 +121,8 @@ public class CreditGrantCreateParams extends ApiRequestParams {
 
     private String customer;
 
+    private String customerAccount;
+
     private Long effectiveAt;
 
     private List<String> expand;
@@ -136,6 +144,7 @@ public class CreditGrantCreateParams extends ApiRequestParams {
           this.applicabilityConfig,
           this.category,
           this.customer,
+          this.customerAccount,
           this.effectiveAt,
           this.expand,
           this.expiresAt,
@@ -162,15 +171,21 @@ public class CreditGrantCreateParams extends ApiRequestParams {
       return this;
     }
 
-    /** <strong>Required.</strong> The category of this credit grant. */
+    /** The category of this credit grant. It defaults to {@code paid} if not specified. */
     public Builder setCategory(CreditGrantCreateParams.Category category) {
       this.category = category;
       return this;
     }
 
-    /** <strong>Required.</strong> ID of the customer to receive the billing credits. */
+    /** ID of the customer receiving the billing credits. */
     public Builder setCustomer(String customer) {
       this.customer = customer;
+      return this;
+    }
+
+    /** ID of the account representing the customer receiving the billing credits. */
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 
@@ -571,7 +586,7 @@ public class CreditGrantCreateParams extends ApiRequestParams {
 
       /**
        * A list of prices that the credit grant can apply to. We currently only support the {@code
-       * metered} prices. Cannot be used in combination with {@code price_type}.
+       * metered} prices. Cannot be used in combination with {@code price_type}. Limit 20 prices.
        */
       @SerializedName("prices")
       List<CreditGrantCreateParams.ApplicabilityConfig.Scope.Price> prices;

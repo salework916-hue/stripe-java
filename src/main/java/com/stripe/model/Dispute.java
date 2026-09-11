@@ -24,7 +24,7 @@ import lombok.Setter;
  * you have the opportunity to respond to the dispute with evidence that shows that the charge is
  * legitimate.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/disputes">Disputes and fraud</a>
+ * <p>Related guide: <a href="https://docs.stripe.com/disputes">Disputes and fraud</a>
  */
 @Getter
 @Setter
@@ -85,14 +85,14 @@ public class Dispute extends ApiResource
   Boolean isChargeRefundable;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -127,7 +127,7 @@ public class Dispute extends ApiResource
    * debit_not_authorized}, {@code duplicate}, {@code fraudulent}, {@code general}, {@code
    * incorrect_account_details}, {@code insufficient_funds}, {@code noncompliant}, {@code
    * product_not_received}, {@code product_unacceptable}, {@code subscription_canceled}, or {@code
-   * unrecognized}. Learn more about <a href="https://stripe.com/docs/disputes/categories">dispute
+   * unrecognized}. Learn more about <a href="https://docs.stripe.com/disputes/categories">dispute
    * reasons</a>.
    */
   @SerializedName("reason")
@@ -138,8 +138,8 @@ public class Dispute extends ApiResource
    * warning_under_review}, {@code warning_closed}, {@code needs_response}, {@code under_review},
    * {@code won}, {@code lost}, or {@code prevented}.
    *
-   * <p>One of {@code lost}, {@code needs_response}, {@code under_review}, {@code warning_closed},
-   * {@code warning_needs_response}, {@code warning_under_review}, or {@code won}.
+   * <p>One of {@code lost}, {@code needs_response}, {@code prevented}, {@code under_review}, {@code
+   * warning_closed}, {@code warning_needs_response}, {@code warning_under_review}, or {@code won}.
    */
   @SerializedName("status")
   String status;
@@ -183,7 +183,7 @@ public class Dispute extends ApiResource
 
   /**
    * Closing the dispute for a charge indicates that you do not have any evidence to submit and are
-   * essentially dismissing the dispute, acknowledging it as lost.
+   * essentially dismissing the dispute (accepting it), acknowledging it as lost.
    *
    * <p>The status of the dispute will change from {@code needs_response} to {@code lost}.
    * <em>Closing a dispute is irreversible</em>.
@@ -194,7 +194,7 @@ public class Dispute extends ApiResource
 
   /**
    * Closing the dispute for a charge indicates that you do not have any evidence to submit and are
-   * essentially dismissing the dispute, acknowledging it as lost.
+   * essentially dismissing the dispute (accepting it), acknowledging it as lost.
    *
    * <p>The status of the dispute will change from {@code needs_response} to {@code lost}.
    * <em>Closing a dispute is irreversible</em>.
@@ -205,7 +205,7 @@ public class Dispute extends ApiResource
 
   /**
    * Closing the dispute for a charge indicates that you do not have any evidence to submit and are
-   * essentially dismissing the dispute, acknowledging it as lost.
+   * essentially dismissing the dispute (accepting it), acknowledging it as lost.
    *
    * <p>The status of the dispute will change from {@code needs_response} to {@code lost}.
    * <em>Closing a dispute is irreversible</em>.
@@ -216,7 +216,7 @@ public class Dispute extends ApiResource
 
   /**
    * Closing the dispute for a charge indicates that you do not have any evidence to submit and are
-   * essentially dismissing the dispute, acknowledging it as lost.
+   * essentially dismissing the dispute (accepting it), acknowledging it as lost.
    *
    * <p>The status of the dispute will change from {@code needs_response} to {@code lost}.
    * <em>Closing a dispute is irreversible</em>.
@@ -230,7 +230,7 @@ public class Dispute extends ApiResource
 
   /**
    * Closing the dispute for a charge indicates that you do not have any evidence to submit and are
-   * essentially dismissing the dispute, acknowledging it as lost.
+   * essentially dismissing the dispute (accepting it), acknowledging it as lost.
    *
    * <p>The status of the dispute will change from {@code needs_response} to {@code lost}.
    * <em>Closing a dispute is irreversible</em>.
@@ -241,7 +241,7 @@ public class Dispute extends ApiResource
 
   /**
    * Closing the dispute for a charge indicates that you do not have any evidence to submit and are
-   * essentially dismissing the dispute, acknowledging it as lost.
+   * essentially dismissing the dispute (accepting it), acknowledging it as lost.
    *
    * <p>The status of the dispute will change from {@code needs_response} to {@code lost}.
    * <em>Closing a dispute is irreversible</em>.
@@ -778,11 +778,30 @@ public class Dispute extends ApiResource
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class EnhancedEvidence extends StripeObject {
+      @SerializedName("mastercard_compliance")
+      MastercardCompliance mastercardCompliance;
+
       @SerializedName("visa_compelling_evidence_3")
       VisaCompellingEvidence3 visaCompellingEvidence3;
 
       @SerializedName("visa_compliance")
       VisaCompliance visaCompliance;
+
+      /**
+       * For more details about MastercardCompliance, please refer to the <a
+       * href="https://docs.stripe.com/api">API Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class MastercardCompliance extends StripeObject {
+        /**
+         * A field acknowledging the fee incurred when countering a Mastercard compliance dispute.
+         * If this field is set to true, evidence can be submitted for the compliance dispute.
+         */
+        @SerializedName("fee_acknowledged")
+        Boolean feeAcknowledged;
+      }
 
       /**
        * For more details about VisaCompellingEvidence3, please refer to the <a
@@ -878,11 +897,11 @@ public class Dispute extends ApiResource
             @SerializedName("country")
             String country;
 
-            /** Address line 1 (e.g., street, PO Box, or company name). */
+            /** Address line 1, such as the street, PO Box, or company name. */
             @SerializedName("line1")
             String line1;
 
-            /** Address line 2 (e.g., apartment, suite, unit, or building). */
+            /** Address line 2, such as the apartment, suite, unit, or building. */
             @SerializedName("line2")
             String line2;
 
@@ -890,7 +909,10 @@ public class Dispute extends ApiResource
             @SerializedName("postal_code")
             String postalCode;
 
-            /** State, county, province, or region. */
+            /**
+             * State, county, province, or region (<a
+             * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+             */
             @SerializedName("state")
             String state;
           }
@@ -966,11 +988,11 @@ public class Dispute extends ApiResource
             @SerializedName("country")
             String country;
 
-            /** Address line 1 (e.g., street, PO Box, or company name). */
+            /** Address line 1, such as the street, PO Box, or company name. */
             @SerializedName("line1")
             String line1;
 
-            /** Address line 2 (e.g., apartment, suite, unit, or building). */
+            /** Address line 2, such as the apartment, suite, unit, or building. */
             @SerializedName("line2")
             String line2;
 
@@ -978,7 +1000,10 @@ public class Dispute extends ApiResource
             @SerializedName("postal_code")
             String postalCode;
 
-            /** State, county, province, or region. */
+            /**
+             * State, county, province, or region (<a
+             * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+             */
             @SerializedName("state")
             String state;
           }
@@ -1052,11 +1077,31 @@ public class Dispute extends ApiResource
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class EnhancedEligibility extends StripeObject {
+      @SerializedName("mastercard_compliance")
+      MastercardCompliance mastercardCompliance;
+
       @SerializedName("visa_compelling_evidence_3")
       VisaCompellingEvidence3 visaCompellingEvidence3;
 
       @SerializedName("visa_compliance")
       VisaCompliance visaCompliance;
+
+      /**
+       * For more details about MastercardCompliance, please refer to the <a
+       * href="https://docs.stripe.com/api">API Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class MastercardCompliance extends StripeObject {
+        /**
+         * Mastercard compliance eligibility status.
+         *
+         * <p>One of {@code fee_acknowledged}, or {@code requires_fee_acknowledgement}.
+         */
+        @SerializedName("status")
+        String status;
+      }
 
       /**
        * For more details about VisaCompellingEvidence3, please refer to the <a
@@ -1173,6 +1218,15 @@ public class Dispute extends ApiResource
       String caseType;
 
       /**
+       * Identifies which network this charge was processed on. Can be {@code amex}, {@code
+       * cartes_bancaires}, {@code diners}, {@code discover}, {@code eftpos_au}, {@code interac},
+       * {@code jcb}, {@code link}, {@code mastercard}, {@code unionpay}, {@code visa}, or {@code
+       * unknown}.
+       */
+      @SerializedName("network")
+      String network;
+
+      /**
        * The card network's specific dispute reason code, which maps to one of Stripe's primary
        * dispute categories to simplify response guidance. The <a
        * href="https://stripe.com/docs/disputes/categories#network-code-map">Network code map</a>
@@ -1190,6 +1244,10 @@ public class Dispute extends ApiResource
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Klarna extends StripeObject {
+      /** Chargeback loss reason mapped by Stripe from Klarna's chargeback loss reason. */
+      @SerializedName("chargeback_loss_reason_code")
+      String chargebackLossReasonCode;
+
       /** The reason for the dispute as defined by Klarna. */
       @SerializedName("reason_code")
       String reasonCode;

@@ -1,6 +1,7 @@
 package com.stripe.net;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,12 +15,16 @@ import com.stripe.exception.ApiConnectionException;
 import com.stripe.exception.StripeException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
+import java.nio.file.Path;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 public class HttpClientTest extends BaseStripeTest {
+  @TempDir Path tempDir;
+
   private HttpClient client;
 
   private StripeRequest request;
@@ -192,9 +197,8 @@ public class HttpClientTest extends BaseStripeTest {
             RequestOptions.builder().setApiKey("sk_test_123").setMaxNetworkRetries(2).build(),
             ApiMode.V1);
 
-    assertEquals(
-        HttpClient.buildUserAgentString(request),
-        String.format("Stripe/v1 JavaBindings/%s", Stripe.VERSION));
+    String userAgent = HttpClient.buildUserAgentString(request);
+    assertTrue(userAgent.startsWith(String.format("Stripe/v1 JavaBindings/%s", Stripe.VERSION)));
   }
 
   @Test
@@ -207,8 +211,130 @@ public class HttpClientTest extends BaseStripeTest {
             RequestOptions.builder().setApiKey("sk_test_123").setMaxNetworkRetries(2).build(),
             ApiMode.V2);
 
-    assertEquals(
-        HttpClient.buildUserAgentString(request),
-        String.format("Stripe/v2 JavaBindings/%s", Stripe.VERSION));
+    String userAgent = HttpClient.buildUserAgentString(request);
+    assertTrue(userAgent.startsWith(String.format("Stripe/v2 JavaBindings/%s", Stripe.VERSION)));
+  }
+
+  @Test
+  public void testDetectAIAgent() {
+    String agent = HttpClient.detectAIAgent(key -> key.equals("CLAUDECODE") ? "1" : null);
+    assertEquals("claude_code", agent);
+  }
+
+  @Test
+  public void testDetectAIAgentNoEnv() {
+    String agent = HttpClient.detectAIAgent(key -> null);
+    assertEquals("", agent);
+  }
+
+  @Test
+  public void testDetectAIAgentFirstMatchWins() {
+    String agent =
+        HttpClient.detectAIAgent(
+            key -> {
+              if (key.equals("CURSOR_AGENT") || key.equals("OPENCODE")) return "1";
+              return null;
+            });
+    assertEquals("cursor", agent);
+  }
+
+  @Test
+  public void testBuildUserAgentStringWithAIAgent() throws StripeException {
+    StripeRequest request =
+        StripeRequest.create(
+            ApiResource.RequestMethod.GET,
+            "http://example.com/get",
+            null,
+            RequestOptions.builder().setApiKey("sk_test_123").build(),
+            ApiMode.V1);
+
+    String userAgent = HttpClient.buildUserAgentString(request, "cursor");
+    assertTrue(userAgent.contains("AIAgent/cursor"));
+  }
+
+  @Test
+  public void testBuildXStripeClientUserAgentStringWithAIAgent() {
+    String json = HttpClient.buildXStripeClientUserAgentString("cursor");
+    com.google.gson.JsonObject parsed =
+        com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+    assertEquals("cursor", parsed.get("ai_agent").getAsString());
+  }
+
+  @Test
+  public void testBuildXStripeClientUserAgentStringOmitsPublisherAndOsKeys() {
+    String json = HttpClient.buildXStripeClientUserAgentString("");
+    com.google.gson.JsonObject parsed =
+        com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+    assertTrue(!parsed.has("publisher"));
+    assertTrue(!parsed.has("os.name"));
+    assertTrue(!parsed.has("os.version"));
+    assertTrue(!parsed.has("os.arch"));
+  }
+
+  @Test
+  public void testBuildXStripeClientUserAgentStringPlatformWithTelemetry() {
+    boolean originalTelemetry = Stripe.enableTelemetry;
+    try {
+      Stripe.enableTelemetry = true;
+      String json = HttpClient.buildXStripeClientUserAgentString("");
+      com.google.gson.JsonObject parsed =
+          com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+      assertTrue(parsed.has("platform"));
+      String platform = parsed.get("platform").getAsString();
+      assertTrue(platform.contains(System.getProperty("os.name")));
+    } finally {
+      Stripe.enableTelemetry = originalTelemetry;
+    }
+  }
+
+  @Test
+  public void testBuildXStripeClientUserAgentStringNoPlatformWithoutTelemetry() {
+    boolean originalTelemetry = Stripe.enableTelemetry;
+    try {
+      Stripe.enableTelemetry = false;
+      String json = HttpClient.buildXStripeClientUserAgentString("");
+      com.google.gson.JsonObject parsed =
+          com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+      assertTrue(!parsed.has("platform"));
+    } finally {
+      Stripe.enableTelemetry = originalTelemetry;
+    }
+  }
+
+  @Test
+  public void testBuildXStripeClientUserAgentStringIncludesTelemetryId() {
+    boolean originalTelemetry = Stripe.enableTelemetry;
+    try {
+      Stripe.enableTelemetry = true;
+      TelemetryId.reset();
+      TelemetryId.configDirOverride = tempDir;
+      String json = HttpClient.buildXStripeClientUserAgentString("");
+      com.google.gson.JsonObject parsed =
+          com.google.gson.JsonParser.parseString(json).getAsJsonObject();
+      assertTrue(
+          parsed.has("telemetry_id"),
+          "Expected 'telemetry_id' field in X-Stripe-Client-User-Agent");
+      String telemetryId = parsed.get("telemetry_id").getAsString();
+      assertTrue(
+          telemetryId.matches("[0-9a-f]{32}"),
+          "Expected 'telemetry_id' to be a 32-character lowercase hex string, got: " + telemetryId);
+    } finally {
+      Stripe.enableTelemetry = originalTelemetry;
+      TelemetryId.reset();
+    }
+  }
+
+  @Test
+  public void testBuildXStripeClientUserAgentStringOmitsTelemetryIdWhenDisabled() {
+    boolean originalTelemetry = Stripe.enableTelemetry;
+    try {
+      Stripe.enableTelemetry = false;
+      String userAgentString = HttpClient.buildXStripeClientUserAgentString("");
+      com.google.gson.JsonObject userAgent =
+          com.google.gson.JsonParser.parseString(userAgentString).getAsJsonObject();
+      assertFalse(userAgent.has("telemetry_id"));
+    } finally {
+      Stripe.enableTelemetry = originalTelemetry;
+    }
   }
 }

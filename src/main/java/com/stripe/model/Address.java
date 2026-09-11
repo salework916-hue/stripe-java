@@ -21,11 +21,11 @@ public class Address extends StripeObject {
   @SerializedName("country")
   String country;
 
-  /** Address line 1 (e.g., street, PO Box, or company name). */
+  /** Address line 1, such as the street, PO Box, or company name. */
   @SerializedName("line1")
   String line1;
 
-  /** Address line 2 (e.g., apartment, suite, unit, or building). */
+  /** Address line 2, such as the apartment, suite, unit, or building. */
   @SerializedName("line2")
   String line2;
 
@@ -33,7 +33,10 @@ public class Address extends StripeObject {
   @SerializedName("postal_code")
   String postalCode;
 
-  /** State, county, province, or region. */
+  /**
+   * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+   * 3166-2</a>).
+   */
   @SerializedName("state")
   String state;
 }

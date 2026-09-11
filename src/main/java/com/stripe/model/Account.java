@@ -15,6 +15,7 @@ import com.stripe.param.AccountListParams;
 import com.stripe.param.AccountPersonsParams;
 import com.stripe.param.AccountRejectParams;
 import com.stripe.param.AccountRetrieveParams;
+import com.stripe.param.AccountUnrejectParams;
 import com.stripe.param.AccountUpdateParams;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is an object representing a Stripe account. You can retrieve it to see properties on the
+ * For new integrations, we recommend using the <a
+ * href="https://stripe.com/api/v2/core/accounts">Accounts v2 API</a>, in place of /v1/accounts and
+ * /v1/customers to represent a user.
+ *
+ * <p>This is an object representing a Stripe account. You can retrieve it to see properties on the
  * account like its current requirements or if the account is enabled to make live charges or
  * receive payouts.
  *
@@ -143,7 +148,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
   Person individual;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -243,9 +248,10 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * href="https://dashboard.stripe.com/account/applications/settings">register your platform</a>.
    *
    * <p>If you’ve already collected information for your connected accounts, you <a
-   * href="https://stripe.com/docs/connect/best-practices#onboarding">can prefill that
-   * information</a> when creating the account. Connect Onboarding won’t ask for the prefilled
-   * information during account onboarding. You can prefill any information on the account.
+   * href="https://stripe.com/connect/marketplace/tasks/create#prefill-account-information">can
+   * prefill that information</a> when creating the account. Connect Onboarding won’t ask for the
+   * prefilled information during account onboarding. You can prefill any information on the
+   * account.
    */
   public static Account create(Map<String, Object> params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -257,9 +263,10 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * href="https://dashboard.stripe.com/account/applications/settings">register your platform</a>.
    *
    * <p>If you’ve already collected information for your connected accounts, you <a
-   * href="https://stripe.com/docs/connect/best-practices#onboarding">can prefill that
-   * information</a> when creating the account. Connect Onboarding won’t ask for the prefilled
-   * information during account onboarding. You can prefill any information on the account.
+   * href="https://stripe.com/connect/marketplace/tasks/create#prefill-account-information">can
+   * prefill that information</a> when creating the account. Connect Onboarding won’t ask for the
+   * prefilled information during account onboarding. You can prefill any information on the
+   * account.
    */
   public static Account create(Map<String, Object> params, RequestOptions options)
       throws StripeException {
@@ -275,9 +282,10 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * href="https://dashboard.stripe.com/account/applications/settings">register your platform</a>.
    *
    * <p>If you’ve already collected information for your connected accounts, you <a
-   * href="https://stripe.com/docs/connect/best-practices#onboarding">can prefill that
-   * information</a> when creating the account. Connect Onboarding won’t ask for the prefilled
-   * information during account onboarding. You can prefill any information on the account.
+   * href="https://stripe.com/connect/marketplace/tasks/create#prefill-account-information">can
+   * prefill that information</a> when creating the account. Connect Onboarding won’t ask for the
+   * prefilled information during account onboarding. You can prefill any information on the
+   * account.
    */
   public static Account create(AccountCreateParams params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -289,9 +297,10 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * href="https://dashboard.stripe.com/account/applications/settings">register your platform</a>.
    *
    * <p>If you’ve already collected information for your connected accounts, you <a
-   * href="https://stripe.com/docs/connect/best-practices#onboarding">can prefill that
-   * information</a> when creating the account. Connect Onboarding won’t ask for the prefilled
-   * information during account onboarding. You can prefill any information on the account.
+   * href="https://stripe.com/connect/marketplace/tasks/create#prefill-account-information">can
+   * prefill that information</a> when creating the account. Connect Onboarding won’t ask for the
+   * prefilled information during account onboarding. You can prefill any information on the
+   * account.
    */
   public static Account create(AccountCreateParams params, RequestOptions options)
       throws StripeException {
@@ -491,8 +500,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * flagged as suspicious.
    *
    * <p>Only accounts where your platform is liable for negative account balances, which includes
-   * Custom and Express accounts, can be rejected. Test-mode accounts can be rejected at any time.
-   * Live-mode accounts can only be rejected after all balances are zero.
+   * Custom and Express accounts, can be rejected.
    */
   public Account reject(Map<String, Object> params) throws StripeException {
     return reject(params, (RequestOptions) null);
@@ -503,8 +511,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * flagged as suspicious.
    *
    * <p>Only accounts where your platform is liable for negative account balances, which includes
-   * Custom and Express accounts, can be rejected. Test-mode accounts can be rejected at any time.
-   * Live-mode accounts can only be rejected after all balances are zero.
+   * Custom and Express accounts, can be rejected.
    */
   public Account reject(Map<String, Object> params, RequestOptions options) throws StripeException {
     String path = String.format("/v1/accounts/%s/reject", ApiResource.urlEncodeId(this.getId()));
@@ -518,8 +525,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * flagged as suspicious.
    *
    * <p>Only accounts where your platform is liable for negative account balances, which includes
-   * Custom and Express accounts, can be rejected. Test-mode accounts can be rejected at any time.
-   * Live-mode accounts can only be rejected after all balances are zero.
+   * Custom and Express accounts, can be rejected.
    */
   public Account reject(AccountRejectParams params) throws StripeException {
     return reject(params, (RequestOptions) null);
@@ -530,8 +536,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
    * flagged as suspicious.
    *
    * <p>Only accounts where your platform is liable for negative account balances, which includes
-   * Custom and Express accounts, can be rejected. Test-mode accounts can be rejected at any time.
-   * Live-mode accounts can only be rejected after all balances are zero.
+   * Custom and Express accounts, can be rejected.
    */
   public Account reject(AccountRejectParams params, RequestOptions options) throws StripeException {
     String path = String.format("/v1/accounts/%s/reject", ApiResource.urlEncodeId(this.getId()));
@@ -612,6 +617,104 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
             ApiRequestParams.paramsToMap(params),
             options);
     return getGlobalResponseGetter().request(request, Account.class);
+  }
+
+  /**
+   * With Connect, you can unreject accounts that you have previously rejected.
+   *
+   * <p>Only accounts that were rejected by your platform can be unrejected. This API cannot be used
+   * to unreject accounts that were rejected by Stripe.
+   *
+   * <p>Unreject will only enable charges and/or payouts if there are no other restrictions other
+   * than those placed by a previous rejection. If you have separately paused charges and/or payouts
+   * outside of rejection, those pauses will remain in place after unrejection.
+   */
+  public Account unreject() throws StripeException {
+    return unreject((Map<String, Object>) null, (RequestOptions) null);
+  }
+
+  /**
+   * With Connect, you can unreject accounts that you have previously rejected.
+   *
+   * <p>Only accounts that were rejected by your platform can be unrejected. This API cannot be used
+   * to unreject accounts that were rejected by Stripe.
+   *
+   * <p>Unreject will only enable charges and/or payouts if there are no other restrictions other
+   * than those placed by a previous rejection. If you have separately paused charges and/or payouts
+   * outside of rejection, those pauses will remain in place after unrejection.
+   */
+  public Account unreject(RequestOptions options) throws StripeException {
+    return unreject((Map<String, Object>) null, options);
+  }
+
+  /**
+   * With Connect, you can unreject accounts that you have previously rejected.
+   *
+   * <p>Only accounts that were rejected by your platform can be unrejected. This API cannot be used
+   * to unreject accounts that were rejected by Stripe.
+   *
+   * <p>Unreject will only enable charges and/or payouts if there are no other restrictions other
+   * than those placed by a previous rejection. If you have separately paused charges and/or payouts
+   * outside of rejection, those pauses will remain in place after unrejection.
+   */
+  public Account unreject(Map<String, Object> params) throws StripeException {
+    return unreject(params, (RequestOptions) null);
+  }
+
+  /**
+   * With Connect, you can unreject accounts that you have previously rejected.
+   *
+   * <p>Only accounts that were rejected by your platform can be unrejected. This API cannot be used
+   * to unreject accounts that were rejected by Stripe.
+   *
+   * <p>Unreject will only enable charges and/or payouts if there are no other restrictions other
+   * than those placed by a previous rejection. If you have separately paused charges and/or payouts
+   * outside of rejection, those pauses will remain in place after unrejection.
+   */
+  public Account unreject(Map<String, Object> params, RequestOptions options)
+      throws StripeException {
+    String path = String.format("/v1/accounts/%s/unreject", ApiResource.urlEncodeId(this.getId()));
+    ApiRequest request =
+        new ApiRequest(BaseAddress.API, ApiResource.RequestMethod.POST, path, params, options);
+    return getResponseGetter().request(request, Account.class);
+  }
+
+  /**
+   * With Connect, you can unreject accounts that you have previously rejected.
+   *
+   * <p>Only accounts that were rejected by your platform can be unrejected. This API cannot be used
+   * to unreject accounts that were rejected by Stripe.
+   *
+   * <p>Unreject will only enable charges and/or payouts if there are no other restrictions other
+   * than those placed by a previous rejection. If you have separately paused charges and/or payouts
+   * outside of rejection, those pauses will remain in place after unrejection.
+   */
+  public Account unreject(AccountUnrejectParams params) throws StripeException {
+    return unreject(params, (RequestOptions) null);
+  }
+
+  /**
+   * With Connect, you can unreject accounts that you have previously rejected.
+   *
+   * <p>Only accounts that were rejected by your platform can be unrejected. This API cannot be used
+   * to unreject accounts that were rejected by Stripe.
+   *
+   * <p>Unreject will only enable charges and/or payouts if there are no other restrictions other
+   * than those placed by a previous rejection. If you have separately paused charges and/or payouts
+   * outside of rejection, those pauses will remain in place after unrejection.
+   */
+  public Account unreject(AccountUnrejectParams params, RequestOptions options)
+      throws StripeException {
+    String path = String.format("/v1/accounts/%s/unreject", ApiResource.urlEncodeId(this.getId()));
+    ApiResource.checkNullTypedParams(path, params);
+    ApiRequest request =
+        new ApiRequest(
+            BaseAddress.API,
+            ApiResource.RequestMethod.POST,
+            path,
+            ApiRequestParams.paramsToMap(params),
+            options);
+    return getResponseGetter().request(request, Account.class);
   }
 
   /**
@@ -903,6 +1006,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     String amazonPayPayments;
 
     /**
+     * The status of the {@code app_distribution} capability of the account, or whether the platform
+     * can distribute apps to other accounts.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("app_distribution")
+    String appDistribution;
+
+    /**
      * The status of the BECS Direct Debit (AU) payments capability of the account, or whether the
      * account can directly process BECS Direct Debit (AU) charges.
      *
@@ -946,6 +1058,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
      */
     @SerializedName("billie_payments")
     String billiePayments;
+
+    /**
+     * The status of the Bizum capability of the account, or whether the account can directly
+     * process Bizum payments.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("bizum_payments")
+    String bizumPayments;
 
     /**
      * The status of the blik payments capability of the account, or whether the account can
@@ -1145,6 +1266,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     String linkPayments;
 
     /**
+     * The status of the MB WAY payments capability of the account, or whether the account can
+     * directly process MB WAY charges.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("mb_way_payments")
+    String mbWayPayments;
+
+    /**
      * The status of the MobilePay capability of the account, or whether the account can directly
      * process MobilePay charges.
      *
@@ -1235,6 +1365,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     String paynowPayments;
 
     /**
+     * The status of the PayTo capability of the account, or whether the account can directly
+     * process PayTo charges.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("payto_payments")
+    String paytoPayments;
+
+    /**
      * The status of the pix payments capability of the account, or whether the account can directly
      * process pix charges.
      *
@@ -1280,6 +1419,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     String satispayPayments;
 
     /**
+     * The status of the Scalapay capability of the account, or whether the account can directly
+     * process Scalapay payments.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("scalapay_payments")
+    String scalapayPayments;
+
+    /**
      * The status of the SEPA customer_balance payments (EUR currency) capability of the account, or
      * whether the account can directly process SEPA customer_balance charges.
      *
@@ -1305,6 +1453,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
      */
     @SerializedName("sofort_payments")
     String sofortPayments;
+
+    /**
+     * The status of the Sunbit capability of the account, or whether the account can directly
+     * process Sunbit payments.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("sunbit_payments")
+    String sunbitPayments;
 
     /**
      * The status of the Swish capability of the account, or whether the account can directly
@@ -1358,6 +1515,15 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     String twintPayments;
 
     /**
+     * The status of the upi payments capability of the account, or whether the account can directly
+     * process upi charges.
+     *
+     * <p>One of {@code active}, {@code inactive}, or {@code pending}.
+     */
+    @SerializedName("upi_payments")
+    String upiPayments;
+
+    /**
      * The status of the US bank account ACH payments capability of the account, or whether the
      * account can directly process US bank account charges.
      *
@@ -1404,10 +1570,13 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     @SerializedName("address_kanji")
     AddressKanji addressKanji;
 
+    @SerializedName("administrative_address")
+    Address administrativeAddress;
+
     /**
      * Whether the company's directors have been provided. This Boolean will be {@code true} if
      * you've manually indicated that all directors are provided via <a
-     * href="https://stripe.com/docs/api/accounts/update#update_account-company-directors_provided">the
+     * href="https://docs.stripe.com/api/accounts/update#update_account-company-directors_provided">the
      * {@code directors_provided} parameter</a>.
      */
     @SerializedName("directors_provided")
@@ -1423,7 +1592,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     /**
      * Whether the company's executives have been provided. This Boolean will be {@code true} if
      * you've manually indicated that all executives are provided via <a
-     * href="https://stripe.com/docs/api/accounts/update#update_account-company-executives_provided">the
+     * href="https://docs.stripe.com/api/accounts/update#update_account-company-executives_provided">the
      * {@code executives_provided} parameter</a>, or if Stripe determined that sufficient executives
      * were provided.
      */
@@ -1470,7 +1639,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     /**
      * Whether the company's owners have been provided. This Boolean will be {@code true} if you've
      * manually indicated that all owners are provided via <a
-     * href="https://stripe.com/docs/api/accounts/update#update_account-company-owners_provided">the
+     * href="https://docs.stripe.com/api/accounts/update#update_account-company-owners_provided">the
      * {@code owners_provided} parameter</a>, or if Stripe determined that sufficient owners were
      * provided. Stripe determines ownership requirements using both the number of owners provided
      * and their total percent ownership (calculated by adding the {@code percent_ownership} of each
@@ -1504,15 +1673,25 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     @SerializedName("phone")
     String phone;
 
+    @SerializedName("principal_place_of_business")
+    Address principalPlaceOfBusiness;
+
     @SerializedName("registration_date")
     RegistrationDate registrationDate;
+
+    /**
+     * This hash is used to attest that the representative is authorized to act as the
+     * representative of their legal entity.
+     */
+    @SerializedName("representative_declaration")
+    RepresentativeDeclaration representativeDeclaration;
 
     /**
      * The category identifying the legal structure of the company or legal entity. Also available
      * for accounts where <a
      * href="https://stripe.com/api/accounts/object#account_object-controller-requirement_collection">controller.requirement_collection</a>
      * is {@code stripe}. See <a
-     * href="https://stripe.com/docs/connect/identity-verification#business-structure">Business
+     * href="https://docs.stripe.com/connect/identity-verification#business-structure">Business
      * structure</a> for more details.
      *
      * <p>One of {@code free_zone_establishment}, {@code free_zone_llc}, {@code
@@ -1693,6 +1872,30 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     }
 
     /**
+     * For more details about RepresentativeDeclaration, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class RepresentativeDeclaration extends StripeObject {
+      /** The Unix timestamp marking when the representative declaration attestation was made. */
+      @SerializedName("date")
+      Long date;
+
+      /** The IP address from which the representative declaration attestation was made. */
+      @SerializedName("ip")
+      String ip;
+
+      /**
+       * The user-agent string from the browser where the representative declaration attestation was
+       * made.
+       */
+      @SerializedName("user_agent")
+      String userAgent;
+    }
+
+    /**
      * For more details about Verification, please refer to the <a
      * href="https://docs.stripe.com/api">API Reference.</a>
      */
@@ -1712,10 +1915,10 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
       @EqualsAndHashCode(callSuper = false)
       public static class Document extends StripeObject {
         /**
-         * The back of a document returned by a <a
-         * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose}
-         * value of {@code additional_verification}. Note that {@code additional_verification} files
-         * are <a href="https://stripe.com/file-upload#uploading-a-file">not downloadable</a>.
+         * The back of a document returned by a <a href="https://api.stripe.com#create_file">file
+         * upload</a> with a {@code purpose} value of {@code additional_verification}. Note that
+         * {@code additional_verification} files are <a
+         * href="https://stripe.com/file-upload#uploading-a-file">not downloadable</a>.
          */
         @SerializedName("back")
         @Getter(lombok.AccessLevel.NONE)
@@ -1739,10 +1942,10 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
         String detailsCode;
 
         /**
-         * The front of a document returned by a <a
-         * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose}
-         * value of {@code additional_verification}. Note that {@code additional_verification} files
-         * are <a href="https://stripe.com/file-upload#uploading-a-file">not downloadable</a>.
+         * The front of a document returned by a <a href="https://api.stripe.com#create_file">file
+         * upload</a> with a {@code purpose} value of {@code additional_verification}. Note that
+         * {@code additional_verification} files are <a
+         * href="https://stripe.com/file-upload#uploading-a-file">not downloadable</a>.
          */
         @SerializedName("front")
         @Getter(lombok.AccessLevel.NONE)
@@ -1802,7 +2005,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     /**
      * {@code true} if the Connect application retrieving the resource controls the account and can
      * therefore exercise <a
-     * href="https://stripe.com/docs/connect/platform-controls-for-standard-accounts">platform
+     * href="https://docs.stripe.com/connect/platform-controls-for-standard-accounts">platform
      * controls</a>. Otherwise, this field is null.
      */
     @SerializedName("is_controller")
@@ -1897,8 +2100,11 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
   @EqualsAndHashCode(callSuper = false)
   public static class FutureRequirements extends StripeObject {
     /**
-     * Fields that are due and can be satisfied by providing the corresponding alternative fields
-     * instead.
+     * Fields that are due and can be resolved by providing the corresponding alternative fields
+     * instead. Many alternatives can list the same {@code original_fields_due}, and any of these
+     * alternatives can serve as a pathway for attempting to resolve the fields again. Re-providing
+     * {@code original_fields_due} also serves as a pathway for attempting to resolve the fields
+     * again.
      */
     @SerializedName("alternatives")
     List<Account.FutureRequirements.Alternative> alternatives;
@@ -1913,7 +2119,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     Long currentDeadline;
 
     /**
-     * Fields that need to be collected to keep the account enabled. If not collected by {@code
+     * Fields that need to be resolved to keep the account enabled. If not resolved by {@code
      * future_requirements[current_deadline]}, these fields will transition to the main {@code
      * requirements} hash.
      */
@@ -1948,20 +2154,19 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     List<String> eventuallyDue;
 
     /**
-     * Fields that weren't collected by {@code requirements.current_deadline}. These fields need to
-     * be collected to enable the capability on the account. New fields will never appear here;
-     * {@code future_requirements.past_due} will always be a subset of {@code
-     * requirements.past_due}.
+     * Fields that haven't been resolved by {@code requirements.current_deadline}. These fields need
+     * to be resolved to enable the capability on the account. {@code future_requirements.past_due}
+     * is a subset of {@code requirements.past_due}.
      */
     @SerializedName("past_due")
     List<String> pastDue;
 
     /**
-     * Fields that might become required depending on the results of verification or review. It's an
-     * empty array unless an asynchronous verification is pending. If verification fails, these
-     * fields move to {@code eventually_due} or {@code currently_due}. Fields might appear in {@code
-     * eventually_due} or {@code currently_due} and in {@code pending_verification} if verification
-     * fails but another verification is still pending.
+     * Fields that are being reviewed, or might become required depending on the results of a
+     * review. If the review fails, these fields can move to {@code eventually_due}, {@code
+     * currently_due}, {@code past_due} or {@code alternatives}. Fields might appear in {@code
+     * eventually_due}, {@code currently_due}, {@code past_due} or {@code alternatives} and in
+     * {@code pending_verification} if one verification fails but another is still pending.
      */
     @SerializedName("pending_verification")
     List<String> pendingVerification;
@@ -1974,12 +2179,12 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Alternative extends StripeObject {
-      /** Fields that can be provided to satisfy all fields in {@code original_fields_due}. */
+      /** Fields that can be provided to resolve all fields in {@code original_fields_due}. */
       @SerializedName("alternative_fields_due")
       List<String> alternativeFieldsDue;
 
       /**
-       * Fields that are due and can be satisfied by providing all fields in {@code
+       * Fields that are due and can be resolved by providing all fields in {@code
        * alternative_fields_due}.
        */
       @SerializedName("original_fields_due")
@@ -1997,14 +2202,14 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
       /**
        * The code for the type of error.
        *
-       * <p>One of {@code information_missing}, {@code invalid_address_city_state_postal_code},
-       * {@code invalid_address_highway_contract_box}, {@code invalid_address_private_mailbox},
-       * {@code invalid_business_profile_name}, {@code invalid_business_profile_name_denylisted},
-       * {@code invalid_company_name_denylisted}, {@code invalid_dob_age_over_maximum}, {@code
-       * invalid_dob_age_under_18}, {@code invalid_dob_age_under_minimum}, {@code
-       * invalid_product_description_length}, {@code invalid_product_description_url_match}, {@code
-       * invalid_representative_country}, {@code invalid_signator}, {@code
-       * invalid_statement_descriptor_business_mismatch}, {@code
+       * <p>One of {@code external_request}, {@code information_missing}, {@code
+       * invalid_address_city_state_postal_code}, {@code invalid_address_highway_contract_box},
+       * {@code invalid_address_private_mailbox}, {@code invalid_business_profile_name}, {@code
+       * invalid_business_profile_name_denylisted}, {@code invalid_company_name_denylisted}, {@code
+       * invalid_dob_age_over_maximum}, {@code invalid_dob_age_under_18}, {@code
+       * invalid_dob_age_under_minimum}, {@code invalid_product_description_length}, {@code
+       * invalid_product_description_url_match}, {@code invalid_representative_country}, {@code
+       * invalid_signator}, {@code invalid_statement_descriptor_business_mismatch}, {@code
        * invalid_statement_descriptor_denylisted}, {@code invalid_statement_descriptor_length},
        * {@code invalid_statement_descriptor_prefix_denylisted}, {@code
        * invalid_statement_descriptor_prefix_mismatch}, {@code invalid_street_address}, {@code
@@ -2023,29 +2228,30 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
        * invalid_url_website_incomplete_return_policy}, {@code
        * invalid_url_website_incomplete_terms_and_conditions}, {@code
        * invalid_url_website_incomplete_under_construction}, {@code invalid_url_website_other},
-       * {@code invalid_value_other}, {@code verification_directors_mismatch}, {@code
-       * verification_document_address_mismatch}, {@code verification_document_address_missing},
-       * {@code verification_document_corrupt}, {@code verification_document_country_not_supported},
-       * {@code verification_document_directors_mismatch}, {@code
-       * verification_document_dob_mismatch}, {@code verification_document_duplicate_type}, {@code
-       * verification_document_expired}, {@code verification_document_failed_copy}, {@code
-       * verification_document_failed_greyscale}, {@code verification_document_failed_other}, {@code
-       * verification_document_failed_test_mode}, {@code verification_document_fraudulent}, {@code
-       * verification_document_id_number_mismatch}, {@code verification_document_id_number_missing},
-       * {@code verification_document_incomplete}, {@code verification_document_invalid}, {@code
-       * verification_document_issue_or_expiry_date_missing}, {@code
-       * verification_document_manipulated}, {@code verification_document_missing_back}, {@code
-       * verification_document_missing_front}, {@code verification_document_name_mismatch}, {@code
-       * verification_document_name_missing}, {@code verification_document_nationality_mismatch},
-       * {@code verification_document_not_readable}, {@code verification_document_not_signed},
-       * {@code verification_document_not_uploaded}, {@code verification_document_photo_mismatch},
-       * {@code verification_document_too_large}, {@code verification_document_type_not_supported},
-       * {@code verification_extraneous_directors}, {@code verification_failed_address_match},
-       * {@code verification_failed_authorizer_authority}, {@code
-       * verification_failed_business_iec_number}, {@code verification_failed_document_match},
-       * {@code verification_failed_id_number_match}, {@code verification_failed_keyed_identity},
-       * {@code verification_failed_keyed_match}, {@code verification_failed_name_match}, {@code
-       * verification_failed_other}, {@code verification_failed_representative_authority}, {@code
+       * {@code invalid_value_other}, {@code unsupported_business_type}, {@code
+       * verification_directors_mismatch}, {@code verification_document_address_mismatch}, {@code
+       * verification_document_address_missing}, {@code verification_document_corrupt}, {@code
+       * verification_document_country_not_supported}, {@code
+       * verification_document_directors_mismatch}, {@code verification_document_dob_mismatch},
+       * {@code verification_document_duplicate_type}, {@code verification_document_expired}, {@code
+       * verification_document_failed_copy}, {@code verification_document_failed_greyscale}, {@code
+       * verification_document_failed_other}, {@code verification_document_failed_test_mode}, {@code
+       * verification_document_fraudulent}, {@code verification_document_id_number_mismatch}, {@code
+       * verification_document_id_number_missing}, {@code verification_document_incomplete}, {@code
+       * verification_document_invalid}, {@code verification_document_issue_or_expiry_date_missing},
+       * {@code verification_document_manipulated}, {@code verification_document_missing_back},
+       * {@code verification_document_missing_front}, {@code verification_document_name_mismatch},
+       * {@code verification_document_name_missing}, {@code
+       * verification_document_nationality_mismatch}, {@code verification_document_not_readable},
+       * {@code verification_document_not_signed}, {@code verification_document_not_uploaded},
+       * {@code verification_document_photo_mismatch}, {@code verification_document_too_large},
+       * {@code verification_document_type_not_supported}, {@code
+       * verification_extraneous_directors}, {@code verification_failed_address_match}, {@code
+       * verification_failed_authorizer_authority}, {@code verification_failed_business_iec_number},
+       * {@code verification_failed_document_match}, {@code verification_failed_id_number_match},
+       * {@code verification_failed_keyed_identity}, {@code verification_failed_keyed_match}, {@code
+       * verification_failed_name_match}, {@code verification_failed_other}, {@code
+       * verification_failed_representative_authority}, {@code
        * verification_failed_residential_address}, {@code verification_failed_tax_id_match}, {@code
        * verification_failed_tax_id_not_issued}, {@code
        * verification_legal_entity_structure_mismatch}, {@code verification_missing_directors},
@@ -2084,7 +2290,7 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
   public static class Groups extends StripeObject {
     /**
      * The group the account is in to determine their payments pricing, and null if the account is
-     * on customized pricing. <a href="https://stripe.com/docs/connect/platform-pricing-tools">See
+     * on customized pricing. <a href="https://docs.stripe.com/connect/platform-pricing-tools">See
      * the Platform pricing tool documentation</a> for details.
      */
     @SerializedName("payments_pricing")
@@ -2100,8 +2306,11 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
   @EqualsAndHashCode(callSuper = false)
   public static class Requirements extends StripeObject {
     /**
-     * Fields that are due and can be satisfied by providing the corresponding alternative fields
-     * instead.
+     * Fields that are due and can be resolved by providing the corresponding alternative fields
+     * instead. Many alternatives can list the same {@code original_fields_due}, and any of these
+     * alternatives can serve as a pathway for attempting to resolve the fields again. Re-providing
+     * {@code original_fields_due} also serves as a pathway for attempting to resolve the fields
+     * again.
      */
     @SerializedName("alternatives")
     List<Account.Requirements.Alternative> alternatives;
@@ -2115,16 +2324,16 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     Long currentDeadline;
 
     /**
-     * Fields that need to be collected to keep the account enabled. If not collected by {@code
-     * current_deadline}, these fields appear in {@code past_due} as well, and the account is
-     * disabled.
+     * Fields that need to be resolved to keep the account enabled. If not resolved by {@code
+     * current_deadline}, these fields will appear in {@code past_due} as well, and the account will
+     * be disabled.
      */
     @SerializedName("currently_due")
     List<String> currentlyDue;
 
     /**
      * If the account is disabled, this enum describes why. <a
-     * href="https://stripe.com/docs/connect/handling-api-verification">Learn more about handling
+     * href="https://docs.stripe.com/connect/handling-api-verification">Learn more about handling
      * verification issues</a>.
      *
      * <p>One of {@code action_required.requested_capabilities}, {@code listed}, {@code other},
@@ -2152,18 +2361,18 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     List<String> eventuallyDue;
 
     /**
-     * Fields that weren't collected by {@code current_deadline}. These fields need to be collected
-     * to enable the account.
+     * Fields that haven't been resolved by {@code current_deadline}. These fields need to be
+     * resolved to enable the account.
      */
     @SerializedName("past_due")
     List<String> pastDue;
 
     /**
-     * Fields that might become required depending on the results of verification or review. It's an
-     * empty array unless an asynchronous verification is pending. If verification fails, these
-     * fields move to {@code eventually_due}, {@code currently_due}, or {@code past_due}. Fields
-     * might appear in {@code eventually_due}, {@code currently_due}, or {@code past_due} and in
-     * {@code pending_verification} if verification fails but another verification is still pending.
+     * Fields that are being reviewed, or might become required depending on the results of a
+     * review. If the review fails, these fields can move to {@code eventually_due}, {@code
+     * currently_due}, {@code past_due} or {@code alternatives}. Fields might appear in {@code
+     * eventually_due}, {@code currently_due}, {@code past_due} or {@code alternatives} and in
+     * {@code pending_verification} if one verification fails but another is still pending.
      */
     @SerializedName("pending_verification")
     List<String> pendingVerification;
@@ -2176,12 +2385,12 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Alternative extends StripeObject {
-      /** Fields that can be provided to satisfy all fields in {@code original_fields_due}. */
+      /** Fields that can be provided to resolve all fields in {@code original_fields_due}. */
       @SerializedName("alternative_fields_due")
       List<String> alternativeFieldsDue;
 
       /**
-       * Fields that are due and can be satisfied by providing all fields in {@code
+       * Fields that are due and can be resolved by providing all fields in {@code
        * alternative_fields_due}.
        */
       @SerializedName("original_fields_due")
@@ -2199,14 +2408,14 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
       /**
        * The code for the type of error.
        *
-       * <p>One of {@code information_missing}, {@code invalid_address_city_state_postal_code},
-       * {@code invalid_address_highway_contract_box}, {@code invalid_address_private_mailbox},
-       * {@code invalid_business_profile_name}, {@code invalid_business_profile_name_denylisted},
-       * {@code invalid_company_name_denylisted}, {@code invalid_dob_age_over_maximum}, {@code
-       * invalid_dob_age_under_18}, {@code invalid_dob_age_under_minimum}, {@code
-       * invalid_product_description_length}, {@code invalid_product_description_url_match}, {@code
-       * invalid_representative_country}, {@code invalid_signator}, {@code
-       * invalid_statement_descriptor_business_mismatch}, {@code
+       * <p>One of {@code external_request}, {@code information_missing}, {@code
+       * invalid_address_city_state_postal_code}, {@code invalid_address_highway_contract_box},
+       * {@code invalid_address_private_mailbox}, {@code invalid_business_profile_name}, {@code
+       * invalid_business_profile_name_denylisted}, {@code invalid_company_name_denylisted}, {@code
+       * invalid_dob_age_over_maximum}, {@code invalid_dob_age_under_18}, {@code
+       * invalid_dob_age_under_minimum}, {@code invalid_product_description_length}, {@code
+       * invalid_product_description_url_match}, {@code invalid_representative_country}, {@code
+       * invalid_signator}, {@code invalid_statement_descriptor_business_mismatch}, {@code
        * invalid_statement_descriptor_denylisted}, {@code invalid_statement_descriptor_length},
        * {@code invalid_statement_descriptor_prefix_denylisted}, {@code
        * invalid_statement_descriptor_prefix_mismatch}, {@code invalid_street_address}, {@code
@@ -2225,29 +2434,30 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
        * invalid_url_website_incomplete_return_policy}, {@code
        * invalid_url_website_incomplete_terms_and_conditions}, {@code
        * invalid_url_website_incomplete_under_construction}, {@code invalid_url_website_other},
-       * {@code invalid_value_other}, {@code verification_directors_mismatch}, {@code
-       * verification_document_address_mismatch}, {@code verification_document_address_missing},
-       * {@code verification_document_corrupt}, {@code verification_document_country_not_supported},
-       * {@code verification_document_directors_mismatch}, {@code
-       * verification_document_dob_mismatch}, {@code verification_document_duplicate_type}, {@code
-       * verification_document_expired}, {@code verification_document_failed_copy}, {@code
-       * verification_document_failed_greyscale}, {@code verification_document_failed_other}, {@code
-       * verification_document_failed_test_mode}, {@code verification_document_fraudulent}, {@code
-       * verification_document_id_number_mismatch}, {@code verification_document_id_number_missing},
-       * {@code verification_document_incomplete}, {@code verification_document_invalid}, {@code
-       * verification_document_issue_or_expiry_date_missing}, {@code
-       * verification_document_manipulated}, {@code verification_document_missing_back}, {@code
-       * verification_document_missing_front}, {@code verification_document_name_mismatch}, {@code
-       * verification_document_name_missing}, {@code verification_document_nationality_mismatch},
-       * {@code verification_document_not_readable}, {@code verification_document_not_signed},
-       * {@code verification_document_not_uploaded}, {@code verification_document_photo_mismatch},
-       * {@code verification_document_too_large}, {@code verification_document_type_not_supported},
-       * {@code verification_extraneous_directors}, {@code verification_failed_address_match},
-       * {@code verification_failed_authorizer_authority}, {@code
-       * verification_failed_business_iec_number}, {@code verification_failed_document_match},
-       * {@code verification_failed_id_number_match}, {@code verification_failed_keyed_identity},
-       * {@code verification_failed_keyed_match}, {@code verification_failed_name_match}, {@code
-       * verification_failed_other}, {@code verification_failed_representative_authority}, {@code
+       * {@code invalid_value_other}, {@code unsupported_business_type}, {@code
+       * verification_directors_mismatch}, {@code verification_document_address_mismatch}, {@code
+       * verification_document_address_missing}, {@code verification_document_corrupt}, {@code
+       * verification_document_country_not_supported}, {@code
+       * verification_document_directors_mismatch}, {@code verification_document_dob_mismatch},
+       * {@code verification_document_duplicate_type}, {@code verification_document_expired}, {@code
+       * verification_document_failed_copy}, {@code verification_document_failed_greyscale}, {@code
+       * verification_document_failed_other}, {@code verification_document_failed_test_mode}, {@code
+       * verification_document_fraudulent}, {@code verification_document_id_number_mismatch}, {@code
+       * verification_document_id_number_missing}, {@code verification_document_incomplete}, {@code
+       * verification_document_invalid}, {@code verification_document_issue_or_expiry_date_missing},
+       * {@code verification_document_manipulated}, {@code verification_document_missing_back},
+       * {@code verification_document_missing_front}, {@code verification_document_name_mismatch},
+       * {@code verification_document_name_missing}, {@code
+       * verification_document_nationality_mismatch}, {@code verification_document_not_readable},
+       * {@code verification_document_not_signed}, {@code verification_document_not_uploaded},
+       * {@code verification_document_photo_mismatch}, {@code verification_document_too_large},
+       * {@code verification_document_type_not_supported}, {@code
+       * verification_extraneous_directors}, {@code verification_failed_address_match}, {@code
+       * verification_failed_authorizer_authority}, {@code verification_failed_business_iec_number},
+       * {@code verification_failed_document_match}, {@code verification_failed_id_number_match},
+       * {@code verification_failed_keyed_identity}, {@code verification_failed_keyed_match}, {@code
+       * verification_failed_name_match}, {@code verification_failed_other}, {@code
+       * verification_failed_representative_authority}, {@code
        * verification_failed_residential_address}, {@code verification_failed_tax_id_match}, {@code
        * verification_failed_tax_id_not_issued}, {@code
        * verification_legal_entity_structure_mismatch}, {@code verification_missing_directors},
@@ -2558,8 +2768,9 @@ public class Account extends ApiResource implements MetadataStore<Account>, Paym
       List<ExpandableField<TaxId>> defaultAccountTaxIds;
 
       /**
-       * Whether payment methods should be saved when a payment is completed for a one-time invoices
-       * on a hosted invoice page.
+       * Whether to save the payment method after a payment is completed for a one-time invoice or a
+       * subscription invoice when the customer already has a default payment method on the hosted
+       * invoice page.
        *
        * <p>One of {@code always}, {@code never}, or {@code offer}.
        */

@@ -33,8 +33,8 @@ public class Mandate extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -196,7 +196,15 @@ public class Mandate extends ApiResource implements HasId {
   @Getter
   @Setter
   @EqualsAndHashCode(callSuper = false)
-  public static class MultiUse extends StripeObject {}
+  public static class MultiUse extends StripeObject {
+    /** The amount of the payment on a multi use mandate. */
+    @SerializedName("amount")
+    Long amount;
+
+    /** The currency of the payment on a multi use mandate. */
+    @SerializedName("currency")
+    String currency;
+  }
 
   /**
    * For more details about PaymentMethodDetails, please refer to the <a
@@ -245,11 +253,20 @@ public class Mandate extends ApiResource implements HasId {
     @SerializedName("paypal")
     Paypal paypal;
 
+    @SerializedName("payto")
+    Payto payto;
+
+    @SerializedName("pix")
+    Pix pix;
+
     @SerializedName("revolut_pay")
     RevolutPay revolutPay;
 
     @SerializedName("sepa_debit")
     SepaDebit sepaDebit;
+
+    @SerializedName("twint")
+    Twint twint;
 
     /**
      * This mandate corresponds with a specific payment method type. The {@code
@@ -258,6 +275,9 @@ public class Mandate extends ApiResource implements HasId {
      */
     @SerializedName("type")
     String type;
+
+    @SerializedName("upi")
+    Upi upi;
 
     @SerializedName("us_bank_account")
     UsBankAccount usBankAccount;
@@ -331,6 +351,10 @@ public class Mandate extends ApiResource implements HasId {
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class BacsDebit extends StripeObject {
+      /** The display name for the account on this mandate. */
+      @SerializedName("display_name")
+      String displayName;
+
       /**
        * The status of the mandate on the Bacs network. Can be one of {@code pending}, {@code
        * revoked}, {@code refused}, or {@code accepted}.
@@ -351,6 +375,10 @@ public class Mandate extends ApiResource implements HasId {
        */
       @SerializedName("revocation_reason")
       String revocationReason;
+
+      /** The service user number for the account on this mandate. */
+      @SerializedName("service_user_number")
+      String serviceUserNumber;
 
       /** The URL that will contain the mandate that the customer has signed. */
       @SerializedName("url")
@@ -450,6 +478,121 @@ public class Mandate extends ApiResource implements HasId {
     }
 
     /**
+     * For more details about Payto, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Payto extends StripeObject {
+      /**
+       * Amount that will be collected. It is required when {@code amount_type} is {@code fixed}.
+       */
+      @SerializedName("amount")
+      Long amount;
+
+      /**
+       * The type of amount that will be collected. The amount charged must be exact or up to the
+       * value of {@code amount} param for {@code fixed} or {@code maximum} type respectively.
+       * Defaults to {@code maximum}.
+       *
+       * <p>One of {@code fixed}, or {@code maximum}.
+       */
+      @SerializedName("amount_type")
+      String amountType;
+
+      /**
+       * Date, in YYYY-MM-DD format, after which payments will not be collected. Defaults to no end
+       * date.
+       */
+      @SerializedName("end_date")
+      String endDate;
+
+      /**
+       * The periodicity at which payments will be collected. Defaults to {@code adhoc}.
+       *
+       * <p>One of {@code adhoc}, {@code annual}, {@code daily}, {@code fortnightly}, {@code
+       * monthly}, {@code quarterly}, {@code semi_annual}, or {@code weekly}.
+       */
+      @SerializedName("payment_schedule")
+      String paymentSchedule;
+
+      /**
+       * The number of payments that will be made during a payment period. Defaults to 1 except for
+       * when {@code payment_schedule} is {@code adhoc}. In that case, it defaults to no limit.
+       */
+      @SerializedName("payments_per_period")
+      Long paymentsPerPeriod;
+
+      /**
+       * The purpose for which payments are made. Has a default value based on your merchant
+       * category code.
+       *
+       * <p>One of {@code dependant_support}, {@code government}, {@code loan}, {@code mortgage},
+       * {@code other}, {@code pension}, {@code personal}, {@code retail}, {@code salary}, {@code
+       * tax}, or {@code utility}.
+       */
+      @SerializedName("purpose")
+      String purpose;
+
+      /**
+       * Date, in YYYY-MM-DD format, from which payments will be collected. Defaults to confirmation
+       * time.
+       */
+      @SerializedName("start_date")
+      String startDate;
+    }
+
+    /**
+     * For more details about Pix, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Pix extends StripeObject {
+      /**
+       * Determines if the amount includes the IOF tax.
+       *
+       * <p>One of {@code always}, or {@code never}.
+       */
+      @SerializedName("amount_includes_iof")
+      String amountIncludesIof;
+
+      /**
+       * Type of amount.
+       *
+       * <p>One of {@code fixed}, or {@code maximum}.
+       */
+      @SerializedName("amount_type")
+      String amountType;
+
+      /**
+       * Date when the mandate expires and no further payments will be charged, in {@code
+       * YYYY-MM-DD}.
+       */
+      @SerializedName("end_date")
+      String endDate;
+
+      /**
+       * Schedule at which the future payments will be charged.
+       *
+       * <p>One of {@code halfyearly}, {@code monthly}, {@code quarterly}, {@code weekly}, or {@code
+       * yearly}.
+       */
+      @SerializedName("payment_schedule")
+      String paymentSchedule;
+
+      /** Subscription name displayed to buyers in their bank app. */
+      @SerializedName("reference")
+      String reference;
+
+      /** Start date of the mandate, in {@code YYYY-MM-DD}. */
+      @SerializedName("start_date")
+      String startDate;
+    }
+
+    /**
      * For more details about RevolutPay, please refer to the <a
      * href="https://docs.stripe.com/api">API Reference.</a>
      */
@@ -476,6 +619,46 @@ public class Mandate extends ApiResource implements HasId {
        */
       @SerializedName("url")
       String url;
+    }
+
+    /**
+     * For more details about Twint, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Twint extends StripeObject {}
+
+    /**
+     * For more details about Upi, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Upi extends StripeObject {
+      /** Amount to be charged for future payments. */
+      @SerializedName("amount")
+      Long amount;
+
+      /**
+       * One of {@code fixed} or {@code maximum}. If {@code fixed}, the {@code amount} param refers
+       * to the exact amount to be charged in future payments. If {@code maximum}, the amount
+       * charged can be up to the value passed for the {@code amount} param.
+       */
+      @SerializedName("amount_type")
+      String amountType;
+
+      /**
+       * A description of the mandate or subscription that is meant to be displayed to the customer.
+       */
+      @SerializedName("description")
+      String description;
+
+      /** End date of the mandate or subscription. */
+      @SerializedName("end_date")
+      Long endDate;
     }
 
     /**

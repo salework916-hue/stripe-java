@@ -30,12 +30,13 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
   @SerializedName("currency")
   String currency;
 
-  /**
-   * <strong>Required.</strong> The ID of the customer who will be billed when this invoice item is
-   * billed.
-   */
+  /** The ID of the customer to bill for this invoice item. */
   @SerializedName("customer")
   String customer;
+
+  /** The ID of the account representing the customer to bill for this invoice item. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * An arbitrary string which you can attach to the invoice item. The description is displayed in
@@ -83,7 +84,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
   String invoice;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -94,16 +95,16 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
   /**
    * The period associated with this invoice item. When set to different values, the period will be
    * rendered on the invoice. If you have <a
-   * href="https://stripe.com/docs/revenue-recognition">Stripe Revenue Recognition</a> enabled, the
+   * href="https://docs.stripe.com/revenue-recognition">Stripe Revenue Recognition</a> enabled, the
    * period will be used to recognize and defer revenue. See the <a
-   * href="https://stripe.com/docs/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
+   * href="https://docs.stripe.com/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
    * Recognition documentation</a> for details.
    */
   @SerializedName("period")
   Period period;
 
   /**
-   * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+   * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
    * inline.
    */
   @SerializedName("price_data")
@@ -113,9 +114,20 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
   @SerializedName("pricing")
   Pricing pricing;
 
-  /** Non-negative integer. The quantity of units for the invoice item. */
+  /**
+   * Non-negative integer. The quantity of units for the invoice item. Use {@code quantity_decimal}
+   * instead to provide decimal precision. This field will be deprecated in favor of {@code
+   * quantity_decimal} in a future version.
+   */
   @SerializedName("quantity")
   Long quantity;
+
+  /**
+   * Non-negative decimal with at most 12 decimal places. The quantity of units for the invoice
+   * item.
+   */
+  @SerializedName("quantity_decimal")
+  BigDecimal quantityDecimal;
 
   /**
    * The ID of a subscription to add this invoice item to. When left blank, the invoice item is
@@ -128,7 +140,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
 
   /**
    * Only required if a <a
-   * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+   * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
    * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price is
    * considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
    * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -137,7 +149,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
   @SerializedName("tax_behavior")
   TaxBehavior taxBehavior;
 
-  /** A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID. */
+  /** A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID. */
   @SerializedName("tax_code")
   Object taxCode;
 
@@ -161,6 +173,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
       Long amount,
       String currency,
       String customer,
+      String customerAccount,
       String description,
       Boolean discountable,
       Object discounts,
@@ -172,6 +185,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
       PriceData priceData,
       Pricing pricing,
       Long quantity,
+      BigDecimal quantityDecimal,
       String subscription,
       TaxBehavior taxBehavior,
       Object taxCode,
@@ -180,6 +194,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     this.amount = amount;
     this.currency = currency;
     this.customer = customer;
+    this.customerAccount = customerAccount;
     this.description = description;
     this.discountable = discountable;
     this.discounts = discounts;
@@ -191,6 +206,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     this.priceData = priceData;
     this.pricing = pricing;
     this.quantity = quantity;
+    this.quantityDecimal = quantityDecimal;
     this.subscription = subscription;
     this.taxBehavior = taxBehavior;
     this.taxCode = taxCode;
@@ -208,6 +224,8 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     private String currency;
 
     private String customer;
+
+    private String customerAccount;
 
     private String description;
 
@@ -231,6 +249,8 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
 
     private Long quantity;
 
+    private BigDecimal quantityDecimal;
+
     private String subscription;
 
     private TaxBehavior taxBehavior;
@@ -247,6 +267,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
           this.amount,
           this.currency,
           this.customer,
+          this.customerAccount,
           this.description,
           this.discountable,
           this.discounts,
@@ -258,6 +279,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
           this.priceData,
           this.pricing,
           this.quantity,
+          this.quantityDecimal,
           this.subscription,
           this.taxBehavior,
           this.taxCode,
@@ -285,12 +307,15 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
       return this;
     }
 
-    /**
-     * <strong>Required.</strong> The ID of the customer who will be billed when this invoice item
-     * is billed.
-     */
+    /** The ID of the customer to bill for this invoice item. */
     public Builder setCustomer(String customer) {
       this.customer = customer;
+      return this;
+    }
+
+    /** The ID of the account representing the customer to bill for this invoice item. */
+    public Builder setCustomerAccount(String customerAccount) {
+      this.customerAccount = customerAccount;
       return this;
     }
 
@@ -452,7 +477,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -463,7 +488,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -476,9 +501,9 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     /**
      * The period associated with this invoice item. When set to different values, the period will
      * be rendered on the invoice. If you have <a
-     * href="https://stripe.com/docs/revenue-recognition">Stripe Revenue Recognition</a> enabled,
+     * href="https://docs.stripe.com/revenue-recognition">Stripe Revenue Recognition</a> enabled,
      * the period will be used to recognize and defer revenue. See the <a
-     * href="https://stripe.com/docs/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
+     * href="https://docs.stripe.com/revenue-recognition/methodology/subscriptions-and-invoicing">Revenue
      * Recognition documentation</a> for details.
      */
     public Builder setPeriod(InvoiceItemCreateParams.Period period) {
@@ -487,7 +512,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Data used to generate a new <a href="https://stripe.com/docs/api/prices">Price</a> object
+     * Data used to generate a new <a href="https://docs.stripe.com/api/prices">Price</a> object
      * inline.
      */
     public Builder setPriceData(InvoiceItemCreateParams.PriceData priceData) {
@@ -501,9 +526,22 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
       return this;
     }
 
-    /** Non-negative integer. The quantity of units for the invoice item. */
+    /**
+     * Non-negative integer. The quantity of units for the invoice item. Use {@code
+     * quantity_decimal} instead to provide decimal precision. This field will be deprecated in
+     * favor of {@code quantity_decimal} in a future version.
+     */
     public Builder setQuantity(Long quantity) {
       this.quantity = quantity;
+      return this;
+    }
+
+    /**
+     * Non-negative decimal with at most 12 decimal places. The quantity of units for the invoice
+     * item.
+     */
+    public Builder setQuantityDecimal(BigDecimal quantityDecimal) {
+      this.quantityDecimal = quantityDecimal;
       return this;
     }
 
@@ -521,7 +559,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
 
     /**
      * Only required if a <a
-     * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+     * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
      * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price is
      * considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
      * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -532,13 +570,13 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
       return this;
     }
 
-    /** A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID. */
+    /** A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID. */
     public Builder setTaxCode(String taxCode) {
       this.taxCode = taxCode;
       return this;
     }
 
-    /** A <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID. */
+    /** A <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID. */
     public Builder setTaxCode(EmptyParam taxCode) {
       this.taxCode = taxCode;
       return this;
@@ -797,7 +835,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
 
     /**
      * Only required if a <a
-     * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+     * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
      * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price is
      * considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
      * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code
@@ -912,7 +950,7 @@ public class InvoiceItemCreateParams extends ApiRequestParams {
 
       /**
        * Only required if a <a
-       * href="https://stripe.com/docs/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
+       * href="https://docs.stripe.com/tax/products-prices-tax-categories-tax-behavior#setting-a-default-tax-behavior-(recommended)">default
        * tax behavior</a> was not provided in the Stripe Tax settings. Specifies whether the price
        * is considered inclusive of taxes or exclusive of taxes. One of {@code inclusive}, {@code
        * exclusive}, or {@code unspecified}. Once specified as either {@code inclusive} or {@code

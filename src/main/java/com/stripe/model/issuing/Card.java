@@ -30,7 +30,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * You can <a href="https://stripe.com/docs/issuing">create physical or virtual cards</a> that are
+ * You can <a href="https://docs.stripe.com/issuing">create physical or virtual cards</a> that are
  * issued to cardholders.
  */
 @Getter
@@ -44,17 +44,17 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   /**
    * The reason why the card was canceled.
    *
-   * <p>One of {@code design_rejected}, {@code lost}, or {@code stolen}.
+   * <p>One of {@code design_rejected}, {@code fulfillment_error}, {@code lost}, or {@code stolen}.
    */
   @SerializedName("cancellation_reason")
   String cancellationReason;
 
   /**
    * An Issuing {@code Cardholder} object represents an individual or business entity who is <a
-   * href="https://stripe.com/docs/issuing">issued</a> cards.
+   * href="https://docs.stripe.com/issuing">issued</a> cards.
    *
    * <p>Related guide: <a
-   * href="https://stripe.com/docs/issuing/cards/virtual/issue-cards#create-cardholder">How to
+   * href="https://docs.stripe.com/issuing/cards/virtual/issue-cards#create-cardholder">How to
    * create a cardholder</a>
    */
   @SerializedName("cardholder")
@@ -75,9 +75,9 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   /**
    * The card's CVC. For security reasons, this is only available for virtual cards, and will be
    * omitted unless you explicitly request it with <a
-   * href="https://stripe.com/docs/api/expanding_objects">the {@code expand} parameter</a>.
+   * href="https://docs.stripe.com/api/expanding_objects">the {@code expand} parameter</a>.
    * Additionally, it's only available via the <a
-   * href="https://stripe.com/docs/api/issuing/cards/retrieve">&quot;Retrieve a card&quot;
+   * href="https://docs.stripe.com/api/issuing/cards/retrieve">&quot;Retrieve a card&quot;
    * endpoint</a>, not via &quot;List all cards&quot; or any other endpoint.
    */
   @SerializedName("cvc")
@@ -105,14 +105,29 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   String last4;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * Stripe’s assessment of whether this card’s details have been compromised. If this property
+   * isn't null, cancel and reissue the card to prevent fraudulent activity risk.
+   */
+  @SerializedName("latest_fraud_warning")
+  LatestFraudWarning latestFraudWarning;
+
+  /**
+   * Rules that control the lifecycle of this card, such as automatic cancellation. Refer to our <a
+   * href="https://stripe.com/issuing/controls/lifecycle-controls">documentation</a> for more
+   * details.
+   */
+  @SerializedName("lifecycle_controls")
+  LifecycleControls lifecycleControls;
+
+  /**
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -123,9 +138,9 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   /**
    * The full unredacted card number. For security reasons, this is only available for virtual
    * cards, and will be omitted unless you explicitly request it with <a
-   * href="https://stripe.com/docs/api/expanding_objects">the {@code expand} parameter</a>.
+   * href="https://docs.stripe.com/api/expanding_objects">the {@code expand} parameter</a>.
    * Additionally, it's only available via the <a
-   * href="https://stripe.com/docs/api/issuing/cards/retrieve">&quot;Retrieve a card&quot;
+   * href="https://docs.stripe.com/api/issuing/cards/retrieve">&quot;Retrieve a card&quot;
    * endpoint</a>, not via &quot;List all cards&quot; or any other endpoint.
    */
   @SerializedName("number")
@@ -160,10 +175,15 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   /**
    * The reason why the previous card needed to be replaced.
    *
-   * <p>One of {@code damaged}, {@code expired}, {@code lost}, or {@code stolen}.
+   * <p>One of {@code damaged}, {@code expired}, {@code fulfillment_error}, {@code lost}, or {@code
+   * stolen}.
    */
   @SerializedName("replacement_reason")
   String replacementReason;
+
+  /** Text separate from cardholder name, printed on the card. */
+  @SerializedName("second_line")
+  String secondLine;
 
   /** Where and how the card will be shipped. */
   @SerializedName("shipping")
@@ -409,6 +429,59 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   }
 
   /**
+   * For more details about LatestFraudWarning, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class LatestFraudWarning extends StripeObject {
+    /** Timestamp of the most recent fraud warning. */
+    @SerializedName("started_at")
+    Long startedAt;
+
+    /**
+     * The type of fraud warning that most recently took place on this card. This field updates with
+     * every new fraud warning, so the value changes over time. If populated, cancel and reissue the
+     * card.
+     *
+     * <p>One of {@code card_testing_exposure}, {@code fraud_dispute_filed}, {@code
+     * third_party_reported}, or {@code user_indicated_fraud}.
+     */
+    @SerializedName("type")
+    String type;
+  }
+
+  /**
+   * For more details about LifecycleControls, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class LifecycleControls extends StripeObject {
+    @SerializedName("cancel_after")
+    CancelAfter cancelAfter;
+
+    /**
+     * For more details about CancelAfter, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class CancelAfter extends StripeObject {
+      /**
+       * The card is automatically cancelled when it makes this number of non-zero payment
+       * authorizations and transactions. The count includes penny authorizations, but doesn't
+       * include non-payment actions, such as authorization advice.
+       */
+      @SerializedName("payment_count")
+      Long paymentCount;
+    }
+  }
+
+  /**
    * For more details about Shipping, please refer to the <a href="https://docs.stripe.com/api">API
    * Reference.</a>
    */
@@ -424,9 +497,16 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
     AddressValidation addressValidation;
 
     /**
+     * The name of the business at the shipping address, used on the shipping label to ensure
+     * delivery when the card is shipped to a cardholder's workplace.
+     */
+    @SerializedName("business_name")
+    String businessName;
+
+    /**
      * The delivery company that shipped a card.
      *
-     * <p>One of {@code dhl}, {@code fedex}, {@code royal_mail}, or {@code usps}.
+     * <p>One of {@code correos}, {@code dhl}, {@code fedex}, {@code royal_mail}, or {@code usps}.
      */
     @SerializedName("carrier")
     String carrier;
@@ -555,8 +635,16 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   @EqualsAndHashCode(callSuper = false)
   public static class SpendingControls extends StripeObject {
     /**
+     * Array of card presence statuses from which authorizations will be allowed. Possible options
+     * are {@code present}, {@code not_present}. All other statuses will be blocked. Cannot be set
+     * with {@code blocked_card_presences}. Provide an empty value to unset this control.
+     */
+    @SerializedName("allowed_card_presences")
+    List<String> allowedCardPresences;
+
+    /**
      * Array of strings containing <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+     * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
      * of authorizations to allow. All other categories will be blocked. Cannot be set with {@code
      * blocked_categories}.
      */
@@ -573,8 +661,16 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
     List<String> allowedMerchantCountries;
 
     /**
+     * Array of card presence statuses from which authorizations will be declined. Possible options
+     * are {@code present}, {@code not_present}. Cannot be set with {@code allowed_card_presences}.
+     * Provide an empty value to unset this control.
+     */
+    @SerializedName("blocked_card_presences")
+    List<String> blockedCardPresences;
+
+    /**
      * Array of strings containing <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+     * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
      * of authorizations to decline. All other categories will be allowed. Cannot be set with {@code
      * allowed_categories}.
      */
@@ -614,14 +710,14 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
     public static class SpendingLimit extends StripeObject {
       /**
        * Maximum amount allowed to spend per interval. This amount is in the card's currency and in
-       * the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+       * the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
        */
       @SerializedName("amount")
       Long amount;
 
       /**
        * Array of strings containing <a
-       * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+       * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
        * this limit applies to. Omitting this field will apply the limit to all categories.
        */
       @SerializedName("categories")
@@ -1037,6 +1133,8 @@ public class Card extends ApiResource implements HasId, MetadataStore<Card> {
   public void setResponseGetter(StripeResponseGetter responseGetter) {
     super.setResponseGetter(responseGetter);
     trySetResponseGetter(cardholder, responseGetter);
+    trySetResponseGetter(latestFraudWarning, responseGetter);
+    trySetResponseGetter(lifecycleControls, responseGetter);
     trySetResponseGetter(personalizationDesign, responseGetter);
     trySetResponseGetter(replacedBy, responseGetter);
     trySetResponseGetter(replacementFor, responseGetter);

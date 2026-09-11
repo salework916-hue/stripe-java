@@ -8,6 +8,7 @@ import com.stripe.model.ExpandableField;
 import com.stripe.model.HasId;
 import com.stripe.model.MetadataStore;
 import com.stripe.model.StripeObject;
+import com.stripe.model.billing.FeedbackOption;
 import com.stripe.net.ApiRequest;
 import com.stripe.net.ApiRequestParams;
 import com.stripe.net.ApiResource;
@@ -20,11 +21,16 @@ import com.stripe.param.billingportal.ConfigurationRetrieveParams;
 import com.stripe.param.billingportal.ConfigurationUpdateParams;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-/** A portal configuration describes the functionality and behavior of a portal session. */
+/**
+ * A portal configuration describes the functionality and behavior you embed in a portal session.
+ * Related guide: <a href="https://stripe.com/customer-management/configure-portal">Configure the
+ * customer portal</a>.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -49,7 +55,7 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
   /**
    * The default URL to redirect customers to when they click on the portal's link to return to your
    * website. This can be <a
-   * href="https://stripe.com/docs/api/customer_portal/sessions/create#create_portal_session-return_url">overriden</a>
+   * href="https://docs.stripe.com/api/customer_portal/sessions/create#create_portal_session-return_url">overridden</a>
    * when creating the session.
    */
   @SerializedName("default_return_url")
@@ -72,8 +78,8 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
   Boolean isDefault;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -82,7 +88,7 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
   LoginPage loginPage;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -361,6 +367,15 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
       /** Whether the feature is enabled. */
       @SerializedName("enabled")
       Boolean enabled;
+
+      /**
+       * The <a href="https://stripe.com/api/payment_method_configurations">Payment Method
+       * Configuration</a> to use for this portal session. When specified, customers will be able to
+       * update their payment method to one of the options specified by the payment method
+       * configuration. If not set, the default payment method configuration is used.
+       */
+      @SerializedName("payment_method_configuration")
+      String paymentMethodConfiguration;
     }
 
     /**
@@ -407,9 +422,57 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
         @SerializedName("enabled")
         Boolean enabled;
 
+        /** The IDs of custom feedback options configured for this cancellation reason. */
+        @SerializedName("feedback_options")
+        List<ExpandableField<FeedbackOption>> feedbackOptions;
+
         /** Which cancellation reasons will be given as options to the customer. */
         @SerializedName("options")
         List<String> options;
+
+        /** Get IDs of expandable {@code feedbackOptions} object list. */
+        public List<String> getFeedbackOptions() {
+          return (this.feedbackOptions != null)
+              ? this.feedbackOptions.stream().map(x -> x.getId()).collect(Collectors.toList())
+              : null;
+        }
+
+        public void setFeedbackOptions(List<String> ids) {
+          if (ids == null) {
+            this.feedbackOptions = null;
+            return;
+          }
+          if (this.feedbackOptions != null
+              && this.feedbackOptions.stream()
+                  .map(x -> x.getId())
+                  .collect(Collectors.toList())
+                  .equals(ids)) {
+            // noop if the ids are equal to what are already present
+            return;
+          }
+          this.feedbackOptions =
+              (ids != null)
+                  ? ids.stream()
+                      .map(id -> new ExpandableField<FeedbackOption>(id, null))
+                      .collect(Collectors.toList())
+                  : null;
+        }
+
+        /** Get expanded {@code feedbackOptions}. */
+        public List<FeedbackOption> getFeedbackOptionObjects() {
+          return (this.feedbackOptions != null)
+              ? this.feedbackOptions.stream().map(x -> x.getExpanded()).collect(Collectors.toList())
+              : null;
+        }
+
+        public void setFeedbackOptionObjects(List<FeedbackOption> objs) {
+          this.feedbackOptions =
+              objs != null
+                  ? objs.stream()
+                      .map(x -> new ExpandableField<FeedbackOption>(x.getId(), x))
+                      .collect(Collectors.toList())
+                  : null;
+        }
       }
     }
 
@@ -421,6 +484,18 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class SubscriptionUpdate extends StripeObject {
+      /**
+       * Determines the value to use for the billing cycle anchor on subscription updates. Valid
+       * values are {@code now} or {@code unchanged}, and the default value is {@code unchanged}.
+       * Setting the value to {@code now} resets the subscription's billing cycle anchor to the
+       * current time (in UTC). For more information, see the billing cycle <a
+       * href="https://docs.stripe.com/billing/subscriptions/billing-cycle">documentation</a>.
+       *
+       * <p>One of {@code now}, or {@code unchanged}.
+       */
+      @SerializedName("billing_cycle_anchor")
+      String billingCycleAnchor;
+
       /**
        * The types of subscription updates that are supported for items listed in the {@code
        * products} attribute. When empty, subscriptions are not updateable.
@@ -448,6 +523,16 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
 
       @SerializedName("schedule_at_period_end")
       ScheduleAtPeriodEnd scheduleAtPeriodEnd;
+
+      /**
+       * Determines how handle updates to trialing subscriptions. Valid values are {@code end_trial}
+       * and {@code continue_trial}. Defaults to a value of {@code end_trial} if you don't set it
+       * during creation.
+       *
+       * <p>One of {@code continue_trial}, or {@code end_trial}.
+       */
+      @SerializedName("trial_update_behavior")
+      String trialUpdateBehavior;
 
       /**
        * For more details about Product, please refer to the <a
@@ -544,7 +629,7 @@ public class Configuration extends ApiResource implements HasId, MetadataStore<C
 
     /**
      * A shareable URL to the hosted portal login page. Your customers will be able to log in with
-     * their <a href="https://stripe.com/docs/api/customers/object#customer_object-email">email</a>
+     * their <a href="https://docs.stripe.com/api/customers/object#customer_object-email">email</a>
      * and receive a link to their customer portal.
      */
     @SerializedName("url")

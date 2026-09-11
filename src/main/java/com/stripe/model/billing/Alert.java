@@ -48,8 +48,8 @@ public class Alert extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -76,7 +76,7 @@ public class Alert extends ApiResource implements HasId {
 
   /**
    * Encapsulates configuration of the alert to monitor usage on a specific <a
-   * href="https://stripe.com/docs/api/billing/meter">Billing Meter</a>.
+   * href="https://docs.stripe.com/api/billing/meter">Billing Meter</a>.
    */
   @SerializedName("usage_threshold")
   UsageThreshold usageThreshold;

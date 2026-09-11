@@ -17,7 +17,7 @@ public class TransactionCreateForceCaptureParams extends ApiRequestParams {
   /**
    * <strong>Required.</strong> The total amount to attempt to capture. This amount is in the
    * provided currency, or defaults to the cards currency, and in the <a
-   * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("amount")
   Long amount;
@@ -109,7 +109,7 @@ public class TransactionCreateForceCaptureParams extends ApiRequestParams {
     /**
      * <strong>Required.</strong> The total amount to attempt to capture. This amount is in the
      * provided currency, or defaults to the cards currency, and in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
      */
     public Builder setAmount(Long amount) {
       this.amount = amount;
@@ -207,7 +207,7 @@ public class TransactionCreateForceCaptureParams extends ApiRequestParams {
   public static class MerchantData {
     /**
      * A categorization of the seller's type of business. See our <a
-     * href="https://stripe.com/docs/issuing/merchant-categories">merchant categories guide</a> for
+     * href="https://docs.stripe.com/issuing/merchant-categories">merchant categories guide</a> for
      * a list of possible values.
      */
     @SerializedName("category")
@@ -322,7 +322,7 @@ public class TransactionCreateForceCaptureParams extends ApiRequestParams {
 
       /**
        * A categorization of the seller's type of business. See our <a
-       * href="https://stripe.com/docs/issuing/merchant-categories">merchant categories guide</a>
+       * href="https://docs.stripe.com/issuing/merchant-categories">merchant categories guide</a>
        * for a list of possible values.
        */
       public Builder setCategory(
@@ -1916,7 +1916,7 @@ public class TransactionCreateForceCaptureParams extends ApiRequestParams {
           Map<String, Object> extraParams;
 
           /**
-           * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost, inclusive
+           * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost, inclusive
            * of taxes.
            */
           @SerializedName("gross_amount_decimal")
@@ -1974,7 +1974,7 @@ public class TransactionCreateForceCaptureParams extends ApiRequestParams {
             }
 
             /**
-             * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost,
+             * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost,
              * inclusive of taxes.
              */
             public Builder setGrossAmountDecimal(BigDecimal grossAmountDecimal) {

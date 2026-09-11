@@ -25,7 +25,7 @@ import lombok.Setter;
  * shown.
  *
  * <p>Related guide: <a
- * href="https://stripe.com/docs/payments/payment-methods/pmd-registration">Payment method
+ * href="https://docs.stripe.com/payments/payment-methods/pmd-registration">Payment method
  * domains</a>.
  */
 @Getter
@@ -73,8 +73,8 @@ public class PaymentMethodDomain extends ApiResource implements HasId {
   Link link;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

@@ -27,7 +27,7 @@ import lombok.Setter;
 public class SetupAttempt extends ApiResource implements HasId {
   /**
    * The value of <a
-   * href="https://stripe.com/docs/api/setup_intents/object#setup_intent_object-application">application</a>
+   * href="https://docs.stripe.com/api/setup_intents/object#setup_intent_object-application">application</a>
    * on the SetupIntent at the time of this confirmation.
    */
   @SerializedName("application")
@@ -51,13 +51,21 @@ public class SetupAttempt extends ApiResource implements HasId {
 
   /**
    * The value of <a
-   * href="https://stripe.com/docs/api/setup_intents/object#setup_intent_object-customer">customer</a>
+   * href="https://docs.stripe.com/api/setup_intents/object#setup_intent_object-customer">customer</a>
    * on the SetupIntent at the time of this confirmation.
    */
   @SerializedName("customer")
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Customer> customer;
+
+  /**
+   * The value of <a
+   * href="https://docs.stripe.com/api/setup_intents/object#setup_intent_object-customer_account">customer_account</a>
+   * on the SetupIntent at the time of this confirmation.
+   */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /**
    * Indicates the directions of money movement for which this payment method is intended to be
@@ -76,8 +84,8 @@ public class SetupAttempt extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -92,7 +100,7 @@ public class SetupAttempt extends ApiResource implements HasId {
 
   /**
    * The value of <a
-   * href="https://stripe.com/docs/api/setup_intents/object#setup_intent_object-on_behalf_of">on_behalf_of</a>
+   * href="https://docs.stripe.com/api/setup_intents/object#setup_intent_object-on_behalf_of">on_behalf_of</a>
    * on the SetupIntent at the time of this confirmation.
    */
   @SerializedName("on_behalf_of")
@@ -128,7 +136,7 @@ public class SetupAttempt extends ApiResource implements HasId {
 
   /**
    * The value of <a
-   * href="https://stripe.com/docs/api/setup_intents/object#setup_intent_object-usage">usage</a> on
+   * href="https://docs.stripe.com/api/setup_intents/object#setup_intent_object-usage">usage</a> on
    * the SetupIntent at the time of this confirmation, one of {@code off_session} or {@code
    * on_session}.
    */
@@ -319,14 +327,26 @@ public class SetupAttempt extends ApiResource implements HasId {
     @SerializedName("paypal")
     Paypal paypal;
 
+    @SerializedName("payto")
+    Payto payto;
+
+    @SerializedName("pix")
+    Pix pix;
+
     @SerializedName("revolut_pay")
     RevolutPay revolutPay;
+
+    @SerializedName("satispay")
+    Satispay satispay;
 
     @SerializedName("sepa_debit")
     SepaDebit sepaDebit;
 
     @SerializedName("sofort")
     Sofort sofort;
+
+    @SerializedName("twint")
+    Twint twint;
 
     /**
      * The type of the payment method used in the SetupIntent (e.g., {@code card}). An additional
@@ -335,6 +355,9 @@ public class SetupAttempt extends ApiResource implements HasId {
      */
     @SerializedName("type")
     String type;
+
+    @SerializedName("upi")
+    Upi upi;
 
     @SerializedName("us_bank_account")
     UsBankAccount usBankAccount;
@@ -560,6 +583,10 @@ public class SetupAttempt extends ApiResource implements HasId {
       @SerializedName("last4")
       String last4;
 
+      /** True if this payment was marked as MOTO and out of scope for SCA. */
+      @SerializedName("moto")
+      Boolean moto;
+
       /**
        * Identifies which network this charge was processed on. Can be {@code amex}, {@code
        * cartes_bancaires}, {@code diners}, {@code discover}, {@code eftpos_au}, {@code interac},
@@ -635,8 +662,8 @@ public class SetupAttempt extends ApiResource implements HasId {
         /**
          * Indicates the outcome of 3D Secure authentication.
          *
-         * <p>One of {@code attempt_acknowledged}, {@code authenticated}, {@code exempted}, {@code
-         * failed}, {@code not_supported}, or {@code processing_error}.
+         * <p>One of {@code attempt_acknowledged}, {@code authenticated}, {@code data_share_only},
+         * {@code exempted}, {@code failed}, {@code not_supported}, or {@code processing_error}.
          */
         @SerializedName("result")
         String result;
@@ -662,7 +689,7 @@ public class SetupAttempt extends ApiResource implements HasId {
         /**
          * The version of 3D Secure that was used.
          *
-         * <p>One of {@code 1.0.2}, {@code 2.1.0}, or {@code 2.2.0}.
+         * <p>One of {@code 1.0.2}, {@code 2.1.0}, {@code 2.2.0}, {@code 2.3.0}, or {@code 2.3.1}.
          */
         @SerializedName("version")
         String version;
@@ -787,10 +814,11 @@ public class SetupAttempt extends ApiResource implements HasId {
     @EqualsAndHashCode(callSuper = false)
     public static class Ideal extends StripeObject {
       /**
-       * The customer's bank. Can be one of {@code abn_amro}, {@code asn_bank}, {@code bunq}, {@code
-       * buut}, {@code handelsbanken}, {@code ing}, {@code knab}, {@code moneyou}, {@code n26},
-       * {@code nn}, {@code rabobank}, {@code regiobank}, {@code revolut}, {@code sns_bank}, {@code
-       * triodos_bank}, {@code van_lanschot}, or {@code yoursafe}.
+       * The customer's bank. Can be one of {@code abn_amro}, {@code adyen}, {@code asn_bank},
+       * {@code bunq}, {@code buut}, {@code finom}, {@code handelsbanken}, {@code ing}, {@code
+       * knab}, {@code mollie}, {@code moneyou}, {@code n26}, {@code nn}, {@code rabobank}, {@code
+       * regiobank}, {@code revolut}, {@code sns_bank}, {@code triodos_bank}, {@code van_lanschot},
+       * or {@code yoursafe}.
        */
       @SerializedName("bank")
       String bank;
@@ -798,10 +826,11 @@ public class SetupAttempt extends ApiResource implements HasId {
       /**
        * The Bank Identifier Code of the customer's bank.
        *
-       * <p>One of {@code ABNANL2A}, {@code ASNBNL21}, {@code BITSNL2A}, {@code BUNQNL2A}, {@code
-       * BUUTNL2A}, {@code FVLBNL22}, {@code HANDNL2A}, {@code INGBNL2A}, {@code KNABNL2H}, {@code
-       * MOYONL21}, {@code NNBANL2G}, {@code NTSBDEB1}, {@code RABONL2U}, {@code RBRBNL21}, {@code
-       * REVOIE23}, {@code REVOLT21}, {@code SNSBNL2A}, or {@code TRIONL2U}.
+       * <p>One of {@code ABNANL2A}, {@code ADYBNL2A}, {@code ASNBNL21}, {@code BITSNL2A}, {@code
+       * BUNQNL2A}, {@code BUUTNL2A}, {@code FNOMNL22}, {@code FVLBNL22}, {@code HANDNL2A}, {@code
+       * INGBNL2A}, {@code KNABNL2H}, {@code MLLENL2A}, {@code MOYONL21}, {@code NNBANL2G}, {@code
+       * NTSBDEB1}, {@code RABONL2U}, {@code RBRBNL21}, {@code REVOIE23}, {@code REVOLT21}, {@code
+       * SNSBNL2A}, or {@code TRIONL2U}.
        */
       @SerializedName("bic")
       String bic;
@@ -947,6 +976,31 @@ public class SetupAttempt extends ApiResource implements HasId {
     public static class Paypal extends StripeObject {}
 
     /**
+     * For more details about Payto, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Payto extends StripeObject {}
+
+    /**
+     * For more details about Pix, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Pix extends StripeObject {
+      /**
+       * Uniquely identifies this particular Pix account. You can use this attribute to check
+       * whether two Pix accounts are the same.
+       */
+      @SerializedName("fingerprint")
+      String fingerprint;
+    }
+
+    /**
      * For more details about RevolutPay, please refer to the <a
      * href="https://docs.stripe.com/api">API Reference.</a>
      */
@@ -954,6 +1008,15 @@ public class SetupAttempt extends ApiResource implements HasId {
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class RevolutPay extends StripeObject {}
+
+    /**
+     * For more details about Satispay, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Satispay extends StripeObject {}
 
     /**
      * For more details about SepaDebit, please refer to the <a
@@ -1060,6 +1123,24 @@ public class SetupAttempt extends ApiResource implements HasId {
             new ExpandableField<Mandate>(expandableObject.getId(), expandableObject);
       }
     }
+
+    /**
+     * For more details about Twint, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Twint extends StripeObject {}
+
+    /**
+     * For more details about Upi, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Upi extends StripeObject {}
 
     /**
      * For more details about UsBankAccount, please refer to the <a

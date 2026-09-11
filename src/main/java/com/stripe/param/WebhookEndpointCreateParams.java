@@ -53,7 +53,7 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
   Map<String, Object> extraParams;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -255,7 +255,7 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -266,7 +266,7 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -627,7 +627,43 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     VERSION_2025_07_30_BASIL("2025-07-30.basil"),
 
     @SerializedName("2025-08-27.basil")
-    VERSION_2025_08_27_BASIL("2025-08-27.basil");
+    VERSION_2025_08_27_BASIL("2025-08-27.basil"),
+
+    @SerializedName("2025-09-30.clover")
+    VERSION_2025_09_30_CLOVER("2025-09-30.clover"),
+
+    @SerializedName("2025-10-29.clover")
+    VERSION_2025_10_29_CLOVER("2025-10-29.clover"),
+
+    @SerializedName("2025-11-17.clover")
+    VERSION_2025_11_17_CLOVER("2025-11-17.clover"),
+
+    @SerializedName("2025-12-15.clover")
+    VERSION_2025_12_15_CLOVER("2025-12-15.clover"),
+
+    @SerializedName("2026-01-28.clover")
+    VERSION_2026_01_28_CLOVER("2026-01-28.clover"),
+
+    @SerializedName("2026-02-25.clover")
+    VERSION_2026_02_25_CLOVER("2026-02-25.clover"),
+
+    @SerializedName("2026-03-25.dahlia")
+    VERSION_2026_03_25_DAHLIA("2026-03-25.dahlia"),
+
+    @SerializedName("2026-04-22.dahlia")
+    VERSION_2026_04_22_DAHLIA("2026-04-22.dahlia"),
+
+    @SerializedName("2026-05-27.dahlia")
+    VERSION_2026_05_27_DAHLIA("2026-05-27.dahlia"),
+
+    @SerializedName("2026-06-24.dahlia")
+    VERSION_2026_06_24_DAHLIA("2026-06-24.dahlia"),
+
+    @SerializedName("2026-07-29.dahlia")
+    VERSION_2026_07_29_DAHLIA("2026-07-29.dahlia"),
+
+    @SerializedName("2026-08-26.dahlia")
+    VERSION_2026_08_26_DAHLIA("2026-08-26.dahlia");
 
     @Getter(onMethod_ = {@Override})
     private final String value;
@@ -671,8 +707,32 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     @SerializedName("balance.available")
     BALANCE__AVAILABLE("balance.available"),
 
+    @SerializedName("balance_settings.updated")
+    BALANCE_SETTINGS__UPDATED("balance_settings.updated"),
+
     @SerializedName("billing.alert.triggered")
     BILLING__ALERT__TRIGGERED("billing.alert.triggered"),
+
+    @SerializedName("billing.credit_balance_transaction.created")
+    BILLING__CREDIT_BALANCE_TRANSACTION__CREATED("billing.credit_balance_transaction.created"),
+
+    @SerializedName("billing.credit_grant.created")
+    BILLING__CREDIT_GRANT__CREATED("billing.credit_grant.created"),
+
+    @SerializedName("billing.credit_grant.updated")
+    BILLING__CREDIT_GRANT__UPDATED("billing.credit_grant.updated"),
+
+    @SerializedName("billing.meter.created")
+    BILLING__METER__CREATED("billing.meter.created"),
+
+    @SerializedName("billing.meter.deactivated")
+    BILLING__METER__DEACTIVATED("billing.meter.deactivated"),
+
+    @SerializedName("billing.meter.reactivated")
+    BILLING__METER__REACTIVATED("billing.meter.reactivated"),
+
+    @SerializedName("billing.meter.updated")
+    BILLING__METER__UPDATED("billing.meter.updated"),
 
     @SerializedName("billing_portal.configuration.created")
     BILLING_PORTAL__CONFIGURATION__CREATED("billing_portal.configuration.created"),
@@ -852,6 +912,10 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     @SerializedName("file.created")
     FILE__CREATED("file.created"),
 
+    @SerializedName("financial_connections.account.account_numbers_updated")
+    FINANCIAL_CONNECTIONS__ACCOUNT__ACCOUNT_NUMBERS_UPDATED(
+        "financial_connections.account.account_numbers_updated"),
+
     @SerializedName("financial_connections.account.created")
     FINANCIAL_CONNECTIONS__ACCOUNT__CREATED("financial_connections.account.created"),
 
@@ -860,6 +924,10 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
 
     @SerializedName("financial_connections.account.disconnected")
     FINANCIAL_CONNECTIONS__ACCOUNT__DISCONNECTED("financial_connections.account.disconnected"),
+
+    @SerializedName("financial_connections.account.expected_deactivation_date_updated")
+    FINANCIAL_CONNECTIONS__ACCOUNT__EXPECTED_DEACTIVATION_DATE_UPDATED(
+        "financial_connections.account.expected_deactivation_date_updated"),
 
     @SerializedName("financial_connections.account.reactivated")
     FINANCIAL_CONNECTIONS__ACCOUNT__REACTIVATED("financial_connections.account.reactivated"),
@@ -875,6 +943,26 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     @SerializedName("financial_connections.account.refreshed_transactions")
     FINANCIAL_CONNECTIONS__ACCOUNT__REFRESHED_TRANSACTIONS(
         "financial_connections.account.refreshed_transactions"),
+
+    @SerializedName("financial_connections.account.supported_payment_method_types_updated")
+    FINANCIAL_CONNECTIONS__ACCOUNT__SUPPORTED_PAYMENT_METHOD_TYPES_UPDATED(
+        "financial_connections.account.supported_payment_method_types_updated"),
+
+    @SerializedName("financial_connections.account.upcoming_account_number_expiry")
+    FINANCIAL_CONNECTIONS__ACCOUNT__UPCOMING_ACCOUNT_NUMBER_EXPIRY(
+        "financial_connections.account.upcoming_account_number_expiry"),
+
+    @SerializedName("financial_connections.account.upcoming_deactivation")
+    FINANCIAL_CONNECTIONS__ACCOUNT__UPCOMING_DEACTIVATION(
+        "financial_connections.account.upcoming_deactivation"),
+
+    @SerializedName("financial_connections.authorization.expected_deactivation_date_updated")
+    FINANCIAL_CONNECTIONS__AUTHORIZATION__EXPECTED_DEACTIVATION_DATE_UPDATED(
+        "financial_connections.authorization.expected_deactivation_date_updated"),
+
+    @SerializedName("financial_connections.authorization.upcoming_deactivation")
+    FINANCIAL_CONNECTIONS__AUTHORIZATION__UPCOMING_DEACTIVATION(
+        "financial_connections.authorization.upcoming_deactivation"),
 
     @SerializedName("identity.verification_session.canceled")
     IDENTITY__VERIFICATION_SESSION__CANCELED("identity.verification_session.canceled"),
@@ -920,6 +1008,9 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
 
     @SerializedName("invoice.payment_action_required")
     INVOICE__PAYMENT_ACTION_REQUIRED("invoice.payment_action_required"),
+
+    @SerializedName("invoice.payment_attempt_required")
+    INVOICE__PAYMENT_ATTEMPT_REQUIRED("invoice.payment_attempt_required"),
 
     @SerializedName("invoice.payment_failed")
     INVOICE__PAYMENT_FAILED("invoice.payment_failed"),
@@ -1159,6 +1250,27 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     @SerializedName("reporting.report_type.updated")
     REPORTING__REPORT_TYPE__UPDATED("reporting.report_type.updated"),
 
+    @SerializedName("reserve.hold.created")
+    RESERVE__HOLD__CREATED("reserve.hold.created"),
+
+    @SerializedName("reserve.hold.updated")
+    RESERVE__HOLD__UPDATED("reserve.hold.updated"),
+
+    @SerializedName("reserve.plan.created")
+    RESERVE__PLAN__CREATED("reserve.plan.created"),
+
+    @SerializedName("reserve.plan.disabled")
+    RESERVE__PLAN__DISABLED("reserve.plan.disabled"),
+
+    @SerializedName("reserve.plan.expired")
+    RESERVE__PLAN__EXPIRED("reserve.plan.expired"),
+
+    @SerializedName("reserve.plan.updated")
+    RESERVE__PLAN__UPDATED("reserve.plan.updated"),
+
+    @SerializedName("reserve.release.created")
+    RESERVE__RELEASE__CREATED("reserve.release.created"),
+
     @SerializedName("review.closed")
     REVIEW__CLOSED("review.closed"),
 
@@ -1376,28 +1488,7 @@ public class WebhookEndpointCreateParams extends ApiRequestParams {
     TREASURY__RECEIVED_CREDIT__SUCCEEDED("treasury.received_credit.succeeded"),
 
     @SerializedName("treasury.received_debit.created")
-    TREASURY__RECEIVED_DEBIT__CREATED("treasury.received_debit.created"),
-
-    @SerializedName("billing.credit_balance_transaction.created")
-    BILLING__CREDIT_BALANCE_TRANSACTION__CREATED("billing.credit_balance_transaction.created"),
-
-    @SerializedName("billing.credit_grant.created")
-    BILLING__CREDIT_GRANT__CREATED("billing.credit_grant.created"),
-
-    @SerializedName("billing.credit_grant.updated")
-    BILLING__CREDIT_GRANT__UPDATED("billing.credit_grant.updated"),
-
-    @SerializedName("billing.meter.created")
-    BILLING__METER__CREATED("billing.meter.created"),
-
-    @SerializedName("billing.meter.deactivated")
-    BILLING__METER__DEACTIVATED("billing.meter.deactivated"),
-
-    @SerializedName("billing.meter.reactivated")
-    BILLING__METER__REACTIVATED("billing.meter.reactivated"),
-
-    @SerializedName("billing.meter.updated")
-    BILLING__METER__UPDATED("billing.meter.updated");
+    TREASURY__RECEIVED_DEBIT__CREATED("treasury.received_debit.created");
 
     @Getter(onMethod_ = {@Override})
     private final String value;

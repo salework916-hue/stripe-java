@@ -23,8 +23,8 @@ import lombok.Setter;
  * the ConfirmationToken are written onto the Intent.
  *
  * <p>To learn more about how to use ConfirmationToken, visit the related guides: - <a
- * href="https://stripe.com/docs/payments/finalize-payments-on-the-server">Finalize payments on the
- * server</a> - <a href="https://stripe.com/docs/payments/build-a-two-step-confirmation">Build
+ * href="https://docs.stripe.com/payments/finalize-payments-on-the-server">Finalize payments on the
+ * server</a> - <a href="https://docs.stripe.com/payments/build-a-two-step-confirmation">Build
  * two-step confirmation</a>.
  */
 @Getter
@@ -48,8 +48,8 @@ public class ConfirmationToken extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -57,6 +57,13 @@ public class ConfirmationToken extends ApiResource implements HasId {
   /** Data used for generating a Mandate. */
   @SerializedName("mandate_data")
   MandateData mandateData;
+
+  /**
+   * Set of key-value pairs that you can attach to an object. This can be useful for storing
+   * additional information about the object in a structured format.
+   */
+  @SerializedName("metadata")
+  Map<String, String> metadata;
 
   /**
    * String representing the object's type. Objects of the same type share the same value.
@@ -92,7 +99,7 @@ public class ConfirmationToken extends ApiResource implements HasId {
    * Indicates that you intend to make future payments with this ConfirmationToken's payment method.
    *
    * <p>The presence of this property will <a
-   * href="https://stripe.com/docs/payments/save-during-payment">attach the payment method</a> to
+   * href="https://docs.stripe.com/payments/save-during-payment">attach the payment method</a> to
    * the PaymentIntent's Customer, if present, after the PaymentIntent is confirmed and any required
    * actions from the user are complete.
    *
@@ -311,6 +318,9 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @SerializedName("billing_details")
     BillingDetails billingDetails;
 
+    @SerializedName("bizum")
+    Bizum bizum;
+
     @SerializedName("blik")
     Blik blik;
 
@@ -337,6 +347,9 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @Getter(lombok.AccessLevel.NONE)
     @Setter(lombok.AccessLevel.NONE)
     ExpandableField<Customer> customer;
+
+    @SerializedName("customer_account")
+    String customerAccount;
 
     @SerializedName("customer_balance")
     CustomerBalance customerBalance;
@@ -374,6 +387,9 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @SerializedName("link")
     Link link;
 
+    @SerializedName("mb_way")
+    MbWay mbWay;
+
     @SerializedName("mobilepay")
     Mobilepay mobilepay;
 
@@ -404,6 +420,9 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @SerializedName("paypal")
     Paypal paypal;
 
+    @SerializedName("payto")
+    Payto payto;
+
     @SerializedName("pix")
     Pix pix;
 
@@ -419,11 +438,17 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @SerializedName("satispay")
     Satispay satispay;
 
+    @SerializedName("scalapay")
+    Scalapay scalapay;
+
     @SerializedName("sepa_debit")
     SepaDebit sepaDebit;
 
     @SerializedName("sofort")
     Sofort sofort;
+
+    @SerializedName("sunbit")
+    Sunbit sunbit;
 
     @SerializedName("swish")
     Swish swish;
@@ -438,18 +463,22 @@ public class ConfirmationToken extends ApiResource implements HasId {
      *
      * <p>One of {@code acss_debit}, {@code affirm}, {@code afterpay_clearpay}, {@code alipay},
      * {@code alma}, {@code amazon_pay}, {@code au_becs_debit}, {@code bacs_debit}, {@code
-     * bancontact}, {@code billie}, {@code blik}, {@code boleto}, {@code card}, {@code
-     * card_present}, {@code cashapp}, {@code crypto}, {@code customer_balance}, {@code eps}, {@code
-     * fpx}, {@code giropay}, {@code grabpay}, {@code ideal}, {@code interac_present}, {@code
-     * kakao_pay}, {@code klarna}, {@code konbini}, {@code kr_card}, {@code link}, {@code
-     * mobilepay}, {@code multibanco}, {@code naver_pay}, {@code nz_bank_account}, {@code oxxo},
-     * {@code p24}, {@code pay_by_bank}, {@code payco}, {@code paynow}, {@code paypal}, {@code pix},
-     * {@code promptpay}, {@code revolut_pay}, {@code samsung_pay}, {@code satispay}, {@code
-     * sepa_debit}, {@code sofort}, {@code swish}, {@code twint}, {@code us_bank_account}, {@code
-     * wechat_pay}, or {@code zip}.
+     * bancontact}, {@code billie}, {@code bizum}, {@code blik}, {@code boleto}, {@code card},
+     * {@code card_present}, {@code cashapp}, {@code crypto}, {@code custom}, {@code
+     * customer_balance}, {@code eps}, {@code fpx}, {@code giropay}, {@code grabpay}, {@code ideal},
+     * {@code interac_present}, {@code kakao_pay}, {@code klarna}, {@code konbini}, {@code kr_card},
+     * {@code link}, {@code mb_way}, {@code mobilepay}, {@code multibanco}, {@code naver_pay},
+     * {@code nz_bank_account}, {@code oxxo}, {@code p24}, {@code pay_by_bank}, {@code payco},
+     * {@code paynow}, {@code paypal}, {@code payto}, {@code pix}, {@code promptpay}, {@code
+     * revolut_pay}, {@code samsung_pay}, {@code satispay}, {@code scalapay}, {@code sepa_debit},
+     * {@code sofort}, {@code sunbit}, {@code swish}, {@code twint}, {@code upi}, {@code
+     * us_bank_account}, {@code wechat_pay}, or {@code zip}.
      */
     @SerializedName("type")
     String type;
+
+    @SerializedName("upi")
+    Upi upi;
 
     @SerializedName("us_bank_account")
     UsBankAccount usBankAccount;
@@ -654,13 +683,30 @@ public class ConfirmationToken extends ApiResource implements HasId {
     }
 
     /**
+     * For more details about Bizum, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Bizum extends StripeObject {
+      /** A unique identifier for the buyer as determined by the local payment processor. */
+      @SerializedName("buyer_id")
+      String buyerId;
+    }
+
+    /**
      * For more details about Blik, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
     @Getter
     @Setter
     @EqualsAndHashCode(callSuper = false)
-    public static class Blik extends StripeObject {}
+    public static class Blik extends StripeObject {
+      /** A unique and immutable identifier assigned by BLIK to every buyer. */
+      @SerializedName("buyer_id")
+      String buyerId;
+    }
 
     /**
      * For more details about Boleto, please refer to the <a href="https://docs.stripe.com/api">API
@@ -984,9 +1030,9 @@ public class ConfirmationToken extends ApiResource implements HasId {
             String iin;
 
             /**
-             * Whether this <a href="https://stripe.com/docs/api/payment_intents">PaymentIntent</a>
+             * Whether this <a href="https://docs.stripe.com/api/payment_intents">PaymentIntent</a>
              * is eligible for incremental authorizations. Request support using <a
-             * href="https://stripe.com/docs/api/payment_intents/create#create_payment_intent-payment_method_options-card_present-request_incremental_authorization_support">request_incremental_authorization_support</a>.
+             * href="https://docs.stripe.com/api/payment_intents/create#create_payment_intent-payment_method_options-card_present-request_incremental_authorization_support">request_incremental_authorization_support</a>.
              */
             @SerializedName("incremental_authorization_supported")
             Boolean incrementalAuthorizationSupported;
@@ -1001,6 +1047,13 @@ public class ConfirmationToken extends ApiResource implements HasId {
             /** The last four digits of the card. */
             @SerializedName("last4")
             String last4;
+
+            /**
+             * ID of the <a href="https://docs.stripe.com/api/terminal/locations">location</a> that
+             * this transaction's reader is assigned to.
+             */
+            @SerializedName("location")
+            String location;
 
             /**
              * Identifies which network this charge was processed on. Can be {@code amex}, {@code
@@ -1045,6 +1098,13 @@ public class ConfirmationToken extends ApiResource implements HasId {
              */
             @SerializedName("read_method")
             String readMethod;
+
+            /**
+             * ID of the <a href="https://docs.stripe.com/api/terminal/readers">reader</a> this
+             * transaction was made on.
+             */
+            @SerializedName("reader")
+            String reader;
 
             /**
              * A collection of fields required to be displayed on receipts. Only required for EMV
@@ -1625,10 +1685,10 @@ public class ConfirmationToken extends ApiResource implements HasId {
       /**
        * The customer's bank, if provided. Can be one of {@code affin_bank}, {@code agrobank},
        * {@code alliance_bank}, {@code ambank}, {@code bank_islam}, {@code bank_muamalat}, {@code
-       * bank_rakyat}, {@code bsn}, {@code cimb}, {@code hong_leong_bank}, {@code hsbc}, {@code
-       * kfh}, {@code maybank2u}, {@code ocbc}, {@code public_bank}, {@code rhb}, {@code
-       * standard_chartered}, {@code uob}, {@code deutsche_bank}, {@code maybank2e}, {@code
-       * pb_enterprise}, or {@code bank_of_china}.
+       * bnp_paribas}, {@code bank_rakyat}, {@code bsn}, {@code cimb}, {@code citibank}, {@code
+       * hong_leong_bank}, {@code hsbc}, {@code kfh}, {@code maybank2u}, {@code ocbc}, {@code
+       * public_bank}, {@code rhb}, {@code standard_chartered}, {@code uob}, {@code deutsche_bank},
+       * {@code maybank2e}, {@code mbsb_bank}, {@code pb_enterprise}, or {@code bank_of_china}.
        */
       @SerializedName("bank")
       String bank;
@@ -1661,10 +1721,11 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @EqualsAndHashCode(callSuper = false)
     public static class Ideal extends StripeObject {
       /**
-       * The customer's bank, if provided. Can be one of {@code abn_amro}, {@code asn_bank}, {@code
-       * bunq}, {@code buut}, {@code handelsbanken}, {@code ing}, {@code knab}, {@code moneyou},
-       * {@code n26}, {@code nn}, {@code rabobank}, {@code regiobank}, {@code revolut}, {@code
-       * sns_bank}, {@code triodos_bank}, {@code van_lanschot}, or {@code yoursafe}.
+       * The customer's bank, if provided. Can be one of {@code abn_amro}, {@code adyen}, {@code
+       * asn_bank}, {@code bunq}, {@code buut}, {@code finom}, {@code handelsbanken}, {@code ing},
+       * {@code knab}, {@code mollie}, {@code moneyou}, {@code n26}, {@code nn}, {@code rabobank},
+       * {@code regiobank}, {@code revolut}, {@code sns_bank}, {@code triodos_bank}, {@code
+       * van_lanschot}, or {@code yoursafe}.
        */
       @SerializedName("bank")
       String bank;
@@ -1672,10 +1733,11 @@ public class ConfirmationToken extends ApiResource implements HasId {
       /**
        * The Bank Identifier Code of the customer's bank, if the bank was provided.
        *
-       * <p>One of {@code ABNANL2A}, {@code ASNBNL21}, {@code BITSNL2A}, {@code BUNQNL2A}, {@code
-       * BUUTNL2A}, {@code FVLBNL22}, {@code HANDNL2A}, {@code INGBNL2A}, {@code KNABNL2H}, {@code
-       * MOYONL21}, {@code NNBANL2G}, {@code NTSBDEB1}, {@code RABONL2U}, {@code RBRBNL21}, {@code
-       * REVOIE23}, {@code REVOLT21}, {@code SNSBNL2A}, or {@code TRIONL2U}.
+       * <p>One of {@code ABNANL2A}, {@code ADYBNL2A}, {@code ASNBNL21}, {@code BITSNL2A}, {@code
+       * BUNQNL2A}, {@code BUUTNL2A}, {@code FNOMNL22}, {@code FVLBNL22}, {@code HANDNL2A}, {@code
+       * INGBNL2A}, {@code KNABNL2H}, {@code MLLENL2A}, {@code MOYONL21}, {@code NNBANL2G}, {@code
+       * NTSBDEB1}, {@code RABONL2U}, {@code RBRBNL21}, {@code REVOIE23}, {@code REVOLT21}, {@code
+       * SNSBNL2A}, or {@code TRIONL2U}.
        */
       @SerializedName("bic")
       String bic;
@@ -1900,6 +1962,15 @@ public class ConfirmationToken extends ApiResource implements HasId {
     }
 
     /**
+     * For more details about MbWay, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class MbWay extends StripeObject {}
+
+    /**
      * For more details about Mobilepay, please refer to the <a
      * href="https://docs.stripe.com/api">API Reference.</a>
      */
@@ -2065,13 +2136,41 @@ public class ConfirmationToken extends ApiResource implements HasId {
     }
 
     /**
+     * For more details about Payto, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Payto extends StripeObject {
+      /** Bank-State-Branch number of the bank account. */
+      @SerializedName("bsb_number")
+      String bsbNumber;
+
+      /** Last four digits of the bank account number. */
+      @SerializedName("last4")
+      String last4;
+
+      /** The PayID alias for the bank account. */
+      @SerializedName("pay_id")
+      String payId;
+    }
+
+    /**
      * For more details about Pix, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
     @Getter
     @Setter
     @EqualsAndHashCode(callSuper = false)
-    public static class Pix extends StripeObject {}
+    public static class Pix extends StripeObject {
+      /**
+       * Uniquely identifies this particular Pix account. You can use this attribute to check
+       * whether two Pix accounts are the same.
+       */
+      @SerializedName("fingerprint")
+      String fingerprint;
+    }
 
     /**
      * For more details about Promptpay, please refer to the <a
@@ -2108,6 +2207,15 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Satispay extends StripeObject {}
+
+    /**
+     * For more details about Scalapay, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Scalapay extends StripeObject {}
 
     /**
      * For more details about SepaDebit, please refer to the <a
@@ -2217,6 +2325,15 @@ public class ConfirmationToken extends ApiResource implements HasId {
     }
 
     /**
+     * For more details about Sunbit, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Sunbit extends StripeObject {}
+
+    /**
      * For more details about Swish, please refer to the <a href="https://docs.stripe.com/api">API
      * Reference.</a>
      */
@@ -2233,6 +2350,19 @@ public class ConfirmationToken extends ApiResource implements HasId {
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Twint extends StripeObject {}
+
+    /**
+     * For more details about Upi, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Upi extends StripeObject {
+      /** Customer's unique Virtual Payment Address. */
+      @SerializedName("vpa")
+      String vpa;
+    }
 
     /**
      * For more details about UsBankAccount, please refer to the <a
@@ -2339,7 +2469,8 @@ public class ConfirmationToken extends ApiResource implements HasId {
            *
            * <p>One of {@code bank_account_closed}, {@code bank_account_frozen}, {@code
            * bank_account_invalid_details}, {@code bank_account_restricted}, {@code
-           * bank_account_unusable}, or {@code debit_not_authorized}.
+           * bank_account_unusable}, {@code debit_not_authorized}, or {@code
+           * tokenized_account_number_deactivated}.
            */
           @SerializedName("reason")
           String reason;

@@ -16,7 +16,7 @@ import lombok.Getter;
 public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * Canadian pre-authorized debit payments, check this <a
-   * href="https://stripe.com/docs/payments/acss-debit">page</a> for more details like country
+   * href="https://docs.stripe.com/payments/acss-debit">page</a> for more details like country
    * availability.
    */
   @SerializedName("acss_debit")
@@ -30,7 +30,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * <a href="https://www.affirm.com/">Affirm</a> gives your customers a way to split purchases over
    * a series of payments. Depending on the purchase, they can pay with four interest-free payments
    * (Split Pay) or pay over a longer term (Installments), which might include interest. Check this
-   * <a href="https://stripe.com/docs/payments/affirm">page</a> for more details like country
+   * <a href="https://docs.stripe.com/payments/affirm">page</a> for more details like country
    * availability.
    */
   @SerializedName("affirm")
@@ -38,7 +38,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   /**
    * Afterpay gives your customers a way to pay for purchases in installments, check this <a
-   * href="https://stripe.com/docs/payments/afterpay-clearpay">page</a> for more details like
+   * href="https://docs.stripe.com/payments/afterpay-clearpay">page</a> for more details like
    * country availability. Afterpay is particularly popular among businesses selling fashion,
    * beauty, and sports products.
    */
@@ -49,7 +49,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * Alipay is a digital wallet in China that has more than a billion active users worldwide. Alipay
    * users can pay on the web or on a mobile device using login credentials or their Alipay app.
    * Alipay has a low dispute rate and reduces fraud by authenticating payments using the customer's
-   * login credentials. Check this <a href="https://stripe.com/docs/payments/alipay">page</a> for
+   * login credentials. Check this <a href="https://docs.stripe.com/payments/alipay">page</a> for
    * more details.
    */
   @SerializedName("alipay")
@@ -74,7 +74,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * applications in iOS 9 and later, and on the web in Safari starting with iOS 10 or macOS Sierra.
    * There are no additional fees to process Apple Pay payments, and the <a
    * href="https://stripe.com/pricing">pricing</a> is the same as other card transactions. Check
-   * this <a href="https://stripe.com/docs/apple-pay">page</a> for more details.
+   * this <a href="https://docs.stripe.com/apple-pay">page</a> for more details.
    */
   @SerializedName("apple_pay")
   ApplePay applePay;
@@ -89,7 +89,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * Stripe users in Australia can accept Bulk Electronic Clearing System (BECS) direct debit
    * payments from customers with an Australian bank account. Check this <a
-   * href="https://stripe.com/docs/payments/au-becs-debit">page</a> for more details.
+   * href="https://docs.stripe.com/payments/au-becs-debit">page</a> for more details.
    */
   @SerializedName("au_becs_debit")
   AuBecsDebit auBecsDebit;
@@ -97,17 +97,17 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * Stripe users in the UK can accept Bacs Direct Debit payments from customers with a UK bank
    * account, check this <a
-   * href="https://stripe.com/docs/payments/payment-methods/bacs-debit">page</a> for more details.
+   * href="https://docs.stripe.com/payments/payment-methods/bacs-debit">page</a> for more details.
    */
   @SerializedName("bacs_debit")
   BacsDebit bacsDebit;
 
   /**
    * Bancontact is the most popular online payment method in Belgium, with over 15 million cards in
-   * circulation. <a href="https://stripe.com/docs/api/customers">Customers</a> use a Bancontact
+   * circulation. <a href="https://docs.stripe.com/api/customers">Customers</a> use a Bancontact
    * card or mobile app linked to a Belgian bank account to make online payments that are secure,
    * guaranteed, and confirmed immediately. Check this <a
-   * href="https://stripe.com/docs/payments/bancontact">page</a> for more details.
+   * href="https://docs.stripe.com/payments/bancontact">page</a> for more details.
    */
   @SerializedName("bancontact")
   Bancontact bancontact;
@@ -124,18 +124,25 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   Billie billie;
 
   /**
-   * BLIK is a <a href="https://stripe.com/docs/payments/payment-methods#usage">single use</a>
+   * To enable Bizum, buyers need a Spanish IBAN from a bank connected to Bizum. Within their
+   * banking app, they can enable Bizum and link their mobile number to their IBAN.
+   */
+  @SerializedName("bizum")
+  Bizum bizum;
+
+  /**
+   * BLIK is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single use</a>
    * payment method that requires customers to authenticate their payments. When customers want to
    * pay online using BLIK, they request a six-digit code from their banking application and enter
    * it into the payment collection form. Check this <a
-   * href="https://stripe.com/docs/payments/blik">page</a> for more details.
+   * href="https://docs.stripe.com/payments/blik">page</a> for more details.
    */
   @SerializedName("blik")
   Blik blik;
 
   /**
    * Boleto is an official (regulated by the Central Bank of Brazil) payment method in Brazil. Check
-   * this <a href="https://stripe.com/docs/payments/boleto">page</a> for more details.
+   * this <a href="https://docs.stripe.com/payments/boleto">page</a> for more details.
    */
   @SerializedName("boleto")
   Boleto boleto;
@@ -151,7 +158,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * Cartes Bancaires is France's local card network. More than 95% of these cards are co-branded
    * with either Visa or Mastercard, meaning you can process these cards over either Cartes
    * Bancaires or the Visa or Mastercard networks. Check this <a
-   * href="https://stripe.com/docs/payments/cartes-bancaires">page</a> for more details.
+   * href="https://docs.stripe.com/payments/cartes-bancaires">page</a> for more details.
    */
   @SerializedName("cartes_bancaires")
   CartesBancaires cartesBancaires;
@@ -159,15 +166,22 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * Cash App is a popular consumer app in the US that allows customers to bank, invest, send, and
    * receive money using their digital wallet. Check this <a
-   * href="https://stripe.com/docs/payments/cash-app-pay">page</a> for more details.
+   * href="https://docs.stripe.com/payments/cash-app-pay">page</a> for more details.
    */
   @SerializedName("cashapp")
   Cashapp cashapp;
 
   /**
-   * Uses a customer’s <a href="https://stripe.com/docs/payments/customer-balance">cash balance</a>
+   * <a href="https://docs.stripe.com/payments/stablecoin-payments">Stablecoin payments</a> enable
+   * customers to pay in stablecoins like USDC from 100s of wallets including Phantom and Metamask.
+   */
+  @SerializedName("crypto")
+  Crypto crypto;
+
+  /**
+   * Uses a customer’s <a href="https://docs.stripe.com/payments/customer-balance">cash balance</a>
    * for the payment. The cash balance can be funded via a bank transfer. Check this <a
-   * href="https://stripe.com/docs/payments/bank-transfers">page</a> for more details.
+   * href="https://docs.stripe.com/payments/bank-transfers">page</a> for more details.
    */
   @SerializedName("customer_balance")
   CustomerBalance customerBalance;
@@ -176,7 +190,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * EPS is an Austria-based payment method that allows customers to complete transactions online
    * using their bank credentials. EPS is supported by all Austrian banks and is accepted by over
    * 80% of Austrian online retailers. Check this <a
-   * href="https://stripe.com/docs/payments/eps">page</a> for more details.
+   * href="https://docs.stripe.com/payments/eps">page</a> for more details.
    */
   @SerializedName("eps")
   Eps eps;
@@ -200,17 +214,26 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * Central Bank of Malaysia, and eleven other major Malaysian financial institutions are members
    * of the PayNet Group, which owns and operates FPX. It is one of the most popular online payment
    * methods in Malaysia, with nearly 90 million transactions in 2018 according to BNM. Check this
-   * <a href="https://stripe.com/docs/payments/fpx">page</a> for more details.
+   * <a href="https://docs.stripe.com/payments/fpx">page</a> for more details.
    */
   @SerializedName("fpx")
   Fpx fpx;
+
+  /**
+   * Meal vouchers in France, or “titres-restaurant”, is a local benefits program commonly offered
+   * by employers for their employees to purchase prepared food and beverages on working days. Check
+   * this <a href="https://docs.stripe.com/payments/meal-vouchers/fr-meal-vouchers">page</a> for
+   * more details.
+   */
+  @SerializedName("fr_meal_voucher_conecs")
+  FrMealVoucherConecs frMealVoucherConecs;
 
   /**
    * giropay is a German payment method based on online banking, introduced in 2006. It allows
    * customers to complete transactions online using their online banking environment, with funds
    * debited from their bank account. Depending on their bank, customers confirm payments on giropay
    * using a second factor of authentication or a PIN. giropay accounts for 10% of online checkouts
-   * in Germany. Check this <a href="https://stripe.com/docs/payments/giropay">page</a> for more
+   * in Germany. Check this <a href="https://docs.stripe.com/payments/giropay">page</a> for more
    * details.
    */
   @SerializedName("giropay")
@@ -220,7 +243,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * Google Pay allows customers to make payments in your app or website using any credit or debit
    * card saved to their Google Account, including those from Google Play, YouTube, Chrome, or an
    * Android device. Use the Google Pay API to request any credit or debit card stored in your
-   * customer's Google account. Check this <a href="https://stripe.com/docs/google-pay">page</a> for
+   * customer's Google account. Check this <a href="https://docs.stripe.com/google-pay">page</a> for
    * more details.
    */
   @SerializedName("google_pay")
@@ -230,7 +253,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * GrabPay is a payment method developed by <a
    * href="https://www.grab.com/sg/consumer/finance/pay/">Grab</a>. GrabPay is a digital wallet -
    * customers maintain a balance in their wallets that they pay out with. Check this <a
-   * href="https://stripe.com/docs/payments/grabpay">page</a> for more details.
+   * href="https://docs.stripe.com/payments/grabpay">page</a> for more details.
    */
   @SerializedName("grabpay")
   Grabpay grabpay;
@@ -240,7 +263,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * online using their bank credentials. All major Dutch banks are members of Currence, the scheme
    * that operates iDEAL, making it the most popular online payment method in the Netherlands with a
    * share of online transactions close to 55%. Check this <a
-   * href="https://stripe.com/docs/payments/ideal">page</a> for more details.
+   * href="https://docs.stripe.com/payments/ideal">page</a> for more details.
    */
   @SerializedName("ideal")
   Ideal ideal;
@@ -262,10 +285,10 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   /**
    * Klarna gives customers a range of <a
-   * href="https://stripe.com/docs/payments/klarna#payment-options">payment options</a> during
+   * href="https://docs.stripe.com/payments/klarna#payment-options">payment options</a> during
    * checkout. Available payment options vary depending on the customer's billing address and the
    * transaction amount. These payment options make it convenient for customers to purchase items in
-   * all price ranges. Check this <a href="https://stripe.com/docs/payments/klarna">page</a> for
+   * all price ranges. Check this <a href="https://docs.stripe.com/payments/klarna">page</a> for
    * more details.
    */
   @SerializedName("klarna")
@@ -273,7 +296,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   /**
    * Konbini allows customers in Japan to pay for bills and online purchases at convenience stores
-   * with cash. Check this <a href="https://stripe.com/docs/payments/konbini">page</a> for more
+   * with cash. Check this <a href="https://docs.stripe.com/payments/konbini">page</a> for more
    * details.
    */
   @SerializedName("konbini")
@@ -284,7 +307,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   KrCard krCard;
 
   /**
-   * <a href="https://stripe.com/docs/payments/link">Link</a> is a payment method network. With
+   * <a href="https://docs.stripe.com/payments/link">Link</a> is a payment method network. With
    * Link, users save their payment details once, then reuse that information to pay with one click
    * for any business on the network.
    */
@@ -292,11 +315,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   Link link;
 
   /**
-   * MobilePay is a <a href="https://stripe.com/docs/payments/payment-methods#usage">single-use</a>
+   * MB WAY is the most popular wallet in Portugal. After entering their phone number in your
+   * checkout, customers approve the payment directly in their MB WAY app. Check this <a
+   * href="https://docs.stripe.com/payments/mb-way">page</a> for more details.
+   */
+  @SerializedName("mb_way")
+  MbWay mbWay;
+
+  /**
+   * MobilePay is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single-use</a>
    * card wallet payment method used in Denmark and Finland. It allows customers to <a
-   * href="https://stripe.com/docs/payments/payment-methods#customer-actions">authenticate and
+   * href="https://docs.stripe.com/payments/payment-methods#customer-actions">authenticate and
    * approve</a> payments using the MobilePay app. Check this <a
-   * href="https://stripe.com/docs/payments/mobilepay">page</a> for more details.
+   * href="https://docs.stripe.com/payments/mobilepay">page</a> for more details.
    */
   @SerializedName("mobilepay")
   Mobilepay mobilepay;
@@ -320,7 +351,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * Stripe users in New Zealand can accept Bulk Electronic Clearing System (BECS) direct debit
    * payments from customers with a New Zeland bank account. Check this <a
-   * href="https://stripe.com/docs/payments/nz-bank-account">page</a> for more details.
+   * href="https://docs.stripe.com/payments/nz-bank-account">page</a> for more details.
    */
   @SerializedName("nz_bank_account")
   NzBankAccount nzBankAccount;
@@ -329,7 +360,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * OXXO is a Mexican chain of convenience stores with thousands of locations across Latin America
    * and represents nearly 20% of online transactions in Mexico. OXXO allows customers to pay bills
    * and online purchases in-store with cash. Check this <a
-   * href="https://stripe.com/docs/payments/oxxo">page</a> for more details.
+   * href="https://docs.stripe.com/payments/oxxo">page</a> for more details.
    */
   @SerializedName("oxxo")
   Oxxo oxxo;
@@ -338,7 +369,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * Przelewy24 is a Poland-based payment method aggregator that allows customers to complete
    * transactions online using bank transfers and other methods. Bank transfers account for 30% of
    * online payments in Poland and Przelewy24 provides a way for customers to pay with over 165
-   * banks. Check this <a href="https://stripe.com/docs/payments/p24">page</a> for more details.
+   * banks. Check this <a href="https://docs.stripe.com/payments/p24">page</a> for more details.
    */
   @SerializedName("p24")
   P24 p24;
@@ -362,7 +393,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * PayNow is a Singapore-based payment method that allows customers to make a payment using their
    * preferred app from participating banks and participating non-bank financial institutions. Check
-   * this <a href="https://stripe.com/docs/payments/paynow">page</a> for more details.
+   * this <a href="https://docs.stripe.com/payments/paynow">page</a> for more details.
    */
   @SerializedName("paynow")
   Paynow paynow;
@@ -370,10 +401,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * PayPal, a digital wallet popular with customers in Europe, allows your customers worldwide to
    * pay using their PayPal account. Check this <a
-   * href="https://stripe.com/docs/payments/paypal">page</a> for more details.
+   * href="https://docs.stripe.com/payments/paypal">page</a> for more details.
    */
   @SerializedName("paypal")
   Paypal paypal;
+
+  /**
+   * PayTo is a <a href="https://docs.stripe.com/payments/real-time">real-time</a> payment method
+   * that enables customers in Australia to pay by providing their bank account details. Customers
+   * must accept a mandate authorizing you to debit their account. Check this <a
+   * href="https://docs.stripe.com/payments/payto">page</a> for more details.
+   */
+  @SerializedName("payto")
+  Payto payto;
 
   /**
    * Pix is a payment method popular in Brazil. When paying with Pix, customers authenticate and
@@ -386,7 +426,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   /**
    * PromptPay is a Thailand-based payment method that allows customers to make a payment using
    * their preferred app from participating banks. Check this <a
-   * href="https://stripe.com/docs/payments/promptpay">page</a> for more details.
+   * href="https://docs.stripe.com/payments/promptpay">page</a> for more details.
    */
   @SerializedName("promptpay")
   Promptpay promptpay;
@@ -407,7 +447,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   SamsungPay samsungPay;
 
   /**
-   * Satispay is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single-use</a>
+   * Satispay is a <a href="https://stripe.com/payments/payment-methods#usage">single-use</a>
    * payment method where customers are required to <a
    * href="https://stripe.com/payments/payment-methods#customer-actions">authenticate</a> their
    * payment. Customers pay by being redirected from your website or app, authorizing the payment
@@ -419,11 +459,21 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   Satispay satispay;
 
   /**
+   * Scalapay is a <a href="https://stripe.com/payments/payment-methods#usage">single-use</a>
+   * payment method that lets customers pay in 3 or 4 installments. Customers are redirected from
+   * your website or app, authorize the payment with Scalapay, then return to your website or app.
+   * You get <a href="https://stripe.com/payments/payment-methods#payment-notification">immediate
+   * notification</a> of whether the payment succeeded or failed.
+   */
+  @SerializedName("scalapay")
+  Scalapay scalapay;
+
+  /**
    * The <a href="https://en.wikipedia.org/wiki/Single_Euro_Payments_Area">Single Euro Payments Area
    * (SEPA)</a> is an initiative of the European Union to simplify payments within and across member
    * countries. SEPA established and enforced banking standards to allow for the direct debiting of
    * every EUR-denominated bank account within the SEPA region, check this <a
-   * href="https://stripe.com/docs/payments/sepa-debit">page</a> for more details.
+   * href="https://docs.stripe.com/payments/sepa-debit">page</a> for more details.
    */
   @SerializedName("sepa_debit")
   SepaDebit sepaDebit;
@@ -433,17 +483,28 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * href="https://stripe.com/docs/payments/payment-intents">Payment Intents API</a>—a single
    * integration path for creating payments using any supported method—to accept <a
    * href="https://www.sofort.com/">Sofort</a> payments from customers. Check this <a
-   * href="https://stripe.com/docs/payments/sofort">page</a> for more details.
+   * href="https://docs.stripe.com/payments/sofort">page</a> for more details.
    */
   @SerializedName("sofort")
   Sofort sofort;
 
   /**
-   * Swish is a <a href="https://stripe.com/docs/payments/real-time">real-time</a> payment method
+   * Sunbit is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single-use</a>
+   * payment method where customers choose to pay in 3, 6, or 12 installments. Customers are
+   * redirected from your website or app, authorize the payment with Sunbit, then return to your
+   * website or app. You get <a
+   * href="https://docs.stripe.com/payments/payment-methods#payment-notification">immediate
+   * notification</a> of whether the payment succeeded or failed.
+   */
+  @SerializedName("sunbit")
+  Sunbit sunbit;
+
+  /**
+   * Swish is a <a href="https://docs.stripe.com/payments/real-time">real-time</a> payment method
    * popular in Sweden. It allows customers to <a
-   * href="https://stripe.com/docs/payments/payment-methods#customer-actions">authenticate and
+   * href="https://docs.stripe.com/payments/payment-methods#customer-actions">authenticate and
    * approve</a> payments using the Swish mobile app and the Swedish BankID mobile app. Check this
-   * <a href="https://stripe.com/docs/payments/swish">page</a> for more details.
+   * <a href="https://docs.stripe.com/payments/swish">page</a> for more details.
    */
   @SerializedName("swish")
   Swish swish;
@@ -456,9 +517,16 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
   Twint twint;
 
   /**
+   * Unified Payment Interface (UPI) is India's leading payment method with exponential growth since
+   * it launched in 2016.
+   */
+  @SerializedName("upi")
+  Upi upi;
+
+  /**
    * Stripe users in the United States can accept ACH direct debit payments from customers with a US
    * bank account using the Automated Clearing House (ACH) payments system operated by Nacha. Check
-   * this <a href="https://stripe.com/docs/payments/ach-direct-debit">page</a> for more details.
+   * this <a href="https://docs.stripe.com/payments/ach-direct-debit">page</a> for more details.
    */
   @SerializedName("us_bank_account")
   UsBankAccount usBankAccount;
@@ -468,14 +536,14 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
    * users. Chinese consumers can use WeChat Pay to pay for goods and services inside of businesses'
    * apps and websites. WeChat Pay users buy most frequently in gaming, e-commerce, travel, online
    * education, and food/nutrition. Check this <a
-   * href="https://stripe.com/docs/payments/wechat-pay">page</a> for more details.
+   * href="https://docs.stripe.com/payments/wechat-pay">page</a> for more details.
    */
   @SerializedName("wechat_pay")
   WechatPay wechatPay;
 
   /**
    * Zip gives your customers a way to split purchases over a series of payments. Check this <a
-   * href="https://stripe.com/docs/payments/zip">page</a> for more details like country
+   * href="https://docs.stripe.com/payments/zip">page</a> for more details like country
    * availability.
    */
   @SerializedName("zip")
@@ -495,16 +563,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
       BacsDebit bacsDebit,
       Bancontact bancontact,
       Billie billie,
+      Bizum bizum,
       Blik blik,
       Boleto boleto,
       Card card,
       CartesBancaires cartesBancaires,
       Cashapp cashapp,
+      Crypto crypto,
       CustomerBalance customerBalance,
       Eps eps,
       List<String> expand,
       Map<String, Object> extraParams,
       Fpx fpx,
+      FrMealVoucherConecs frMealVoucherConecs,
       Giropay giropay,
       GooglePay googlePay,
       Grabpay grabpay,
@@ -515,6 +586,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
       Konbini konbini,
       KrCard krCard,
       Link link,
+      MbWay mbWay,
       Mobilepay mobilepay,
       Multibanco multibanco,
       Object name,
@@ -526,15 +598,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
       Payco payco,
       Paynow paynow,
       Paypal paypal,
+      Payto payto,
       Pix pix,
       Promptpay promptpay,
       RevolutPay revolutPay,
       SamsungPay samsungPay,
       Satispay satispay,
+      Scalapay scalapay,
       SepaDebit sepaDebit,
       Sofort sofort,
+      Sunbit sunbit,
       Swish swish,
       Twint twint,
+      Upi upi,
       UsBankAccount usBankAccount,
       WechatPay wechatPay,
       Zip zip) {
@@ -551,16 +627,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     this.bacsDebit = bacsDebit;
     this.bancontact = bancontact;
     this.billie = billie;
+    this.bizum = bizum;
     this.blik = blik;
     this.boleto = boleto;
     this.card = card;
     this.cartesBancaires = cartesBancaires;
     this.cashapp = cashapp;
+    this.crypto = crypto;
     this.customerBalance = customerBalance;
     this.eps = eps;
     this.expand = expand;
     this.extraParams = extraParams;
     this.fpx = fpx;
+    this.frMealVoucherConecs = frMealVoucherConecs;
     this.giropay = giropay;
     this.googlePay = googlePay;
     this.grabpay = grabpay;
@@ -571,6 +650,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     this.konbini = konbini;
     this.krCard = krCard;
     this.link = link;
+    this.mbWay = mbWay;
     this.mobilepay = mobilepay;
     this.multibanco = multibanco;
     this.name = name;
@@ -582,15 +662,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     this.payco = payco;
     this.paynow = paynow;
     this.paypal = paypal;
+    this.payto = payto;
     this.pix = pix;
     this.promptpay = promptpay;
     this.revolutPay = revolutPay;
     this.samsungPay = samsungPay;
     this.satispay = satispay;
+    this.scalapay = scalapay;
     this.sepaDebit = sepaDebit;
     this.sofort = sofort;
+    this.sunbit = sunbit;
     this.swish = swish;
     this.twint = twint;
+    this.upi = upi;
     this.usBankAccount = usBankAccount;
     this.wechatPay = wechatPay;
     this.zip = zip;
@@ -627,6 +711,8 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     private Billie billie;
 
+    private Bizum bizum;
+
     private Blik blik;
 
     private Boleto boleto;
@@ -637,6 +723,8 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     private Cashapp cashapp;
 
+    private Crypto crypto;
+
     private CustomerBalance customerBalance;
 
     private Eps eps;
@@ -646,6 +734,8 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     private Map<String, Object> extraParams;
 
     private Fpx fpx;
+
+    private FrMealVoucherConecs frMealVoucherConecs;
 
     private Giropay giropay;
 
@@ -666,6 +756,8 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     private KrCard krCard;
 
     private Link link;
+
+    private MbWay mbWay;
 
     private Mobilepay mobilepay;
 
@@ -689,6 +781,8 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     private Paypal paypal;
 
+    private Payto payto;
+
     private Pix pix;
 
     private Promptpay promptpay;
@@ -699,13 +793,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     private Satispay satispay;
 
+    private Scalapay scalapay;
+
     private SepaDebit sepaDebit;
 
     private Sofort sofort;
 
+    private Sunbit sunbit;
+
     private Swish swish;
 
     private Twint twint;
+
+    private Upi upi;
 
     private UsBankAccount usBankAccount;
 
@@ -729,16 +829,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
           this.bacsDebit,
           this.bancontact,
           this.billie,
+          this.bizum,
           this.blik,
           this.boleto,
           this.card,
           this.cartesBancaires,
           this.cashapp,
+          this.crypto,
           this.customerBalance,
           this.eps,
           this.expand,
           this.extraParams,
           this.fpx,
+          this.frMealVoucherConecs,
           this.giropay,
           this.googlePay,
           this.grabpay,
@@ -749,6 +852,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
           this.konbini,
           this.krCard,
           this.link,
+          this.mbWay,
           this.mobilepay,
           this.multibanco,
           this.name,
@@ -760,15 +864,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
           this.payco,
           this.paynow,
           this.paypal,
+          this.payto,
           this.pix,
           this.promptpay,
           this.revolutPay,
           this.samsungPay,
           this.satispay,
+          this.scalapay,
           this.sepaDebit,
           this.sofort,
+          this.sunbit,
           this.swish,
           this.twint,
+          this.upi,
           this.usBankAccount,
           this.wechatPay,
           this.zip);
@@ -776,7 +884,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Canadian pre-authorized debit payments, check this <a
-     * href="https://stripe.com/docs/payments/acss-debit">page</a> for more details like country
+     * href="https://docs.stripe.com/payments/acss-debit">page</a> for more details like country
      * availability.
      */
     public Builder setAcssDebit(PaymentMethodConfigurationUpdateParams.AcssDebit acssDebit) {
@@ -794,7 +902,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * <a href="https://www.affirm.com/">Affirm</a> gives your customers a way to split purchases
      * over a series of payments. Depending on the purchase, they can pay with four interest-free
      * payments (Split Pay) or pay over a longer term (Installments), which might include interest.
-     * Check this <a href="https://stripe.com/docs/payments/affirm">page</a> for more details like
+     * Check this <a href="https://docs.stripe.com/payments/affirm">page</a> for more details like
      * country availability.
      */
     public Builder setAffirm(PaymentMethodConfigurationUpdateParams.Affirm affirm) {
@@ -804,7 +912,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Afterpay gives your customers a way to pay for purchases in installments, check this <a
-     * href="https://stripe.com/docs/payments/afterpay-clearpay">page</a> for more details like
+     * href="https://docs.stripe.com/payments/afterpay-clearpay">page</a> for more details like
      * country availability. Afterpay is particularly popular among businesses selling fashion,
      * beauty, and sports products.
      */
@@ -819,7 +927,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * Alipay users can pay on the web or on a mobile device using login credentials or their Alipay
      * app. Alipay has a low dispute rate and reduces fraud by authenticating payments using the
      * customer's login credentials. Check this <a
-     * href="https://stripe.com/docs/payments/alipay">page</a> for more details.
+     * href="https://docs.stripe.com/payments/alipay">page</a> for more details.
      */
     public Builder setAlipay(PaymentMethodConfigurationUpdateParams.Alipay alipay) {
       this.alipay = alipay;
@@ -849,7 +957,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * applications in iOS 9 and later, and on the web in Safari starting with iOS 10 or macOS
      * Sierra. There are no additional fees to process Apple Pay payments, and the <a
      * href="https://stripe.com/pricing">pricing</a> is the same as other card transactions. Check
-     * this <a href="https://stripe.com/docs/apple-pay">page</a> for more details.
+     * this <a href="https://docs.stripe.com/apple-pay">page</a> for more details.
      */
     public Builder setApplePay(PaymentMethodConfigurationUpdateParams.ApplePay applePay) {
       this.applePay = applePay;
@@ -869,7 +977,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * Stripe users in Australia can accept Bulk Electronic Clearing System (BECS) direct debit
      * payments from customers with an Australian bank account. Check this <a
-     * href="https://stripe.com/docs/payments/au-becs-debit">page</a> for more details.
+     * href="https://docs.stripe.com/payments/au-becs-debit">page</a> for more details.
      */
     public Builder setAuBecsDebit(PaymentMethodConfigurationUpdateParams.AuBecsDebit auBecsDebit) {
       this.auBecsDebit = auBecsDebit;
@@ -879,7 +987,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * Stripe users in the UK can accept Bacs Direct Debit payments from customers with a UK bank
      * account, check this <a
-     * href="https://stripe.com/docs/payments/payment-methods/bacs-debit">page</a> for more details.
+     * href="https://docs.stripe.com/payments/payment-methods/bacs-debit">page</a> for more details.
      */
     public Builder setBacsDebit(PaymentMethodConfigurationUpdateParams.BacsDebit bacsDebit) {
       this.bacsDebit = bacsDebit;
@@ -888,10 +996,10 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Bancontact is the most popular online payment method in Belgium, with over 15 million cards
-     * in circulation. <a href="https://stripe.com/docs/api/customers">Customers</a> use a
+     * in circulation. <a href="https://docs.stripe.com/api/customers">Customers</a> use a
      * Bancontact card or mobile app linked to a Belgian bank account to make online payments that
      * are secure, guaranteed, and confirmed immediately. Check this <a
-     * href="https://stripe.com/docs/payments/bancontact">page</a> for more details.
+     * href="https://docs.stripe.com/payments/bancontact">page</a> for more details.
      */
     public Builder setBancontact(PaymentMethodConfigurationUpdateParams.Bancontact bancontact) {
       this.bancontact = bancontact;
@@ -912,11 +1020,20 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * BLIK is a <a href="https://stripe.com/docs/payments/payment-methods#usage">single use</a>
+     * To enable Bizum, buyers need a Spanish IBAN from a bank connected to Bizum. Within their
+     * banking app, they can enable Bizum and link their mobile number to their IBAN.
+     */
+    public Builder setBizum(PaymentMethodConfigurationUpdateParams.Bizum bizum) {
+      this.bizum = bizum;
+      return this;
+    }
+
+    /**
+     * BLIK is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single use</a>
      * payment method that requires customers to authenticate their payments. When customers want to
      * pay online using BLIK, they request a six-digit code from their banking application and enter
      * it into the payment collection form. Check this <a
-     * href="https://stripe.com/docs/payments/blik">page</a> for more details.
+     * href="https://docs.stripe.com/payments/blik">page</a> for more details.
      */
     public Builder setBlik(PaymentMethodConfigurationUpdateParams.Blik blik) {
       this.blik = blik;
@@ -925,7 +1042,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Boleto is an official (regulated by the Central Bank of Brazil) payment method in Brazil.
-     * Check this <a href="https://stripe.com/docs/payments/boleto">page</a> for more details.
+     * Check this <a href="https://docs.stripe.com/payments/boleto">page</a> for more details.
      */
     public Builder setBoleto(PaymentMethodConfigurationUpdateParams.Boleto boleto) {
       this.boleto = boleto;
@@ -945,7 +1062,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * Cartes Bancaires is France's local card network. More than 95% of these cards are co-branded
      * with either Visa or Mastercard, meaning you can process these cards over either Cartes
      * Bancaires or the Visa or Mastercard networks. Check this <a
-     * href="https://stripe.com/docs/payments/cartes-bancaires">page</a> for more details.
+     * href="https://docs.stripe.com/payments/cartes-bancaires">page</a> for more details.
      */
     public Builder setCartesBancaires(
         PaymentMethodConfigurationUpdateParams.CartesBancaires cartesBancaires) {
@@ -956,7 +1073,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * Cash App is a popular consumer app in the US that allows customers to bank, invest, send, and
      * receive money using their digital wallet. Check this <a
-     * href="https://stripe.com/docs/payments/cash-app-pay">page</a> for more details.
+     * href="https://docs.stripe.com/payments/cash-app-pay">page</a> for more details.
      */
     public Builder setCashapp(PaymentMethodConfigurationUpdateParams.Cashapp cashapp) {
       this.cashapp = cashapp;
@@ -964,9 +1081,19 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Uses a customer’s <a href="https://stripe.com/docs/payments/customer-balance">cash
+     * <a href="https://docs.stripe.com/payments/stablecoin-payments">Stablecoin payments</a> enable
+     * customers to pay in stablecoins like USDC from 100s of wallets including Phantom and
+     * Metamask.
+     */
+    public Builder setCrypto(PaymentMethodConfigurationUpdateParams.Crypto crypto) {
+      this.crypto = crypto;
+      return this;
+    }
+
+    /**
+     * Uses a customer’s <a href="https://docs.stripe.com/payments/customer-balance">cash
      * balance</a> for the payment. The cash balance can be funded via a bank transfer. Check this
-     * <a href="https://stripe.com/docs/payments/bank-transfers">page</a> for more details.
+     * <a href="https://docs.stripe.com/payments/bank-transfers">page</a> for more details.
      */
     public Builder setCustomerBalance(
         PaymentMethodConfigurationUpdateParams.CustomerBalance customerBalance) {
@@ -978,7 +1105,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * EPS is an Austria-based payment method that allows customers to complete transactions online
      * using their bank credentials. EPS is supported by all Austrian banks and is accepted by over
      * 80% of Austrian online retailers. Check this <a
-     * href="https://stripe.com/docs/payments/eps">page</a> for more details.
+     * href="https://docs.stripe.com/payments/eps">page</a> for more details.
      */
     public Builder setEps(PaymentMethodConfigurationUpdateParams.Eps eps) {
       this.eps = eps;
@@ -1043,10 +1170,22 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * Central Bank of Malaysia, and eleven other major Malaysian financial institutions are members
      * of the PayNet Group, which owns and operates FPX. It is one of the most popular online
      * payment methods in Malaysia, with nearly 90 million transactions in 2018 according to BNM.
-     * Check this <a href="https://stripe.com/docs/payments/fpx">page</a> for more details.
+     * Check this <a href="https://docs.stripe.com/payments/fpx">page</a> for more details.
      */
     public Builder setFpx(PaymentMethodConfigurationUpdateParams.Fpx fpx) {
       this.fpx = fpx;
+      return this;
+    }
+
+    /**
+     * Meal vouchers in France, or “titres-restaurant”, is a local benefits program commonly offered
+     * by employers for their employees to purchase prepared food and beverages on working days.
+     * Check this <a href="https://docs.stripe.com/payments/meal-vouchers/fr-meal-vouchers">page</a>
+     * for more details.
+     */
+    public Builder setFrMealVoucherConecs(
+        PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs frMealVoucherConecs) {
+      this.frMealVoucherConecs = frMealVoucherConecs;
       return this;
     }
 
@@ -1055,7 +1194,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * customers to complete transactions online using their online banking environment, with funds
      * debited from their bank account. Depending on their bank, customers confirm payments on
      * giropay using a second factor of authentication or a PIN. giropay accounts for 10% of online
-     * checkouts in Germany. Check this <a href="https://stripe.com/docs/payments/giropay">page</a>
+     * checkouts in Germany. Check this <a href="https://docs.stripe.com/payments/giropay">page</a>
      * for more details.
      */
     public Builder setGiropay(PaymentMethodConfigurationUpdateParams.Giropay giropay) {
@@ -1067,7 +1206,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * Google Pay allows customers to make payments in your app or website using any credit or debit
      * card saved to their Google Account, including those from Google Play, YouTube, Chrome, or an
      * Android device. Use the Google Pay API to request any credit or debit card stored in your
-     * customer's Google account. Check this <a href="https://stripe.com/docs/google-pay">page</a>
+     * customer's Google account. Check this <a href="https://docs.stripe.com/google-pay">page</a>
      * for more details.
      */
     public Builder setGooglePay(PaymentMethodConfigurationUpdateParams.GooglePay googlePay) {
@@ -1079,7 +1218,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * GrabPay is a payment method developed by <a
      * href="https://www.grab.com/sg/consumer/finance/pay/">Grab</a>. GrabPay is a digital wallet -
      * customers maintain a balance in their wallets that they pay out with. Check this <a
-     * href="https://stripe.com/docs/payments/grabpay">page</a> for more details.
+     * href="https://docs.stripe.com/payments/grabpay">page</a> for more details.
      */
     public Builder setGrabpay(PaymentMethodConfigurationUpdateParams.Grabpay grabpay) {
       this.grabpay = grabpay;
@@ -1091,7 +1230,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * online using their bank credentials. All major Dutch banks are members of Currence, the
      * scheme that operates iDEAL, making it the most popular online payment method in the
      * Netherlands with a share of online transactions close to 55%. Check this <a
-     * href="https://stripe.com/docs/payments/ideal">page</a> for more details.
+     * href="https://docs.stripe.com/payments/ideal">page</a> for more details.
      */
     public Builder setIdeal(PaymentMethodConfigurationUpdateParams.Ideal ideal) {
       this.ideal = ideal;
@@ -1119,10 +1258,10 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Klarna gives customers a range of <a
-     * href="https://stripe.com/docs/payments/klarna#payment-options">payment options</a> during
+     * href="https://docs.stripe.com/payments/klarna#payment-options">payment options</a> during
      * checkout. Available payment options vary depending on the customer's billing address and the
      * transaction amount. These payment options make it convenient for customers to purchase items
-     * in all price ranges. Check this <a href="https://stripe.com/docs/payments/klarna">page</a>
+     * in all price ranges. Check this <a href="https://docs.stripe.com/payments/klarna">page</a>
      * for more details.
      */
     public Builder setKlarna(PaymentMethodConfigurationUpdateParams.Klarna klarna) {
@@ -1132,7 +1271,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Konbini allows customers in Japan to pay for bills and online purchases at convenience stores
-     * with cash. Check this <a href="https://stripe.com/docs/payments/konbini">page</a> for more
+     * with cash. Check this <a href="https://docs.stripe.com/payments/konbini">page</a> for more
      * details.
      */
     public Builder setKonbini(PaymentMethodConfigurationUpdateParams.Konbini konbini) {
@@ -1147,7 +1286,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * <a href="https://stripe.com/docs/payments/link">Link</a> is a payment method network. With
+     * <a href="https://docs.stripe.com/payments/link">Link</a> is a payment method network. With
      * Link, users save their payment details once, then reuse that information to pay with one
      * click for any business on the network.
      */
@@ -1157,12 +1296,22 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
+     * MB WAY is the most popular wallet in Portugal. After entering their phone number in your
+     * checkout, customers approve the payment directly in their MB WAY app. Check this <a
+     * href="https://docs.stripe.com/payments/mb-way">page</a> for more details.
+     */
+    public Builder setMbWay(PaymentMethodConfigurationUpdateParams.MbWay mbWay) {
+      this.mbWay = mbWay;
+      return this;
+    }
+
+    /**
      * MobilePay is a <a
-     * href="https://stripe.com/docs/payments/payment-methods#usage">single-use</a> card wallet
+     * href="https://docs.stripe.com/payments/payment-methods#usage">single-use</a> card wallet
      * payment method used in Denmark and Finland. It allows customers to <a
-     * href="https://stripe.com/docs/payments/payment-methods#customer-actions">authenticate and
+     * href="https://docs.stripe.com/payments/payment-methods#customer-actions">authenticate and
      * approve</a> payments using the MobilePay app. Check this <a
-     * href="https://stripe.com/docs/payments/mobilepay">page</a> for more details.
+     * href="https://docs.stripe.com/payments/mobilepay">page</a> for more details.
      */
     public Builder setMobilepay(PaymentMethodConfigurationUpdateParams.Mobilepay mobilepay) {
       this.mobilepay = mobilepay;
@@ -1200,7 +1349,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * Stripe users in New Zealand can accept Bulk Electronic Clearing System (BECS) direct debit
      * payments from customers with a New Zeland bank account. Check this <a
-     * href="https://stripe.com/docs/payments/nz-bank-account">page</a> for more details.
+     * href="https://docs.stripe.com/payments/nz-bank-account">page</a> for more details.
      */
     public Builder setNzBankAccount(
         PaymentMethodConfigurationUpdateParams.NzBankAccount nzBankAccount) {
@@ -1212,7 +1361,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * OXXO is a Mexican chain of convenience stores with thousands of locations across Latin
      * America and represents nearly 20% of online transactions in Mexico. OXXO allows customers to
      * pay bills and online purchases in-store with cash. Check this <a
-     * href="https://stripe.com/docs/payments/oxxo">page</a> for more details.
+     * href="https://docs.stripe.com/payments/oxxo">page</a> for more details.
      */
     public Builder setOxxo(PaymentMethodConfigurationUpdateParams.Oxxo oxxo) {
       this.oxxo = oxxo;
@@ -1223,7 +1372,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * Przelewy24 is a Poland-based payment method aggregator that allows customers to complete
      * transactions online using bank transfers and other methods. Bank transfers account for 30% of
      * online payments in Poland and Przelewy24 provides a way for customers to pay with over 165
-     * banks. Check this <a href="https://stripe.com/docs/payments/p24">page</a> for more details.
+     * banks. Check this <a href="https://docs.stripe.com/payments/p24">page</a> for more details.
      */
     public Builder setP24(PaymentMethodConfigurationUpdateParams.P24 p24) {
       this.p24 = p24;
@@ -1253,7 +1402,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * PayNow is a Singapore-based payment method that allows customers to make a payment using
      * their preferred app from participating banks and participating non-bank financial
-     * institutions. Check this <a href="https://stripe.com/docs/payments/paynow">page</a> for more
+     * institutions. Check this <a href="https://docs.stripe.com/payments/paynow">page</a> for more
      * details.
      */
     public Builder setPaynow(PaymentMethodConfigurationUpdateParams.Paynow paynow) {
@@ -1264,10 +1413,21 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * PayPal, a digital wallet popular with customers in Europe, allows your customers worldwide to
      * pay using their PayPal account. Check this <a
-     * href="https://stripe.com/docs/payments/paypal">page</a> for more details.
+     * href="https://docs.stripe.com/payments/paypal">page</a> for more details.
      */
     public Builder setPaypal(PaymentMethodConfigurationUpdateParams.Paypal paypal) {
       this.paypal = paypal;
+      return this;
+    }
+
+    /**
+     * PayTo is a <a href="https://docs.stripe.com/payments/real-time">real-time</a> payment method
+     * that enables customers in Australia to pay by providing their bank account details. Customers
+     * must accept a mandate authorizing you to debit their account. Check this <a
+     * href="https://docs.stripe.com/payments/payto">page</a> for more details.
+     */
+    public Builder setPayto(PaymentMethodConfigurationUpdateParams.Payto payto) {
+      this.payto = payto;
       return this;
     }
 
@@ -1284,7 +1444,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     /**
      * PromptPay is a Thailand-based payment method that allows customers to make a payment using
      * their preferred app from participating banks. Check this <a
-     * href="https://stripe.com/docs/payments/promptpay">page</a> for more details.
+     * href="https://docs.stripe.com/payments/promptpay">page</a> for more details.
      */
     public Builder setPromptpay(PaymentMethodConfigurationUpdateParams.Promptpay promptpay) {
       this.promptpay = promptpay;
@@ -1311,7 +1471,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Satispay is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single-use</a>
+     * Satispay is a <a href="https://stripe.com/payments/payment-methods#usage">single-use</a>
      * payment method where customers are required to <a
      * href="https://stripe.com/payments/payment-methods#customer-actions">authenticate</a> their
      * payment. Customers pay by being redirected from your website or app, authorizing the payment
@@ -1325,11 +1485,23 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
+     * Scalapay is a <a href="https://stripe.com/payments/payment-methods#usage">single-use</a>
+     * payment method that lets customers pay in 3 or 4 installments. Customers are redirected from
+     * your website or app, authorize the payment with Scalapay, then return to your website or app.
+     * You get <a href="https://stripe.com/payments/payment-methods#payment-notification">immediate
+     * notification</a> of whether the payment succeeded or failed.
+     */
+    public Builder setScalapay(PaymentMethodConfigurationUpdateParams.Scalapay scalapay) {
+      this.scalapay = scalapay;
+      return this;
+    }
+
+    /**
      * The <a href="https://en.wikipedia.org/wiki/Single_Euro_Payments_Area">Single Euro Payments
      * Area (SEPA)</a> is an initiative of the European Union to simplify payments within and across
      * member countries. SEPA established and enforced banking standards to allow for the direct
      * debiting of every EUR-denominated bank account within the SEPA region, check this <a
-     * href="https://stripe.com/docs/payments/sepa-debit">page</a> for more details.
+     * href="https://docs.stripe.com/payments/sepa-debit">page</a> for more details.
      */
     public Builder setSepaDebit(PaymentMethodConfigurationUpdateParams.SepaDebit sepaDebit) {
       this.sepaDebit = sepaDebit;
@@ -1341,7 +1513,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * href="https://stripe.com/docs/payments/payment-intents">Payment Intents API</a>—a single
      * integration path for creating payments using any supported method—to accept <a
      * href="https://www.sofort.com/">Sofort</a> payments from customers. Check this <a
-     * href="https://stripe.com/docs/payments/sofort">page</a> for more details.
+     * href="https://docs.stripe.com/payments/sofort">page</a> for more details.
      */
     public Builder setSofort(PaymentMethodConfigurationUpdateParams.Sofort sofort) {
       this.sofort = sofort;
@@ -1349,11 +1521,24 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Swish is a <a href="https://stripe.com/docs/payments/real-time">real-time</a> payment method
+     * Sunbit is a <a href="https://docs.stripe.com/payments/payment-methods#usage">single-use</a>
+     * payment method where customers choose to pay in 3, 6, or 12 installments. Customers are
+     * redirected from your website or app, authorize the payment with Sunbit, then return to your
+     * website or app. You get <a
+     * href="https://docs.stripe.com/payments/payment-methods#payment-notification">immediate
+     * notification</a> of whether the payment succeeded or failed.
+     */
+    public Builder setSunbit(PaymentMethodConfigurationUpdateParams.Sunbit sunbit) {
+      this.sunbit = sunbit;
+      return this;
+    }
+
+    /**
+     * Swish is a <a href="https://docs.stripe.com/payments/real-time">real-time</a> payment method
      * popular in Sweden. It allows customers to <a
-     * href="https://stripe.com/docs/payments/payment-methods#customer-actions">authenticate and
+     * href="https://docs.stripe.com/payments/payment-methods#customer-actions">authenticate and
      * approve</a> payments using the Swish mobile app and the Swedish BankID mobile app. Check this
-     * <a href="https://stripe.com/docs/payments/swish">page</a> for more details.
+     * <a href="https://docs.stripe.com/payments/swish">page</a> for more details.
      */
     public Builder setSwish(PaymentMethodConfigurationUpdateParams.Swish swish) {
       this.swish = swish;
@@ -1371,9 +1556,18 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
     }
 
     /**
+     * Unified Payment Interface (UPI) is India's leading payment method with exponential growth
+     * since it launched in 2016.
+     */
+    public Builder setUpi(PaymentMethodConfigurationUpdateParams.Upi upi) {
+      this.upi = upi;
+      return this;
+    }
+
+    /**
      * Stripe users in the United States can accept ACH direct debit payments from customers with a
      * US bank account using the Automated Clearing House (ACH) payments system operated by Nacha.
-     * Check this <a href="https://stripe.com/docs/payments/ach-direct-debit">page</a> for more
+     * Check this <a href="https://docs.stripe.com/payments/ach-direct-debit">page</a> for more
      * details.
      */
     public Builder setUsBankAccount(
@@ -1387,7 +1581,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
      * users. Chinese consumers can use WeChat Pay to pay for goods and services inside of
      * businesses' apps and websites. WeChat Pay users buy most frequently in gaming, e-commerce,
      * travel, online education, and food/nutrition. Check this <a
-     * href="https://stripe.com/docs/payments/wechat-pay">page</a> for more details.
+     * href="https://docs.stripe.com/payments/wechat-pay">page</a> for more details.
      */
     public Builder setWechatPay(PaymentMethodConfigurationUpdateParams.WechatPay wechatPay) {
       this.wechatPay = wechatPay;
@@ -1396,7 +1590,7 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
     /**
      * Zip gives your customers a way to split purchases over a series of payments. Check this <a
-     * href="https://stripe.com/docs/payments/zip">page</a> for more details like country
+     * href="https://docs.stripe.com/payments/zip">page</a> for more details like country
      * availability.
      */
     public Builder setZip(PaymentMethodConfigurationUpdateParams.Zip zip) {
@@ -3400,6 +3594,171 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Bizum {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Bizum(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.Bizum build() {
+        return new PaymentMethodConfigurationUpdateParams.Bizum(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.Bizum.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.Bizum#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.Bizum#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.Bizum.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.Bizum.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Bizum.DisplayPreference#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Bizum.DisplayPreference#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.Bizum.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class Blik {
     /** Whether or not the payment method should be displayed. */
     @SerializedName("display_preference")
@@ -4229,6 +4588,171 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Crypto {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Crypto(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.Crypto build() {
+        return new PaymentMethodConfigurationUpdateParams.Crypto(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.Crypto.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.Crypto#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.Crypto#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.Crypto.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.Crypto.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Crypto.DisplayPreference#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Crypto.DisplayPreference#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.Crypto.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class CustomerBalance {
     /** Whether or not the payment method should be displayed. */
     @SerializedName("display_preference")
@@ -4696,6 +5220,176 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
         /** The account's preference for whether or not to display this payment method. */
         public Builder setPreference(
             PaymentMethodConfigurationUpdateParams.Fpx.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class FrMealVoucherConecs {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private FrMealVoucherConecs(
+        DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs build() {
+        return new PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs.DisplayPreference
+              displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs#extraParams} for the field
+       * documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs#extraParams} for the
+       * field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs.DisplayPreference
+            build() {
+          return new PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs.DisplayPreference#extraParams}
+         * for the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs.DisplayPreference#extraParams}
+         * for the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.FrMealVoucherConecs.DisplayPreference.Preference
+                preference) {
           this.preference = preference;
           return this;
         }
@@ -6349,6 +7043,171 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
         /** The account's preference for whether or not to display this payment method. */
         public Builder setPreference(
             PaymentMethodConfigurationUpdateParams.Link.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class MbWay {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private MbWay(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.MbWay build() {
+        return new PaymentMethodConfigurationUpdateParams.MbWay(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.MbWay.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.MbWay#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.MbWay#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.MbWay.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.MbWay.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.MbWay.DisplayPreference#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.MbWay.DisplayPreference#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.MbWay.DisplayPreference.Preference preference) {
           this.preference = preference;
           return this;
         }
@@ -8031,6 +8890,171 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Payto {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Payto(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.Payto build() {
+        return new PaymentMethodConfigurationUpdateParams.Payto(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.Payto.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.Payto#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.Payto#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.Payto.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.Payto.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Payto.DisplayPreference#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Payto.DisplayPreference#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.Payto.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class Pix {
     /** Whether or not the payment method should be displayed. */
     @SerializedName("display_preference")
@@ -8858,6 +9882,172 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Scalapay {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Scalapay(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.Scalapay build() {
+        return new PaymentMethodConfigurationUpdateParams.Scalapay(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.Scalapay.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.Scalapay#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.Scalapay#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.Scalapay.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.Scalapay.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Scalapay.DisplayPreference#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Scalapay.DisplayPreference#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.Scalapay.DisplayPreference.Preference
+                preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class SepaDebit {
     /** Whether or not the payment method should be displayed. */
     @SerializedName("display_preference")
@@ -9189,6 +10379,171 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Sunbit {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Sunbit(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.Sunbit build() {
+        return new PaymentMethodConfigurationUpdateParams.Sunbit(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.Sunbit.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.Sunbit#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.Sunbit#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.Sunbit.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.Sunbit.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Sunbit.DisplayPreference#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link
+         * PaymentMethodConfigurationUpdateParams.Sunbit.DisplayPreference#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.Sunbit.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class Swish {
     /** Whether or not the payment method should be displayed. */
     @SerializedName("display_preference")
@@ -9492,6 +10847,169 @@ public class PaymentMethodConfigurationUpdateParams extends ApiRequestParams {
         /** The account's preference for whether or not to display this payment method. */
         public Builder setPreference(
             PaymentMethodConfigurationUpdateParams.Twint.DisplayPreference.Preference preference) {
+          this.preference = preference;
+          return this;
+        }
+      }
+
+      public enum Preference implements ApiRequestParams.EnumParam {
+        @SerializedName("none")
+        NONE("none"),
+
+        @SerializedName("off")
+        OFF("off"),
+
+        @SerializedName("on")
+        ON("on");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Preference(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class Upi {
+    /** Whether or not the payment method should be displayed. */
+    @SerializedName("display_preference")
+    DisplayPreference displayPreference;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Upi(DisplayPreference displayPreference, Map<String, Object> extraParams) {
+      this.displayPreference = displayPreference;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private DisplayPreference displayPreference;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodConfigurationUpdateParams.Upi build() {
+        return new PaymentMethodConfigurationUpdateParams.Upi(
+            this.displayPreference, this.extraParams);
+      }
+
+      /** Whether or not the payment method should be displayed. */
+      public Builder setDisplayPreference(
+          PaymentMethodConfigurationUpdateParams.Upi.DisplayPreference displayPreference) {
+        this.displayPreference = displayPreference;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodConfigurationUpdateParams.Upi#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodConfigurationUpdateParams.Upi#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class DisplayPreference {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The account's preference for whether or not to display this payment method. */
+      @SerializedName("preference")
+      Preference preference;
+
+      private DisplayPreference(Map<String, Object> extraParams, Preference preference) {
+        this.extraParams = extraParams;
+        this.preference = preference;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Preference preference;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodConfigurationUpdateParams.Upi.DisplayPreference build() {
+          return new PaymentMethodConfigurationUpdateParams.Upi.DisplayPreference(
+              this.extraParams, this.preference);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link PaymentMethodConfigurationUpdateParams.Upi.DisplayPreference#extraParams}
+         * for the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link PaymentMethodConfigurationUpdateParams.Upi.DisplayPreference#extraParams}
+         * for the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The account's preference for whether or not to display this payment method. */
+        public Builder setPreference(
+            PaymentMethodConfigurationUpdateParams.Upi.DisplayPreference.Preference preference) {
           this.preference = preference;
           return this;
         }

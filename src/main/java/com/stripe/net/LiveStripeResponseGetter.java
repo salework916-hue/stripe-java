@@ -21,8 +21,12 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.logging.Logger;
 
 public class LiveStripeResponseGetter implements StripeResponseGetter {
+  private static final Logger logger = Logger.getLogger("Stripe");
+
   private final HttpClient httpClient;
   private final StripeResponseGetterOptions options;
 
@@ -76,6 +80,26 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
     this.httpClient = (httpClient != null) ? httpClient : buildDefaultHttpClient();
   }
 
+  /**
+   * Creates a new LiveStripeResponseGetter with the same configuration and HTTP client as this
+   * instance, but with a different stripe_context. This allows for efficient cloning when you need
+   * to make requests with different contexts (e.g., webhook processing) without reinitializing HTTP
+   * connections.
+   *
+   * @param contextCreator a function that takes the existing options and returns new options with
+   *     the desired context
+   * @return a new LiveStripeResponseGetter with the updated options and the same HTTP client
+   */
+  public LiveStripeResponseGetter withNewOptions(
+      Function<StripeResponseGetterOptions, StripeResponseGetterOptions> contextCreator) {
+    StripeResponseGetterOptions newOptions = contextCreator.apply(this.options);
+    return new LiveStripeResponseGetter(newOptions, this.httpClient);
+  }
+
+  public StripeResponseGetterOptions getOptions() {
+    return this.options;
+  }
+
   private StripeRequest toStripeRequest(ApiRequest apiRequest, RequestOptions mergedOptions)
       throws StripeException {
     String fullUrl = fullUrl(apiRequest);
@@ -118,7 +142,7 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
 
   @Override
   @SuppressWarnings({"TypeParameterUnusedInFormals", "unchecked"})
-  public <T extends StripeObjectInterface> T request(ApiRequest apiRequest, Type typeToken)
+  public <T extends StripeObject> T request(ApiRequest apiRequest, Type typeToken)
       throws StripeException {
 
     RequestOptions mergedOptions = RequestOptions.merge(this.options, apiRequest.getOptions());
@@ -130,6 +154,8 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
     StripeRequest request = toStripeRequest(apiRequest, mergedOptions);
     StripeResponse response =
         sendWithTelemetry(request, apiRequest.getUsage(), r -> httpClient.requestWithRetries(r));
+
+    maybeEmitStripeNotice(response.headers());
 
     int responseCode = response.code();
     String responseBody = response.body();
@@ -173,6 +199,8 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
     StripeResponseStream responseStream =
         sendWithTelemetry(
             request, apiRequest.getUsage(), r -> httpClient.requestStreamWithRetries(r));
+
+    maybeEmitStripeNotice(responseStream.headers());
 
     int responseCode = responseStream.code();
 
@@ -230,7 +258,7 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
 
   @Override
   @SuppressWarnings({"TypeParameterUnusedInFormals", "deprecation"})
-  public <T extends StripeObjectInterface> T request(
+  public <T extends StripeObject> T request(
       BaseAddress baseAddress,
       ApiResource.RequestMethod method,
       String path,
@@ -253,6 +281,10 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
       ApiMode apiMode)
       throws StripeException {
     return this.requestStream(new ApiRequest(baseAddress, method, path, params, options));
+  }
+
+  private static void maybeEmitStripeNotice(HttpHeaders headers) {
+    headers.firstValue("Stripe-Notice").ifPresent(logger::warning);
   }
 
   private static HttpClient buildDefaultHttpClient() {
@@ -311,108 +343,67 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
   }
 
   private void handleV1ApiError(StripeResponse response) throws StripeException {
-    StripeException exception = null;
-
-    StripeError error =
-        parseStripeError(response.body(), response.code(), response.requestId(), StripeError.class);
-
-    error.setLastResponse(response);
-    switch (response.code()) {
-      case 400:
-      case 404:
-        if ("idempotency_error".equals(error.getType())) {
-          exception =
-              new IdempotencyException(
-                  error.getMessage(), response.requestId(), error.getCode(), response.code());
-        } else {
-          exception =
-              new InvalidRequestException(
-                  error.getMessage(),
-                  error.getParam(),
-                  response.requestId(),
-                  error.getCode(),
-                  response.code(),
-                  null);
-        }
-        break;
-      case 401:
-        exception =
-            new AuthenticationException(
-                error.getMessage(), response.requestId(), error.getCode(), response.code());
-        break;
-      case 402:
-        exception =
-            new CardException(
-                error.getMessage(),
-                response.requestId(),
-                error.getCode(),
-                error.getParam(),
-                error.getDeclineCode(),
-                error.getCharge(),
-                response.code(),
-                null);
-        break;
-      case 403:
-        exception =
-            new PermissionException(
-                error.getMessage(), response.requestId(), error.getCode(), response.code());
-        break;
-      case 429:
-        exception =
-            new RateLimitException(
-                error.getMessage(),
-                error.getParam(),
-                response.requestId(),
-                error.getCode(),
-                response.code(),
-                null);
-        break;
-      default:
-        exception =
-            new ApiException(
-                error.getMessage(), response.requestId(), error.getCode(), response.code(), null);
-        break;
-    }
-    exception.setStripeError(error);
-
-    throw exception;
+    throwStripeException(response, ApiMode.V1);
   }
 
   private void handleV2ApiError(StripeResponse response) throws StripeException {
+    // First try to throw an exception based on the "type" field, if it exists and we
+    // recognize it. Otherwise, we will fall back to throwing an exception based on status code.
     JsonObject body =
         ApiResource.GSON.fromJson(response.body(), JsonObject.class).getAsJsonObject("error");
-
     JsonElement typeElement = body == null ? null : body.get("type");
-    JsonElement codeElement = body == null ? null : body.get("code");
     String type = typeElement == null ? "<no_type>" : typeElement.getAsString();
-    String code = codeElement == null ? "<no_code>" : codeElement.getAsString();
-
     StripeException exception =
         StripeException.parseV2Exception(type, body, response.code(), response.requestId(), this);
     if (exception != null) {
       throw exception;
     }
 
-    StripeError error;
-    try {
-      error =
-          parseStripeError(
-              response.body(), response.code(), response.requestId(), StripeError.class);
-    } catch (ApiException e) {
-      String message = "Unrecognized error type '" + type + "'";
-      JsonElement messageField = body == null ? null : body.get("message");
-      if (messageField != null && messageField.isJsonPrimitive()) {
-        message = messageField.getAsString();
-      }
+    throwStripeException(response, ApiMode.V2);
+  }
 
-      throw new ApiException(message, response.requestId(), code, response.code(), null);
-    }
-
+  private void throwStripeException(StripeResponse response, ApiMode apiMode)
+      throws StripeException {
+    StripeError error =
+        parseStripeError(response.body(), response.code(), response.requestId(), StripeError.class);
     error.setLastResponse(response);
-    exception =
-        new ApiException(error.getMessage(), response.requestId(), code, response.code(), null);
-    exception.setStripeV2Error(error);
+    StripeException exception = exceptionFromStatus(response.code(), response.requestId(), error);
+    exception.setStripeError(error, apiMode);
     throw exception;
+  }
+
+  private StripeException exceptionFromStatus(int statusCode, String requestId, StripeError error) {
+    switch (statusCode) {
+      case 400:
+      case 404:
+        if ("idempotency_error".equals(error.getType())) {
+          return new IdempotencyException(
+              error.getMessage(), requestId, error.getCode(), statusCode);
+        } else {
+          return new InvalidRequestException(
+              error.getMessage(), error.getParam(), requestId, error.getCode(), statusCode, null);
+        }
+      case 401:
+        return new AuthenticationException(
+            error.getMessage(), requestId, error.getCode(), statusCode);
+      case 402:
+        return new CardException(
+            error.getMessage(),
+            requestId,
+            error.getCode(),
+            error.getParam(),
+            error.getDeclineCode(),
+            error.getCharge(),
+            statusCode,
+            null);
+      case 403:
+        return new PermissionException(error.getMessage(), requestId, error.getCode(), statusCode);
+      case 429:
+        return new RateLimitException(
+            error.getMessage(), error.getParam(), requestId, error.getCode(), statusCode, null);
+      default:
+        return new ApiException(error.getMessage(), requestId, error.getCode(), statusCode, null);
+    }
   }
 
   private void handleOAuthError(StripeResponse response) throws StripeException {
@@ -485,6 +476,27 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
     }
   }
 
+  /**
+   * Asserts that a request path is origin-relative: that it begins with a single {@code "/"}.
+   *
+   * <p>The absolute URL is built by concatenating a base URL onto this path, and no base URL ends
+   * in a slash. A path like {@code "@evil.example/v1/x"} or {@code ".evil.example/v1/x"} would
+   * modify the resulting host and direct the request (including the API key) to a non-Stripe host.
+   *
+   * <p>Because some relative urls arrive from potentially untrusted sources (like webhook bodies),
+   * we have to be a little defensive.
+   *
+   * <p>So, we require that a path starts with a leading slash. Deliberately not using {@link
+   * java.net.URI} to parse -- it enforces RFC 2396 strictly and would reject paths containing
+   * characters that callers have always been able to send.
+   */
+  static void validatePath(String path) {
+    if (path == null || !path.startsWith("/") || path.startsWith("//")) {
+      throw new IllegalArgumentException(
+          "Request path must begin with a single \"/\", got: " + path);
+    }
+  }
+
   private String fullUrl(BaseApiRequest apiRequest) {
     BaseAddress baseAddress = apiRequest.getBaseAddress();
     RequestOptions options = apiRequest.getOptions();
@@ -509,6 +521,7 @@ public class LiveStripeResponseGetter implements StripeResponseGetter {
     if (options != null && options.getBaseUrl() != null) {
       baseUrl = options.getBaseUrl();
     }
+    validatePath(relativeUrl);
     return String.format("%s%s", baseUrl, relativeUrl);
   }
 }

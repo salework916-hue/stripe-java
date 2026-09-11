@@ -2,6 +2,7 @@ package com.stripe.net;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.stripe.StripeContext;
 import com.stripe.net.RequestOptions.RequestOptionsBuilder;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
@@ -33,7 +34,7 @@ public class RequestOptionsTest {
 
     // only api keys and account should persist
     // assuming these are stable across a given stripe integration
-    assertEquals("sk_foo", optsRebuilt.getApiKey());
+    assertEquals(new BearerTokenAuthenticator("sk_foo"), optsRebuilt.getAuthenticator());
     assertEquals("acct_bar", optsRebuilt.getStripeAccount());
 
     assertNull(optsRebuilt.getClientId());
@@ -56,6 +57,8 @@ public class RequestOptionsTest {
                     .setClientId("123")
                     .setIdempotencyKey("123")
                     .setStripeAccount("acct_bar")
+                    .setStripeContext("acct_context_123")
+                    .setStripeRequestTrigger("some_trigger")
                     .setConnectTimeout(100)
                     .setReadTimeout(100)
                     .setConnectionProxy(
@@ -68,6 +71,8 @@ public class RequestOptionsTest {
     RequestOptions optsRebuilt = opts.toBuilderFullCopy().build();
 
     assertEquals(opts, optsRebuilt);
+    assertEquals("acct_context_123", optsRebuilt.getStripeContext());
+    assertEquals("some_trigger", optsRebuilt.getStripeRequestTrigger());
   }
 
   @Test
@@ -157,7 +162,7 @@ public class RequestOptionsTest {
             .build();
 
     RequestOptions merged = RequestOptions.merge(clientOptions, requestOptions);
-    assertEquals("key2", merged.getApiKey());
+    assertEquals(new BearerTokenAuthenticator("key2"), merged.getAuthenticator());
     assertEquals(3, merged.getConnectTimeout());
     assertEquals(4, merged.getMaxNetworkRetries());
     assertEquals(5, merged.getReadTimeout());
@@ -167,6 +172,57 @@ public class RequestOptionsTest {
     assertEquals("3", merged.getIdempotencyKey());
     assertEquals("4", merged.getStripeAccount());
     assertEquals("5", merged.getStripeContext());
+  }
+
+  @Test
+  public void clientContextIsUsedWhenRequestNull() {
+    StripeResponseGetterOptions clientOptions =
+        TestStripeResponseGetterOptions.builder().setStripeContext("a/b/c").build();
+
+    RequestOptions requestOptions =
+        RequestOptions.builder().setStripeContext((StripeContext) null).build();
+
+    RequestOptions merged = RequestOptions.merge(clientOptions, requestOptions);
+
+    assertEquals("a/b/c", merged.getStripeContext());
+  }
+
+  @Test
+  public void requestContextPrioritizedIfRequestSetNullString() {
+    StripeResponseGetterOptions clientOptions =
+        TestStripeResponseGetterOptions.builder().setStripeContext("a/b/c").build();
+
+    RequestOptions requestOptions =
+        RequestOptions.builder().setStripeContext((String) null).build();
+
+    RequestOptions merged = RequestOptions.merge(clientOptions, requestOptions);
+
+    assertEquals("a/b/c", merged.getStripeContext());
+  }
+
+  @Test
+  public void mergeRequestOptionsWithEmptyContextOverwritesClientContext() {
+    StripeResponseGetterOptions clientOptions =
+        TestStripeResponseGetterOptions.builder().setStripeContext("a/b/c").build();
+
+    RequestOptions requestOptions =
+        RequestOptions.builder().setStripeContext(new StripeContext()).build();
+
+    RequestOptions merged = RequestOptions.merge(clientOptions, requestOptions);
+
+    assertNull(merged.getStripeContext());
+  }
+
+  @Test
+  public void requestContextPrioritized() {
+    StripeResponseGetterOptions clientOptions =
+        TestStripeResponseGetterOptions.builder().setStripeContext("a/b/c").build();
+
+    RequestOptions requestOptions = RequestOptions.builder().setStripeContext("d/e/f").build();
+
+    RequestOptions merged = RequestOptions.merge(clientOptions, requestOptions);
+
+    assertEquals("d/e/f", merged.getStripeContext());
   }
 
   @Test
@@ -190,7 +246,7 @@ public class RequestOptionsTest {
     RequestOptions requestOptions = RequestOptions.builder().build();
 
     RequestOptions merged = RequestOptions.merge(clientOptions, requestOptions);
-    assertEquals("key1", merged.getApiKey());
+    assertEquals(new BearerTokenAuthenticator("key1"), merged.getAuthenticator());
     assertEquals(1, merged.getConnectTimeout());
     assertEquals(1, merged.getMaxNetworkRetries());
     assertEquals(1, merged.getReadTimeout());
@@ -205,7 +261,7 @@ public class RequestOptionsTest {
   @Test
   public void defaultsToAllNullValues() {
     RequestOptions merged = RequestOptions.getDefault();
-    assertEquals(null, merged.getApiKey());
+    assertNull(merged.getAuthenticator());
     assertEquals(null, merged.getConnectTimeout());
     assertEquals(null, merged.getMaxNetworkRetries());
     assertEquals(null, merged.getReadTimeout());

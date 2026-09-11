@@ -16,8 +16,8 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = false)
 public class AccountCreateParams extends ApiRequestParams {
   /**
-   * An <a href="https://stripe.com/docs/api#create_account_token">account token</a>, used to
-   * securely provide details to the account.
+   * An <a href="https://api.stripe.com#create_account_token">account token</a>, used to securely
+   * provide details to the account.
    */
   @SerializedName("account_token")
   String accountToken;
@@ -153,7 +153,7 @@ public class AccountCreateParams extends ApiRequestParams {
   Individual individual;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -177,8 +177,9 @@ public class AccountCreateParams extends ApiRequestParams {
   TosAcceptance tosAcceptance;
 
   /**
-   * The type of Stripe account to create. May be one of {@code custom}, {@code express} or {@code
-   * standard}.
+   * The {@code type} parameter is deprecated. Use <a
+   * href="https://stripe.com/api/accounts/create#create_account-controller">{@code controller}</a>
+   * instead to configure dashboard access, fee payer, loss liability, and requirement collection.
    */
   @SerializedName("type")
   Type type;
@@ -292,8 +293,8 @@ public class AccountCreateParams extends ApiRequestParams {
     }
 
     /**
-     * An <a href="https://stripe.com/docs/api#create_account_token">account token</a>, used to
-     * securely provide details to the account.
+     * An <a href="https://api.stripe.com#create_account_token">account token</a>, used to securely
+     * provide details to the account.
      */
     public Builder setAccountToken(String accountToken) {
       this.accountToken = accountToken;
@@ -523,7 +524,7 @@ public class AccountCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -534,7 +535,7 @@ public class AccountCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -564,8 +565,10 @@ public class AccountCreateParams extends ApiRequestParams {
     }
 
     /**
-     * The type of Stripe account to create. May be one of {@code custom}, {@code express} or {@code
-     * standard}.
+     * The {@code type} parameter is deprecated. Use <a
+     * href="https://stripe.com/api/accounts/create#create_account-controller">{@code
+     * controller}</a> instead to configure dashboard access, fee payer, loss liability, and
+     * requirement collection.
      */
     public Builder setType(AccountCreateParams.Type type) {
       this.type = type;
@@ -1114,11 +1117,11 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -1126,7 +1129,10 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -1221,13 +1227,13 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -1239,7 +1245,10 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -1295,6 +1304,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("amazon_pay_payments")
     AmazonPayPayments amazonPayPayments;
 
+    /** The app_distribution capability. */
+    @SerializedName("app_distribution")
+    AppDistribution appDistribution;
+
     /** The au_becs_debit_payments capability. */
     @SerializedName("au_becs_debit_payments")
     AuBecsDebitPayments auBecsDebitPayments;
@@ -1314,6 +1327,10 @@ public class AccountCreateParams extends ApiRequestParams {
     /** The billie_payments capability. */
     @SerializedName("billie_payments")
     BilliePayments billiePayments;
+
+    /** The bizum_payments capability. */
+    @SerializedName("bizum_payments")
+    BizumPayments bizumPayments;
 
     /** The blik_payments capability. */
     @SerializedName("blik_payments")
@@ -1412,6 +1429,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("link_payments")
     LinkPayments linkPayments;
 
+    /** The mb_way_payments capability. */
+    @SerializedName("mb_way_payments")
+    MbWayPayments mbWayPayments;
+
     /** The mobilepay_payments capability. */
     @SerializedName("mobilepay_payments")
     MobilepayPayments mobilepayPayments;
@@ -1452,6 +1473,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("paynow_payments")
     PaynowPayments paynowPayments;
 
+    /** The payto_payments capability. */
+    @SerializedName("payto_payments")
+    PaytoPayments paytoPayments;
+
     /** The pix_payments capability. */
     @SerializedName("pix_payments")
     PixPayments pixPayments;
@@ -1472,6 +1497,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("satispay_payments")
     SatispayPayments satispayPayments;
 
+    /** The scalapay_payments capability. */
+    @SerializedName("scalapay_payments")
+    ScalapayPayments scalapayPayments;
+
     /** The sepa_bank_transfer_payments capability. */
     @SerializedName("sepa_bank_transfer_payments")
     SepaBankTransferPayments sepaBankTransferPayments;
@@ -1483,6 +1512,10 @@ public class AccountCreateParams extends ApiRequestParams {
     /** The sofort_payments capability. */
     @SerializedName("sofort_payments")
     SofortPayments sofortPayments;
+
+    /** The sunbit_payments capability. */
+    @SerializedName("sunbit_payments")
+    SunbitPayments sunbitPayments;
 
     /** The swish_payments capability. */
     @SerializedName("swish_payments")
@@ -1508,6 +1541,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("twint_payments")
     TwintPayments twintPayments;
 
+    /** The upi_payments capability. */
+    @SerializedName("upi_payments")
+    UpiPayments upiPayments;
+
     /** The us_bank_account_ach_payments capability. */
     @SerializedName("us_bank_account_ach_payments")
     UsBankAccountAchPayments usBankAccountAchPayments;
@@ -1526,11 +1563,13 @@ public class AccountCreateParams extends ApiRequestParams {
         AfterpayClearpayPayments afterpayClearpayPayments,
         AlmaPayments almaPayments,
         AmazonPayPayments amazonPayPayments,
+        AppDistribution appDistribution,
         AuBecsDebitPayments auBecsDebitPayments,
         BacsDebitPayments bacsDebitPayments,
         BancontactPayments bancontactPayments,
         BankTransferPayments bankTransferPayments,
         BilliePayments billiePayments,
+        BizumPayments bizumPayments,
         BlikPayments blikPayments,
         BoletoPayments boletoPayments,
         CardIssuing cardIssuing,
@@ -1554,6 +1593,7 @@ public class AccountCreateParams extends ApiRequestParams {
         KrCardPayments krCardPayments,
         LegacyPayments legacyPayments,
         LinkPayments linkPayments,
+        MbWayPayments mbWayPayments,
         MobilepayPayments mobilepayPayments,
         MultibancoPayments multibancoPayments,
         MxBankTransferPayments mxBankTransferPayments,
@@ -1564,20 +1604,24 @@ public class AccountCreateParams extends ApiRequestParams {
         PayByBankPayments payByBankPayments,
         PaycoPayments paycoPayments,
         PaynowPayments paynowPayments,
+        PaytoPayments paytoPayments,
         PixPayments pixPayments,
         PromptpayPayments promptpayPayments,
         RevolutPayPayments revolutPayPayments,
         SamsungPayPayments samsungPayPayments,
         SatispayPayments satispayPayments,
+        ScalapayPayments scalapayPayments,
         SepaBankTransferPayments sepaBankTransferPayments,
         SepaDebitPayments sepaDebitPayments,
         SofortPayments sofortPayments,
+        SunbitPayments sunbitPayments,
         SwishPayments swishPayments,
         TaxReportingUs1099K taxReportingUs1099K,
         TaxReportingUs1099Misc taxReportingUs1099Misc,
         Transfers transfers,
         Treasury treasury,
         TwintPayments twintPayments,
+        UpiPayments upiPayments,
         UsBankAccountAchPayments usBankAccountAchPayments,
         UsBankTransferPayments usBankTransferPayments,
         ZipPayments zipPayments) {
@@ -1586,11 +1630,13 @@ public class AccountCreateParams extends ApiRequestParams {
       this.afterpayClearpayPayments = afterpayClearpayPayments;
       this.almaPayments = almaPayments;
       this.amazonPayPayments = amazonPayPayments;
+      this.appDistribution = appDistribution;
       this.auBecsDebitPayments = auBecsDebitPayments;
       this.bacsDebitPayments = bacsDebitPayments;
       this.bancontactPayments = bancontactPayments;
       this.bankTransferPayments = bankTransferPayments;
       this.billiePayments = billiePayments;
+      this.bizumPayments = bizumPayments;
       this.blikPayments = blikPayments;
       this.boletoPayments = boletoPayments;
       this.cardIssuing = cardIssuing;
@@ -1614,6 +1660,7 @@ public class AccountCreateParams extends ApiRequestParams {
       this.krCardPayments = krCardPayments;
       this.legacyPayments = legacyPayments;
       this.linkPayments = linkPayments;
+      this.mbWayPayments = mbWayPayments;
       this.mobilepayPayments = mobilepayPayments;
       this.multibancoPayments = multibancoPayments;
       this.mxBankTransferPayments = mxBankTransferPayments;
@@ -1624,20 +1671,24 @@ public class AccountCreateParams extends ApiRequestParams {
       this.payByBankPayments = payByBankPayments;
       this.paycoPayments = paycoPayments;
       this.paynowPayments = paynowPayments;
+      this.paytoPayments = paytoPayments;
       this.pixPayments = pixPayments;
       this.promptpayPayments = promptpayPayments;
       this.revolutPayPayments = revolutPayPayments;
       this.samsungPayPayments = samsungPayPayments;
       this.satispayPayments = satispayPayments;
+      this.scalapayPayments = scalapayPayments;
       this.sepaBankTransferPayments = sepaBankTransferPayments;
       this.sepaDebitPayments = sepaDebitPayments;
       this.sofortPayments = sofortPayments;
+      this.sunbitPayments = sunbitPayments;
       this.swishPayments = swishPayments;
       this.taxReportingUs1099K = taxReportingUs1099K;
       this.taxReportingUs1099Misc = taxReportingUs1099Misc;
       this.transfers = transfers;
       this.treasury = treasury;
       this.twintPayments = twintPayments;
+      this.upiPayments = upiPayments;
       this.usBankAccountAchPayments = usBankAccountAchPayments;
       this.usBankTransferPayments = usBankTransferPayments;
       this.zipPayments = zipPayments;
@@ -1658,6 +1709,8 @@ public class AccountCreateParams extends ApiRequestParams {
 
       private AmazonPayPayments amazonPayPayments;
 
+      private AppDistribution appDistribution;
+
       private AuBecsDebitPayments auBecsDebitPayments;
 
       private BacsDebitPayments bacsDebitPayments;
@@ -1667,6 +1720,8 @@ public class AccountCreateParams extends ApiRequestParams {
       private BankTransferPayments bankTransferPayments;
 
       private BilliePayments billiePayments;
+
+      private BizumPayments bizumPayments;
 
       private BlikPayments blikPayments;
 
@@ -1714,6 +1769,8 @@ public class AccountCreateParams extends ApiRequestParams {
 
       private LinkPayments linkPayments;
 
+      private MbWayPayments mbWayPayments;
+
       private MobilepayPayments mobilepayPayments;
 
       private MultibancoPayments multibancoPayments;
@@ -1734,6 +1791,8 @@ public class AccountCreateParams extends ApiRequestParams {
 
       private PaynowPayments paynowPayments;
 
+      private PaytoPayments paytoPayments;
+
       private PixPayments pixPayments;
 
       private PromptpayPayments promptpayPayments;
@@ -1744,11 +1803,15 @@ public class AccountCreateParams extends ApiRequestParams {
 
       private SatispayPayments satispayPayments;
 
+      private ScalapayPayments scalapayPayments;
+
       private SepaBankTransferPayments sepaBankTransferPayments;
 
       private SepaDebitPayments sepaDebitPayments;
 
       private SofortPayments sofortPayments;
+
+      private SunbitPayments sunbitPayments;
 
       private SwishPayments swishPayments;
 
@@ -1761,6 +1824,8 @@ public class AccountCreateParams extends ApiRequestParams {
       private Treasury treasury;
 
       private TwintPayments twintPayments;
+
+      private UpiPayments upiPayments;
 
       private UsBankAccountAchPayments usBankAccountAchPayments;
 
@@ -1776,11 +1841,13 @@ public class AccountCreateParams extends ApiRequestParams {
             this.afterpayClearpayPayments,
             this.almaPayments,
             this.amazonPayPayments,
+            this.appDistribution,
             this.auBecsDebitPayments,
             this.bacsDebitPayments,
             this.bancontactPayments,
             this.bankTransferPayments,
             this.billiePayments,
+            this.bizumPayments,
             this.blikPayments,
             this.boletoPayments,
             this.cardIssuing,
@@ -1804,6 +1871,7 @@ public class AccountCreateParams extends ApiRequestParams {
             this.krCardPayments,
             this.legacyPayments,
             this.linkPayments,
+            this.mbWayPayments,
             this.mobilepayPayments,
             this.multibancoPayments,
             this.mxBankTransferPayments,
@@ -1814,20 +1882,24 @@ public class AccountCreateParams extends ApiRequestParams {
             this.payByBankPayments,
             this.paycoPayments,
             this.paynowPayments,
+            this.paytoPayments,
             this.pixPayments,
             this.promptpayPayments,
             this.revolutPayPayments,
             this.samsungPayPayments,
             this.satispayPayments,
+            this.scalapayPayments,
             this.sepaBankTransferPayments,
             this.sepaDebitPayments,
             this.sofortPayments,
+            this.sunbitPayments,
             this.swishPayments,
             this.taxReportingUs1099K,
             this.taxReportingUs1099Misc,
             this.transfers,
             this.treasury,
             this.twintPayments,
+            this.upiPayments,
             this.usBankAccountAchPayments,
             this.usBankTransferPayments,
             this.zipPayments);
@@ -1867,6 +1939,13 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
+      /** The app_distribution capability. */
+      public Builder setAppDistribution(
+          AccountCreateParams.Capabilities.AppDistribution appDistribution) {
+        this.appDistribution = appDistribution;
+        return this;
+      }
+
       /** The au_becs_debit_payments capability. */
       public Builder setAuBecsDebitPayments(
           AccountCreateParams.Capabilities.AuBecsDebitPayments auBecsDebitPayments) {
@@ -1899,6 +1978,13 @@ public class AccountCreateParams extends ApiRequestParams {
       public Builder setBilliePayments(
           AccountCreateParams.Capabilities.BilliePayments billiePayments) {
         this.billiePayments = billiePayments;
+        return this;
+      }
+
+      /** The bizum_payments capability. */
+      public Builder setBizumPayments(
+          AccountCreateParams.Capabilities.BizumPayments bizumPayments) {
+        this.bizumPayments = bizumPayments;
         return this;
       }
 
@@ -2075,6 +2161,13 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
+      /** The mb_way_payments capability. */
+      public Builder setMbWayPayments(
+          AccountCreateParams.Capabilities.MbWayPayments mbWayPayments) {
+        this.mbWayPayments = mbWayPayments;
+        return this;
+      }
+
       /** The mobilepay_payments capability. */
       public Builder setMobilepayPayments(
           AccountCreateParams.Capabilities.MobilepayPayments mobilepayPayments) {
@@ -2144,6 +2237,13 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
+      /** The payto_payments capability. */
+      public Builder setPaytoPayments(
+          AccountCreateParams.Capabilities.PaytoPayments paytoPayments) {
+        this.paytoPayments = paytoPayments;
+        return this;
+      }
+
       /** The pix_payments capability. */
       public Builder setPixPayments(AccountCreateParams.Capabilities.PixPayments pixPayments) {
         this.pixPayments = pixPayments;
@@ -2178,6 +2278,13 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
+      /** The scalapay_payments capability. */
+      public Builder setScalapayPayments(
+          AccountCreateParams.Capabilities.ScalapayPayments scalapayPayments) {
+        this.scalapayPayments = scalapayPayments;
+        return this;
+      }
+
       /** The sepa_bank_transfer_payments capability. */
       public Builder setSepaBankTransferPayments(
           AccountCreateParams.Capabilities.SepaBankTransferPayments sepaBankTransferPayments) {
@@ -2196,6 +2303,13 @@ public class AccountCreateParams extends ApiRequestParams {
       public Builder setSofortPayments(
           AccountCreateParams.Capabilities.SofortPayments sofortPayments) {
         this.sofortPayments = sofortPayments;
+        return this;
+      }
+
+      /** The sunbit_payments capability. */
+      public Builder setSunbitPayments(
+          AccountCreateParams.Capabilities.SunbitPayments sunbitPayments) {
+        this.sunbitPayments = sunbitPayments;
         return this;
       }
 
@@ -2236,6 +2350,12 @@ public class AccountCreateParams extends ApiRequestParams {
       public Builder setTwintPayments(
           AccountCreateParams.Capabilities.TwintPayments twintPayments) {
         this.twintPayments = twintPayments;
+        return this;
+      }
+
+      /** The upi_payments capability. */
+      public Builder setUpiPayments(AccountCreateParams.Capabilities.UpiPayments upiPayments) {
+        this.upiPayments = upiPayments;
         return this;
       }
 
@@ -2662,6 +2782,86 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class AppDistribution {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private AppDistribution(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.AppDistribution build() {
+          return new AccountCreateParams.Capabilities.AppDistribution(
+              this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.AppDistribution#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.AppDistribution#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class AuBecsDebitPayments {
       /**
        * Map of extra parameters for custom features not available in this client library. The
@@ -3039,6 +3239,86 @@ public class AccountCreateParams extends ApiRequestParams {
          * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
          * map. See {@link AccountCreateParams.Capabilities.BilliePayments#extraParams} for the
          * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class BizumPayments {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private BizumPayments(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.BizumPayments build() {
+          return new AccountCreateParams.Capabilities.BizumPayments(
+              this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.BizumPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.BizumPayments#extraParams} for the field
+         * documentation.
          */
         public Builder putAllExtraParam(Map<String, Object> map) {
           if (this.extraParams == null) {
@@ -4818,6 +5098,86 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class MbWayPayments {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private MbWayPayments(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.MbWayPayments build() {
+          return new AccountCreateParams.Capabilities.MbWayPayments(
+              this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.MbWayPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.MbWayPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class MobilepayPayments {
       /**
        * Map of extra parameters for custom features not available in this client library. The
@@ -5619,6 +5979,86 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class PaytoPayments {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private PaytoPayments(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.PaytoPayments build() {
+          return new AccountCreateParams.Capabilities.PaytoPayments(
+              this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.PaytoPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.PaytoPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class PixPayments {
       /**
        * Map of extra parameters for custom features not available in this client library. The
@@ -6018,6 +6458,86 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class ScalapayPayments {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private ScalapayPayments(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.ScalapayPayments build() {
+          return new AccountCreateParams.Capabilities.ScalapayPayments(
+              this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.ScalapayPayments#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.ScalapayPayments#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class SepaBankTransferPayments {
       /**
        * Map of extra parameters for custom features not available in this client library. The
@@ -6234,6 +6754,86 @@ public class AccountCreateParams extends ApiRequestParams {
          * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
          * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
          * map. See {@link AccountCreateParams.Capabilities.SofortPayments#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class SunbitPayments {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private SunbitPayments(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.SunbitPayments build() {
+          return new AccountCreateParams.Capabilities.SunbitPayments(
+              this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.SunbitPayments#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.SunbitPayments#extraParams} for the
          * field documentation.
          */
         public Builder putAllExtraParam(Map<String, Object> map) {
@@ -6736,6 +7336,85 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class UpiPayments {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * Passing true requests the capability for the account, if it is not already requested. A
+       * requested capability may not immediately become active. Any requirements to activate the
+       * capability are returned in the {@code requirements} arrays.
+       */
+      @SerializedName("requested")
+      Boolean requested;
+
+      private UpiPayments(Map<String, Object> extraParams, Boolean requested) {
+        this.extraParams = extraParams;
+        this.requested = requested;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Boolean requested;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Capabilities.UpiPayments build() {
+          return new AccountCreateParams.Capabilities.UpiPayments(this.extraParams, this.requested);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.UpiPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Capabilities.UpiPayments#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * Passing true requests the capability for the account, if it is not already requested. A
+         * requested capability may not immediately become active. Any requirements to activate the
+         * capability are returned in the {@code requirements} arrays.
+         */
+        public Builder setRequested(Boolean requested) {
+          this.requested = requested;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class UsBankAccountAchPayments {
       /**
        * Map of extra parameters for custom features not available in this client library. The
@@ -6989,6 +7668,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("address_kanji")
     AddressKanji addressKanji;
 
+    /** The location where the business is administered. */
+    @SerializedName("administrative_address")
+    AdministrativeAddress administrativeAddress;
+
     /**
      * Whether the company's directors have been provided. Set this Boolean to {@code true} after
      * creating all the company's directors with <a href="https://stripe.com/api/persons">the
@@ -7076,6 +7759,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("phone")
     String phone;
 
+    /** The primary location where the business conducts operations. */
+    @SerializedName("principal_place_of_business")
+    PrincipalPlaceOfBusiness principalPlaceOfBusiness;
+
     /** When the business was incorporated or registered. */
     @SerializedName("registration_date")
     Object registrationDate;
@@ -7090,6 +7777,13 @@ public class AccountCreateParams extends ApiRequestParams {
     String registrationNumber;
 
     /**
+     * This hash is used to attest that the representative is authorized to act as the
+     * representative of their legal entity.
+     */
+    @SerializedName("representative_declaration")
+    RepresentativeDeclaration representativeDeclaration;
+
+    /**
      * The category identifying the legal structure of the company or legal entity. See <a
      * href="https://stripe.com/connect/identity-verification#business-structure">Business
      * structure</a> for more details. Pass an empty string to unset this value.
@@ -7101,6 +7795,10 @@ public class AccountCreateParams extends ApiRequestParams {
      * The business ID number of the company, as appropriate for the company’s country. (Examples
      * are an Employer ID Number in the U.S., a Business Number in Canada, or a Company Number in
      * the UK.)
+     *
+     * <p>Changing this value requires that the account re-accept the <a
+     * href="https://stripe.com/api/accounts/object#account_object-tos_acceptance">terms of
+     * service</a>.
      */
     @SerializedName("tax_id")
     String taxId;
@@ -7123,6 +7821,7 @@ public class AccountCreateParams extends ApiRequestParams {
         Address address,
         AddressKana addressKana,
         AddressKanji addressKanji,
+        AdministrativeAddress administrativeAddress,
         Boolean directorsProvided,
         DirectorshipDeclaration directorshipDeclaration,
         Boolean executivesProvided,
@@ -7136,8 +7835,10 @@ public class AccountCreateParams extends ApiRequestParams {
         OwnershipDeclaration ownershipDeclaration,
         ApiRequestParams.EnumParam ownershipExemptionReason,
         String phone,
+        PrincipalPlaceOfBusiness principalPlaceOfBusiness,
         Object registrationDate,
         String registrationNumber,
+        RepresentativeDeclaration representativeDeclaration,
         ApiRequestParams.EnumParam structure,
         String taxId,
         String taxIdRegistrar,
@@ -7146,6 +7847,7 @@ public class AccountCreateParams extends ApiRequestParams {
       this.address = address;
       this.addressKana = addressKana;
       this.addressKanji = addressKanji;
+      this.administrativeAddress = administrativeAddress;
       this.directorsProvided = directorsProvided;
       this.directorshipDeclaration = directorshipDeclaration;
       this.executivesProvided = executivesProvided;
@@ -7159,8 +7861,10 @@ public class AccountCreateParams extends ApiRequestParams {
       this.ownershipDeclaration = ownershipDeclaration;
       this.ownershipExemptionReason = ownershipExemptionReason;
       this.phone = phone;
+      this.principalPlaceOfBusiness = principalPlaceOfBusiness;
       this.registrationDate = registrationDate;
       this.registrationNumber = registrationNumber;
+      this.representativeDeclaration = representativeDeclaration;
       this.structure = structure;
       this.taxId = taxId;
       this.taxIdRegistrar = taxIdRegistrar;
@@ -7178,6 +7882,8 @@ public class AccountCreateParams extends ApiRequestParams {
       private AddressKana addressKana;
 
       private AddressKanji addressKanji;
+
+      private AdministrativeAddress administrativeAddress;
 
       private Boolean directorsProvided;
 
@@ -7205,9 +7911,13 @@ public class AccountCreateParams extends ApiRequestParams {
 
       private String phone;
 
+      private PrincipalPlaceOfBusiness principalPlaceOfBusiness;
+
       private Object registrationDate;
 
       private String registrationNumber;
+
+      private RepresentativeDeclaration representativeDeclaration;
 
       private ApiRequestParams.EnumParam structure;
 
@@ -7225,6 +7935,7 @@ public class AccountCreateParams extends ApiRequestParams {
             this.address,
             this.addressKana,
             this.addressKanji,
+            this.administrativeAddress,
             this.directorsProvided,
             this.directorshipDeclaration,
             this.executivesProvided,
@@ -7238,8 +7949,10 @@ public class AccountCreateParams extends ApiRequestParams {
             this.ownershipDeclaration,
             this.ownershipExemptionReason,
             this.phone,
+            this.principalPlaceOfBusiness,
             this.registrationDate,
             this.registrationNumber,
+            this.representativeDeclaration,
             this.structure,
             this.taxId,
             this.taxIdRegistrar,
@@ -7262,6 +7975,13 @@ public class AccountCreateParams extends ApiRequestParams {
       /** The Kanji variation of the company's primary address (Japan only). */
       public Builder setAddressKanji(AccountCreateParams.Company.AddressKanji addressKanji) {
         this.addressKanji = addressKanji;
+        return this;
+      }
+
+      /** The location where the business is administered. */
+      public Builder setAdministrativeAddress(
+          AccountCreateParams.Company.AdministrativeAddress administrativeAddress) {
+        this.administrativeAddress = administrativeAddress;
         return this;
       }
 
@@ -7409,6 +8129,13 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
+      /** The primary location where the business conducts operations. */
+      public Builder setPrincipalPlaceOfBusiness(
+          AccountCreateParams.Company.PrincipalPlaceOfBusiness principalPlaceOfBusiness) {
+        this.principalPlaceOfBusiness = principalPlaceOfBusiness;
+        return this;
+      }
+
       /** When the business was incorporated or registered. */
       public Builder setRegistrationDate(
           AccountCreateParams.Company.RegistrationDate registrationDate) {
@@ -7430,6 +8157,16 @@ public class AccountCreateParams extends ApiRequestParams {
        */
       public Builder setRegistrationNumber(String registrationNumber) {
         this.registrationNumber = registrationNumber;
+        return this;
+      }
+
+      /**
+       * This hash is used to attest that the representative is authorized to act as the
+       * representative of their legal entity.
+       */
+      public Builder setRepresentativeDeclaration(
+          AccountCreateParams.Company.RepresentativeDeclaration representativeDeclaration) {
+        this.representativeDeclaration = representativeDeclaration;
         return this;
       }
 
@@ -7457,6 +8194,10 @@ public class AccountCreateParams extends ApiRequestParams {
        * The business ID number of the company, as appropriate for the company’s country. (Examples
        * are an Employer ID Number in the U.S., a Business Number in Canada, or a Company Number in
        * the UK.)
+       *
+       * <p>Changing this value requires that the account re-accept the <a
+       * href="https://stripe.com/api/accounts/object#account_object-tos_acceptance">terms of
+       * service</a>.
        */
       public Builder setTaxId(String taxId) {
         this.taxId = taxId;
@@ -7507,11 +8248,11 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -7519,7 +8260,10 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -7614,13 +8358,13 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -7632,7 +8376,10 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -7984,6 +8731,168 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class AdministrativeAddress {
+      /** City, district, suburb, town, or village. */
+      @SerializedName("city")
+      String city;
+
+      /**
+       * Two-letter country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO
+       * 3166-1 alpha-2</a>).
+       */
+      @SerializedName("country")
+      String country;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** Address line 1, such as the street, PO Box, or company name. */
+      @SerializedName("line1")
+      String line1;
+
+      /** Address line 2, such as the apartment, suite, unit, or building. */
+      @SerializedName("line2")
+      String line2;
+
+      /** ZIP or postal code. */
+      @SerializedName("postal_code")
+      String postalCode;
+
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
+      @SerializedName("state")
+      String state;
+
+      private AdministrativeAddress(
+          String city,
+          String country,
+          Map<String, Object> extraParams,
+          String line1,
+          String line2,
+          String postalCode,
+          String state) {
+        this.city = city;
+        this.country = country;
+        this.extraParams = extraParams;
+        this.line1 = line1;
+        this.line2 = line2;
+        this.postalCode = postalCode;
+        this.state = state;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private String city;
+
+        private String country;
+
+        private Map<String, Object> extraParams;
+
+        private String line1;
+
+        private String line2;
+
+        private String postalCode;
+
+        private String state;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Company.AdministrativeAddress build() {
+          return new AccountCreateParams.Company.AdministrativeAddress(
+              this.city,
+              this.country,
+              this.extraParams,
+              this.line1,
+              this.line2,
+              this.postalCode,
+              this.state);
+        }
+
+        /** City, district, suburb, town, or village. */
+        public Builder setCity(String city) {
+          this.city = city;
+          return this;
+        }
+
+        /**
+         * Two-letter country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO
+         * 3166-1 alpha-2</a>).
+         */
+        public Builder setCountry(String country) {
+          this.country = country;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Company.AdministrativeAddress#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Company.AdministrativeAddress#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** Address line 1, such as the street, PO Box, or company name. */
+        public Builder setLine1(String line1) {
+          this.line1 = line1;
+          return this;
+        }
+
+        /** Address line 2, such as the apartment, suite, unit, or building. */
+        public Builder setLine2(String line2) {
+          this.line2 = line2;
+          return this;
+        }
+
+        /** ZIP or postal code. */
+        public Builder setPostalCode(String postalCode) {
+          this.postalCode = postalCode;
+          return this;
+        }
+
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
+        public Builder setState(String state) {
+          this.state = state;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class DirectorshipDeclaration {
       /** The Unix timestamp marking when the directorship declaration attestation was made. */
       @SerializedName("date")
@@ -8187,6 +9096,168 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class PrincipalPlaceOfBusiness {
+      /** City, district, suburb, town, or village. */
+      @SerializedName("city")
+      String city;
+
+      /**
+       * Two-letter country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO
+       * 3166-1 alpha-2</a>).
+       */
+      @SerializedName("country")
+      String country;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** Address line 1, such as the street, PO Box, or company name. */
+      @SerializedName("line1")
+      String line1;
+
+      /** Address line 2, such as the apartment, suite, unit, or building. */
+      @SerializedName("line2")
+      String line2;
+
+      /** ZIP or postal code. */
+      @SerializedName("postal_code")
+      String postalCode;
+
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
+      @SerializedName("state")
+      String state;
+
+      private PrincipalPlaceOfBusiness(
+          String city,
+          String country,
+          Map<String, Object> extraParams,
+          String line1,
+          String line2,
+          String postalCode,
+          String state) {
+        this.city = city;
+        this.country = country;
+        this.extraParams = extraParams;
+        this.line1 = line1;
+        this.line2 = line2;
+        this.postalCode = postalCode;
+        this.state = state;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private String city;
+
+        private String country;
+
+        private Map<String, Object> extraParams;
+
+        private String line1;
+
+        private String line2;
+
+        private String postalCode;
+
+        private String state;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Company.PrincipalPlaceOfBusiness build() {
+          return new AccountCreateParams.Company.PrincipalPlaceOfBusiness(
+              this.city,
+              this.country,
+              this.extraParams,
+              this.line1,
+              this.line2,
+              this.postalCode,
+              this.state);
+        }
+
+        /** City, district, suburb, town, or village. */
+        public Builder setCity(String city) {
+          this.city = city;
+          return this;
+        }
+
+        /**
+         * Two-letter country code (<a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2">ISO
+         * 3166-1 alpha-2</a>).
+         */
+        public Builder setCountry(String country) {
+          this.country = country;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Company.PrincipalPlaceOfBusiness#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Company.PrincipalPlaceOfBusiness#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** Address line 1, such as the street, PO Box, or company name. */
+        public Builder setLine1(String line1) {
+          this.line1 = line1;
+          return this;
+        }
+
+        /** Address line 2, such as the apartment, suite, unit, or building. */
+        public Builder setLine2(String line2) {
+          this.line2 = line2;
+          return this;
+        }
+
+        /** ZIP or postal code. */
+        public Builder setPostalCode(String postalCode) {
+          this.postalCode = postalCode;
+          return this;
+        }
+
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
+        public Builder setState(String state) {
+          this.state = state;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class RegistrationDate {
       /** <strong>Required.</strong> The day of registration, between 1 and 31. */
       @SerializedName("day")
@@ -8285,6 +9356,111 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
+    public static class RepresentativeDeclaration {
+      /** The Unix timestamp marking when the representative declaration attestation was made. */
+      @SerializedName("date")
+      Long date;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /** The IP address from which the representative declaration attestation was made. */
+      @SerializedName("ip")
+      String ip;
+
+      /**
+       * The user agent of the browser from which the representative declaration attestation was
+       * made.
+       */
+      @SerializedName("user_agent")
+      String userAgent;
+
+      private RepresentativeDeclaration(
+          Long date, Map<String, Object> extraParams, String ip, String userAgent) {
+        this.date = date;
+        this.extraParams = extraParams;
+        this.ip = ip;
+        this.userAgent = userAgent;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Long date;
+
+        private Map<String, Object> extraParams;
+
+        private String ip;
+
+        private String userAgent;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AccountCreateParams.Company.RepresentativeDeclaration build() {
+          return new AccountCreateParams.Company.RepresentativeDeclaration(
+              this.date, this.extraParams, this.ip, this.userAgent);
+        }
+
+        /** The Unix timestamp marking when the representative declaration attestation was made. */
+        public Builder setDate(Long date) {
+          this.date = date;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Company.RepresentativeDeclaration#extraParams} for
+         * the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AccountCreateParams.Company.RepresentativeDeclaration#extraParams} for
+         * the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /** The IP address from which the representative declaration attestation was made. */
+        public Builder setIp(String ip) {
+          this.ip = ip;
+          return this;
+        }
+
+        /**
+         * The user agent of the browser from which the representative declaration attestation was
+         * made.
+         */
+        public Builder setUserAgent(String userAgent) {
+          this.userAgent = userAgent;
+          return this;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
     public static class Verification {
       /** A document verifying the business. */
       @SerializedName("document")
@@ -8357,11 +9533,10 @@ public class AccountCreateParams extends ApiRequestParams {
       @EqualsAndHashCode(callSuper = false)
       public static class Document {
         /**
-         * The back of a document returned by a <a
-         * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose}
-         * value of {@code additional_verification}. The uploaded file needs to be a color image
-         * (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format, and less than 10 MB in
-         * size.
+         * The back of a document returned by a <a href="https://api.stripe.com#create_file">file
+         * upload</a> with a {@code purpose} value of {@code additional_verification}. The uploaded
+         * file needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF
+         * format, and less than 10 MB in size.
          */
         @SerializedName("back")
         String back;
@@ -8377,11 +9552,10 @@ public class AccountCreateParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * The front of a document returned by a <a
-         * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose}
-         * value of {@code additional_verification}. The uploaded file needs to be a color image
-         * (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format, and less than 10 MB in
-         * size.
+         * The front of a document returned by a <a href="https://api.stripe.com#create_file">file
+         * upload</a> with a {@code purpose} value of {@code additional_verification}. The uploaded
+         * file needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF
+         * format, and less than 10 MB in size.
          */
         @SerializedName("front")
         String front;
@@ -8410,11 +9584,10 @@ public class AccountCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The back of a document returned by a <a
-           * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose}
-           * value of {@code additional_verification}. The uploaded file needs to be a color image
-           * (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format, and less than 10 MB in
-           * size.
+           * The back of a document returned by a <a href="https://api.stripe.com#create_file">file
+           * upload</a> with a {@code purpose} value of {@code additional_verification}. The
+           * uploaded file needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG,
+           * or PDF format, and less than 10 MB in size.
            */
           public Builder setBack(String back) {
             this.back = back;
@@ -8450,11 +9623,10 @@ public class AccountCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The front of a document returned by a <a
-           * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose}
-           * value of {@code additional_verification}. The uploaded file needs to be a color image
-           * (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format, and less than 10 MB in
-           * size.
+           * The front of a document returned by a <a href="https://api.stripe.com#create_file">file
+           * upload</a> with a {@code purpose} value of {@code additional_verification}. The
+           * uploaded file needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG,
+           * or PDF format, and less than 10 MB in size.
            */
           public Builder setFront(String front) {
             this.front = front;
@@ -9007,7 +10179,10 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("company_license")
     CompanyLicense companyLicense;
 
-    /** One or more documents showing the company's Memorandum of Association. */
+    /**
+     * One or more documents showing the company's governing document (for example, a memorandum of
+     * association, constitution, or articles of association).
+     */
     @SerializedName("company_memorandum_of_association")
     CompanyMemorandumOfAssociation companyMemorandumOfAssociation;
 
@@ -9042,13 +10217,6 @@ public class AccountCreateParams extends ApiRequestParams {
     @SerializedName("proof_of_address")
     ProofOfAddress proofOfAddress;
 
-    /**
-     * One or more documents showing the company’s proof of registration with the national business
-     * registry.
-     */
-    @SerializedName("proof_of_registration")
-    ProofOfRegistration proofOfRegistration;
-
     /** One or more documents that demonstrate proof of ultimate beneficial ownership. */
     @SerializedName("proof_of_ultimate_beneficial_ownership")
     ProofOfUltimateBeneficialOwnership proofOfUltimateBeneficialOwnership;
@@ -9062,7 +10230,6 @@ public class AccountCreateParams extends ApiRequestParams {
         CompanyTaxIdVerification companyTaxIdVerification,
         Map<String, Object> extraParams,
         ProofOfAddress proofOfAddress,
-        ProofOfRegistration proofOfRegistration,
         ProofOfUltimateBeneficialOwnership proofOfUltimateBeneficialOwnership) {
       this.bankAccountOwnershipVerification = bankAccountOwnershipVerification;
       this.companyLicense = companyLicense;
@@ -9072,7 +10239,6 @@ public class AccountCreateParams extends ApiRequestParams {
       this.companyTaxIdVerification = companyTaxIdVerification;
       this.extraParams = extraParams;
       this.proofOfAddress = proofOfAddress;
-      this.proofOfRegistration = proofOfRegistration;
       this.proofOfUltimateBeneficialOwnership = proofOfUltimateBeneficialOwnership;
     }
 
@@ -9097,8 +10263,6 @@ public class AccountCreateParams extends ApiRequestParams {
 
       private ProofOfAddress proofOfAddress;
 
-      private ProofOfRegistration proofOfRegistration;
-
       private ProofOfUltimateBeneficialOwnership proofOfUltimateBeneficialOwnership;
 
       /** Finalize and obtain parameter instance from this builder. */
@@ -9112,7 +10276,6 @@ public class AccountCreateParams extends ApiRequestParams {
             this.companyTaxIdVerification,
             this.extraParams,
             this.proofOfAddress,
-            this.proofOfRegistration,
             this.proofOfUltimateBeneficialOwnership);
       }
 
@@ -9137,7 +10300,10 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
-      /** One or more documents showing the company's Memorandum of Association. */
+      /**
+       * One or more documents showing the company's governing document (for example, a memorandum
+       * of association, constitution, or articles of association).
+       */
       public Builder setCompanyMemorandumOfAssociation(
           AccountCreateParams.Documents.CompanyMemorandumOfAssociation
               companyMemorandumOfAssociation) {
@@ -9206,16 +10372,6 @@ public class AccountCreateParams extends ApiRequestParams {
         return this;
       }
 
-      /**
-       * One or more documents showing the company’s proof of registration with the national
-       * business registry.
-       */
-      public Builder setProofOfRegistration(
-          AccountCreateParams.Documents.ProofOfRegistration proofOfRegistration) {
-        this.proofOfRegistration = proofOfRegistration;
-        return this;
-      }
-
       /** One or more documents that demonstrate proof of ultimate beneficial ownership. */
       public Builder setProofOfUltimateBeneficialOwnership(
           AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership
@@ -9238,9 +10394,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9339,9 +10494,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9434,9 +10588,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9532,9 +10685,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9630,9 +10782,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9730,9 +10881,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9828,9 +10978,8 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
@@ -9912,102 +11061,6 @@ public class AccountCreateParams extends ApiRequestParams {
 
     @Getter
     @EqualsAndHashCode(callSuper = false)
-    public static class ProofOfRegistration {
-      /**
-       * Map of extra parameters for custom features not available in this client library. The
-       * content in this map is not serialized under this field's {@code @SerializedName} value.
-       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
-       * name in this param object. Effectively, this map is flattened to its parent instance.
-       */
-      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
-      Map<String, Object> extraParams;
-
-      /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
-       */
-      @SerializedName("files")
-      List<String> files;
-
-      private ProofOfRegistration(Map<String, Object> extraParams, List<String> files) {
-        this.extraParams = extraParams;
-        this.files = files;
-      }
-
-      public static Builder builder() {
-        return new Builder();
-      }
-
-      public static class Builder {
-        private Map<String, Object> extraParams;
-
-        private List<String> files;
-
-        /** Finalize and obtain parameter instance from this builder. */
-        public AccountCreateParams.Documents.ProofOfRegistration build() {
-          return new AccountCreateParams.Documents.ProofOfRegistration(
-              this.extraParams, this.files);
-        }
-
-        /**
-         * Add a key/value pair to `extraParams` map. A map is initialized for the first
-         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
-         * map. See {@link AccountCreateParams.Documents.ProofOfRegistration#extraParams} for the
-         * field documentation.
-         */
-        public Builder putExtraParam(String key, Object value) {
-          if (this.extraParams == null) {
-            this.extraParams = new HashMap<>();
-          }
-          this.extraParams.put(key, value);
-          return this;
-        }
-
-        /**
-         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
-         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
-         * map. See {@link AccountCreateParams.Documents.ProofOfRegistration#extraParams} for the
-         * field documentation.
-         */
-        public Builder putAllExtraParam(Map<String, Object> map) {
-          if (this.extraParams == null) {
-            this.extraParams = new HashMap<>();
-          }
-          this.extraParams.putAll(map);
-          return this;
-        }
-
-        /**
-         * Add an element to `files` list. A list is initialized for the first `add/addAll` call,
-         * and subsequent calls adds additional elements to the original list. See {@link
-         * AccountCreateParams.Documents.ProofOfRegistration#files} for the field documentation.
-         */
-        public Builder addFile(String element) {
-          if (this.files == null) {
-            this.files = new ArrayList<>();
-          }
-          this.files.add(element);
-          return this;
-        }
-
-        /**
-         * Add all elements to `files` list. A list is initialized for the first `add/addAll` call,
-         * and subsequent calls adds additional elements to the original list. See {@link
-         * AccountCreateParams.Documents.ProofOfRegistration#files} for the field documentation.
-         */
-        public Builder addAllFile(List<String> elements) {
-          if (this.files == null) {
-            this.files = new ArrayList<>();
-          }
-          this.files.addAll(elements);
-          return this;
-        }
-      }
-    }
-
-    @Getter
-    @EqualsAndHashCode(callSuper = false)
     public static class ProofOfUltimateBeneficialOwnership {
       /**
        * Map of extra parameters for custom features not available in this client library. The
@@ -10019,17 +11072,21 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * One or more document ids returned by a <a
-       * href="https://stripe.com/docs/api#create_file">file upload</a> with a {@code purpose} value
-       * of {@code account_requirement}.
+       * One or more document ids returned by a <a href="https://api.stripe.com#create_file">file
+       * upload</a> with a {@code purpose} value of {@code account_requirement}.
        */
       @SerializedName("files")
       List<String> files;
 
+      /** Information regarding the person signing the document if applicable. */
+      @SerializedName("signer")
+      Signer signer;
+
       private ProofOfUltimateBeneficialOwnership(
-          Map<String, Object> extraParams, List<String> files) {
+          Map<String, Object> extraParams, List<String> files, Signer signer) {
         this.extraParams = extraParams;
         this.files = files;
+        this.signer = signer;
       }
 
       public static Builder builder() {
@@ -10041,10 +11098,12 @@ public class AccountCreateParams extends ApiRequestParams {
 
         private List<String> files;
 
+        private Signer signer;
+
         /** Finalize and obtain parameter instance from this builder. */
         public AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership build() {
           return new AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership(
-              this.extraParams, this.files);
+              this.extraParams, this.files, this.signer);
         }
 
         /**
@@ -10103,6 +11162,88 @@ public class AccountCreateParams extends ApiRequestParams {
           }
           this.files.addAll(elements);
           return this;
+        }
+
+        /** Information regarding the person signing the document if applicable. */
+        public Builder setSigner(
+            AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership.Signer signer) {
+          this.signer = signer;
+          return this;
+        }
+      }
+
+      @Getter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Signer {
+        /**
+         * Map of extra parameters for custom features not available in this client library. The
+         * content in this map is not serialized under this field's {@code @SerializedName} value.
+         * Instead, each key/value pair is serialized as if the key is a root-level field
+         * (serialized) name in this param object. Effectively, this map is flattened to its parent
+         * instance.
+         */
+        @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+        Map<String, Object> extraParams;
+
+        /** The token of the person signing the document, if applicable. */
+        @SerializedName("person")
+        String person;
+
+        private Signer(Map<String, Object> extraParams, String person) {
+          this.extraParams = extraParams;
+          this.person = person;
+        }
+
+        public static Builder builder() {
+          return new Builder();
+        }
+
+        public static class Builder {
+          private Map<String, Object> extraParams;
+
+          private String person;
+
+          /** Finalize and obtain parameter instance from this builder. */
+          public AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership.Signer build() {
+            return new AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership.Signer(
+                this.extraParams, this.person);
+          }
+
+          /**
+           * Add a key/value pair to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership.Signer#extraParams}
+           * for the field documentation.
+           */
+          public Builder putExtraParam(String key, Object value) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.put(key, value);
+            return this;
+          }
+
+          /**
+           * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+           * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+           * map. See {@link
+           * AccountCreateParams.Documents.ProofOfUltimateBeneficialOwnership.Signer#extraParams}
+           * for the field documentation.
+           */
+          public Builder putAllExtraParam(Map<String, Object> map) {
+            if (this.extraParams == null) {
+              this.extraParams = new HashMap<>();
+            }
+            this.extraParams.putAll(map);
+            return this;
+          }
+
+          /** The token of the person signing the document, if applicable. */
+          public Builder setPerson(String person) {
+            this.person = person;
+            return this;
+          }
         }
       }
     }
@@ -10122,7 +11263,7 @@ public class AccountCreateParams extends ApiRequestParams {
 
     /**
      * The group the account is in to determine their payments pricing, and null if the account is
-     * on customized pricing. <a href="https://stripe.com/docs/connect/platform-pricing-tools">See
+     * on customized pricing. <a href="https://docs.stripe.com/connect/platform-pricing-tools">See
      * the Platform pricing tool documentation</a> for details.
      */
     @SerializedName("payments_pricing")
@@ -10175,7 +11316,7 @@ public class AccountCreateParams extends ApiRequestParams {
 
       /**
        * The group the account is in to determine their payments pricing, and null if the account is
-       * on customized pricing. <a href="https://stripe.com/docs/connect/platform-pricing-tools">See
+       * on customized pricing. <a href="https://docs.stripe.com/connect/platform-pricing-tools">See
        * the Platform pricing tool documentation</a> for details.
        */
       public Builder setPaymentsPricing(String paymentsPricing) {
@@ -10185,7 +11326,7 @@ public class AccountCreateParams extends ApiRequestParams {
 
       /**
        * The group the account is in to determine their payments pricing, and null if the account is
-       * on customized pricing. <a href="https://stripe.com/docs/connect/platform-pricing-tools">See
+       * on customized pricing. <a href="https://docs.stripe.com/connect/platform-pricing-tools">See
        * the Platform pricing tool documentation</a> for details.
        */
       public Builder setPaymentsPricing(EmptyParam paymentsPricing) {
@@ -10284,7 +11425,7 @@ public class AccountCreateParams extends ApiRequestParams {
     String maidenName;
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -10656,7 +11797,7 @@ public class AccountCreateParams extends ApiRequestParams {
       }
 
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to an object. This can be useful for storing additional information about the object
        * in a structured format. Individual keys can be unset by posting an empty value to them. All
        * keys can be unset by posting an empty value to {@code metadata}.
@@ -10667,7 +11808,7 @@ public class AccountCreateParams extends ApiRequestParams {
       }
 
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to an object. This can be useful for storing additional information about the object
        * in a structured format. Individual keys can be unset by posting an empty value to them. All
        * keys can be unset by posting an empty value to {@code metadata}.
@@ -10743,11 +11884,11 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -10755,7 +11896,10 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -10850,13 +11994,13 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -10868,7 +12012,10 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -11339,11 +12486,11 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -11351,7 +12498,10 @@ public class AccountCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -11446,13 +12596,13 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -11464,7 +12614,10 @@ public class AccountCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -11725,7 +12878,7 @@ public class AccountCreateParams extends ApiRequestParams {
       @EqualsAndHashCode(callSuper = false)
       public static class AdditionalDocument {
         /**
-         * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+         * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
          * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
          * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format,
          * and less than 10 MB in size.
@@ -11744,7 +12897,7 @@ public class AccountCreateParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+         * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
          * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
          * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format,
          * and less than 10 MB in size.
@@ -11776,7 +12929,7 @@ public class AccountCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+           * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
            * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
            * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF
            * format, and less than 10 MB in size.
@@ -11817,7 +12970,7 @@ public class AccountCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+           * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
            * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
            * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF
            * format, and less than 10 MB in size.
@@ -11833,7 +12986,7 @@ public class AccountCreateParams extends ApiRequestParams {
       @EqualsAndHashCode(callSuper = false)
       public static class Document {
         /**
-         * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+         * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
          * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
          * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format,
          * and less than 10 MB in size.
@@ -11852,7 +13005,7 @@ public class AccountCreateParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+         * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
          * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
          * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF format,
          * and less than 10 MB in size.
@@ -11884,7 +13037,7 @@ public class AccountCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+           * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
            * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
            * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF
            * format, and less than 10 MB in size.
@@ -11923,7 +13076,7 @@ public class AccountCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+           * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
            * upload</a> with a {@code purpose} value of {@code identity_document}. The uploaded file
            * needs to be a color image (smaller than 8,000px by 8,000px), in JPG, PNG, or PDF
            * format, and less than 10 MB in size.
@@ -12855,8 +14008,9 @@ public class AccountCreateParams extends ApiRequestParams {
       Map<String, Object> extraParams;
 
       /**
-       * Whether payment methods should be saved when a payment is completed for a one-time invoices
-       * on a hosted invoice page.
+       * Whether to save the payment method after a payment is completed for a one-time invoice or a
+       * subscription invoice when the customer already has a default payment method on the hosted
+       * invoice page.
        */
       @SerializedName("hosted_payment_method_save")
       HostedPaymentMethodSave hostedPaymentMethodSave;
@@ -12911,8 +14065,9 @@ public class AccountCreateParams extends ApiRequestParams {
         }
 
         /**
-         * Whether payment methods should be saved when a payment is completed for a one-time
-         * invoices on a hosted invoice page.
+         * Whether to save the payment method after a payment is completed for a one-time invoice or
+         * a subscription invoice when the customer already has a default payment method on the
+         * hosted invoice page.
          */
         public Builder setHostedPaymentMethodSave(
             AccountCreateParams.Settings.Invoices.HostedPaymentMethodSave hostedPaymentMethodSave) {
@@ -13264,16 +14419,15 @@ public class AccountCreateParams extends ApiRequestParams {
 
         /**
          * The day of the week when available funds are paid out, specified as {@code monday},
-         * {@code tuesday}, etc. (required and applicable only if {@code interval} is {@code
-         * weekly}.)
+         * {@code tuesday}, etc. Required and applicable only if {@code interval} is {@code weekly}.
          */
         @SerializedName("weekly_anchor")
         WeeklyAnchor weeklyAnchor;
 
         /**
          * The days of the week when available funds are paid out, specified as an array, e.g.,
-         * [{@code monday}, {@code tuesday}]. (required and applicable only if {@code interval} is
-         * {@code weekly} and {@code weekly_anchor} is not set.)
+         * [{@code monday}, {@code tuesday}]. Required and applicable only if {@code interval} is
+         * {@code weekly}.
          */
         @SerializedName("weekly_payout_days")
         List<AccountCreateParams.Settings.Payouts.Schedule.WeeklyPayoutDay> weeklyPayoutDays;
@@ -13433,8 +14587,8 @@ public class AccountCreateParams extends ApiRequestParams {
 
           /**
            * The day of the week when available funds are paid out, specified as {@code monday},
-           * {@code tuesday}, etc. (required and applicable only if {@code interval} is {@code
-           * weekly}.)
+           * {@code tuesday}, etc. Required and applicable only if {@code interval} is {@code
+           * weekly}.
            */
           public Builder setWeeklyAnchor(
               AccountCreateParams.Settings.Payouts.Schedule.WeeklyAnchor weeklyAnchor) {
@@ -13542,12 +14696,6 @@ public class AccountCreateParams extends ApiRequestParams {
 
           @SerializedName("monday")
           MONDAY("monday"),
-
-          @SerializedName("saturday")
-          SATURDAY("saturday"),
-
-          @SerializedName("sunday")
-          SUNDAY("sunday"),
 
           @SerializedName("thursday")
           THURSDAY("thursday"),

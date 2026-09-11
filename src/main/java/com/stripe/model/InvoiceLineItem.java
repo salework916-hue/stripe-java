@@ -21,12 +21,12 @@ import lombok.Setter;
 
 /**
  * Invoice Line Items represent the individual lines within an <a
- * href="https://stripe.com/docs/api/invoices">invoice</a> and only exist within the context of an
+ * href="https://docs.stripe.com/api/invoices">invoice</a> and only exist within the context of an
  * invoice.
  *
  * <p>Each line item is backed by either an <a
- * href="https://stripe.com/docs/api/invoiceitems">invoice item</a> or a <a
- * href="https://stripe.com/docs/api/subscription_items">subscription item</a>.
+ * href="https://docs.stripe.com/api/invoiceitems">invoice item</a> or a <a
+ * href="https://docs.stripe.com/api/subscription_items">subscription item</a>.
  */
 @Getter
 @Setter
@@ -72,14 +72,14 @@ public class InvoiceLineItem extends ApiResource implements HasId, MetadataStore
   String invoice;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Note that for line items with {@code type=subscription}, {@code metadata}
    * reflects the current metadata from the subscription associated with the line item, unless the
@@ -114,14 +114,32 @@ public class InvoiceLineItem extends ApiResource implements HasId, MetadataStore
   @SerializedName("pricing")
   Pricing pricing;
 
-  /** The quantity of the subscription, if the line item is a subscription or a proration. */
+  /**
+   * Quantity of units for the invoice line item in integer format, with any decimal precision
+   * truncated. For the line item's full-precision decimal quantity, use {@code quantity_decimal}.
+   * This field will be deprecated in favor of {@code quantity_decimal} in a future version. If the
+   * line item is a proration or subscription, the quantity of the subscription that the proration
+   * was computed for.
+   */
   @SerializedName("quantity")
   Long quantity;
+
+  /**
+   * Non-negative decimal with at most 12 decimal places. The quantity of units for the line item.
+   */
+  @SerializedName("quantity_decimal")
+  BigDecimal quantityDecimal;
 
   @SerializedName("subscription")
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Subscription> subscription;
+
+  /**
+   * The subtotal of the line item, in cents (or local equivalent), before any discounts or taxes.
+   */
+  @SerializedName("subtotal")
+  Long subtotal;
 
   /** The tax information of the line item. */
   @SerializedName("taxes")
@@ -564,11 +582,31 @@ public class InvoiceLineItem extends ApiResource implements HasId, MetadataStore
     public static class PriceDetails extends StripeObject {
       /** The ID of the price this item is associated with. */
       @SerializedName("price")
-      String price;
+      @Getter(lombok.AccessLevel.NONE)
+      @Setter(lombok.AccessLevel.NONE)
+      ExpandableField<Price> price;
 
       /** The ID of the product this item is associated with. */
       @SerializedName("product")
       String product;
+
+      /** Get ID of expandable {@code price} object. */
+      public String getPrice() {
+        return (this.price != null) ? this.price.getId() : null;
+      }
+
+      public void setPrice(String id) {
+        this.price = ApiResource.setExpandableFieldId(id, this.price);
+      }
+
+      /** Get expanded {@code price}. */
+      public Price getPriceObject() {
+        return (this.price != null) ? this.price.getExpanded() : null;
+      }
+
+      public void setPriceObject(Price expandableObject) {
+        this.price = new ExpandableField<Price>(expandableObject.getId(), expandableObject);
+      }
     }
   }
 
@@ -633,8 +671,29 @@ public class InvoiceLineItem extends ApiResource implements HasId, MetadataStore
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class TaxRateDetails extends StripeObject {
+      /** ID of the tax rate. */
       @SerializedName("tax_rate")
-      String taxRate;
+      @Getter(lombok.AccessLevel.NONE)
+      @Setter(lombok.AccessLevel.NONE)
+      ExpandableField<TaxRate> taxRate;
+
+      /** Get ID of expandable {@code taxRate} object. */
+      public String getTaxRate() {
+        return (this.taxRate != null) ? this.taxRate.getId() : null;
+      }
+
+      public void setTaxRate(String id) {
+        this.taxRate = ApiResource.setExpandableFieldId(id, this.taxRate);
+      }
+
+      /** Get expanded {@code taxRate}. */
+      public TaxRate getTaxRateObject() {
+        return (this.taxRate != null) ? this.taxRate.getExpanded() : null;
+      }
+
+      public void setTaxRateObject(TaxRate expandableObject) {
+        this.taxRate = new ExpandableField<TaxRate>(expandableObject.getId(), expandableObject);
+      }
     }
   }
 

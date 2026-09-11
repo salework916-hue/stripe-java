@@ -17,14 +17,14 @@ public class AuthorizationCreateParams extends ApiRequestParams {
   /**
    * The total amount to attempt to authorize. This amount is in the provided currency, or defaults
    * to the card's currency, and in the <a
-   * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("amount")
   Long amount;
 
   /**
    * Detailed breakdown of amount components. These amounts are denominated in {@code currency} and
-   * in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("amount_details")
   AmountDetails amountDetails;
@@ -62,13 +62,20 @@ public class AuthorizationCreateParams extends ApiRequestParams {
   @SerializedName("fleet")
   Fleet fleet;
 
+  /**
+   * Probability that this transaction can be disputed in the event of fraud. Assessed by comparing
+   * the characteristics of the authorization to card network rules.
+   */
+  @SerializedName("fraud_disputability_likelihood")
+  FraudDisputabilityLikelihood fraudDisputabilityLikelihood;
+
   /** Information about fuel that was purchased with this transaction. */
   @SerializedName("fuel")
   Fuel fuel;
 
   /**
    * If set {@code true}, you may provide <a
-   * href="https://stripe.com/docs/api/issuing/authorizations/approve#approve_issuing_authorization-amount">amount</a>
+   * href="https://docs.stripe.com/api/issuing/authorizations/approve#approve_issuing_authorization-amount">amount</a>
    * to control how much to hold for the authorization.
    */
   @SerializedName("is_amount_controllable")
@@ -76,7 +83,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
   /**
    * The total amount to attempt to authorize. This amount is in the provided merchant currency, and
-   * in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("merchant_amount")
   Long merchantAmount;
@@ -99,6 +106,10 @@ public class AuthorizationCreateParams extends ApiRequestParams {
   /** Details about the authorization, such as identifiers, set by the card network. */
   @SerializedName("network_data")
   NetworkData networkData;
+
+  /** Stripe’s assessment of the fraud risk for this authorization. */
+  @SerializedName("risk_assessment")
+  RiskAssessment riskAssessment;
 
   /**
    * Verifications that Stripe performed on information that the cardholder provided to the
@@ -123,12 +134,14 @@ public class AuthorizationCreateParams extends ApiRequestParams {
       List<String> expand,
       Map<String, Object> extraParams,
       Fleet fleet,
+      FraudDisputabilityLikelihood fraudDisputabilityLikelihood,
       Fuel fuel,
       Boolean isAmountControllable,
       Long merchantAmount,
       String merchantCurrency,
       MerchantData merchantData,
       NetworkData networkData,
+      RiskAssessment riskAssessment,
       VerificationData verificationData,
       Wallet wallet) {
     this.amount = amount;
@@ -139,12 +152,14 @@ public class AuthorizationCreateParams extends ApiRequestParams {
     this.expand = expand;
     this.extraParams = extraParams;
     this.fleet = fleet;
+    this.fraudDisputabilityLikelihood = fraudDisputabilityLikelihood;
     this.fuel = fuel;
     this.isAmountControllable = isAmountControllable;
     this.merchantAmount = merchantAmount;
     this.merchantCurrency = merchantCurrency;
     this.merchantData = merchantData;
     this.networkData = networkData;
+    this.riskAssessment = riskAssessment;
     this.verificationData = verificationData;
     this.wallet = wallet;
   }
@@ -170,6 +185,8 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
     private Fleet fleet;
 
+    private FraudDisputabilityLikelihood fraudDisputabilityLikelihood;
+
     private Fuel fuel;
 
     private Boolean isAmountControllable;
@@ -181,6 +198,8 @@ public class AuthorizationCreateParams extends ApiRequestParams {
     private MerchantData merchantData;
 
     private NetworkData networkData;
+
+    private RiskAssessment riskAssessment;
 
     private VerificationData verificationData;
 
@@ -197,12 +216,14 @@ public class AuthorizationCreateParams extends ApiRequestParams {
           this.expand,
           this.extraParams,
           this.fleet,
+          this.fraudDisputabilityLikelihood,
           this.fuel,
           this.isAmountControllable,
           this.merchantAmount,
           this.merchantCurrency,
           this.merchantData,
           this.networkData,
+          this.riskAssessment,
           this.verificationData,
           this.wallet);
     }
@@ -210,7 +231,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
     /**
      * The total amount to attempt to authorize. This amount is in the provided currency, or
      * defaults to the card's currency, and in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
      */
     public Builder setAmount(Long amount) {
       this.amount = amount;
@@ -219,7 +240,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
     /**
      * Detailed breakdown of amount components. These amounts are denominated in {@code currency}
-     * and in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+     * and in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
      * unit</a>.
      */
     public Builder setAmountDetails(AuthorizationCreateParams.AmountDetails amountDetails) {
@@ -309,6 +330,16 @@ public class AuthorizationCreateParams extends ApiRequestParams {
       return this;
     }
 
+    /**
+     * Probability that this transaction can be disputed in the event of fraud. Assessed by
+     * comparing the characteristics of the authorization to card network rules.
+     */
+    public Builder setFraudDisputabilityLikelihood(
+        AuthorizationCreateParams.FraudDisputabilityLikelihood fraudDisputabilityLikelihood) {
+      this.fraudDisputabilityLikelihood = fraudDisputabilityLikelihood;
+      return this;
+    }
+
     /** Information about fuel that was purchased with this transaction. */
     public Builder setFuel(AuthorizationCreateParams.Fuel fuel) {
       this.fuel = fuel;
@@ -317,7 +348,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
     /**
      * If set {@code true}, you may provide <a
-     * href="https://stripe.com/docs/api/issuing/authorizations/approve#approve_issuing_authorization-amount">amount</a>
+     * href="https://docs.stripe.com/api/issuing/authorizations/approve#approve_issuing_authorization-amount">amount</a>
      * to control how much to hold for the authorization.
      */
     public Builder setIsAmountControllable(Boolean isAmountControllable) {
@@ -327,7 +358,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
     /**
      * The total amount to attempt to authorize. This amount is in the provided merchant currency,
-     * and in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+     * and in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
      * unit</a>.
      */
     public Builder setMerchantAmount(Long merchantAmount) {
@@ -358,6 +389,12 @@ public class AuthorizationCreateParams extends ApiRequestParams {
     /** Details about the authorization, such as identifiers, set by the card network. */
     public Builder setNetworkData(AuthorizationCreateParams.NetworkData networkData) {
       this.networkData = networkData;
+      return this;
+    }
+
+    /** Stripe’s assessment of the fraud risk for this authorization. */
+    public Builder setRiskAssessment(AuthorizationCreateParams.RiskAssessment riskAssessment) {
+      this.riskAssessment = riskAssessment;
       return this;
     }
 
@@ -866,8 +903,8 @@ public class AuthorizationCreateParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost, inclusive of
-         * taxes.
+         * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost, inclusive
+         * of taxes.
          */
         @SerializedName("gross_amount_decimal")
         BigDecimal grossAmountDecimal;
@@ -921,7 +958,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
           }
 
           /**
-           * Gross fuel amount that should equal Fuel Volume multipled by Fuel Unit Cost, inclusive
+           * Gross fuel amount that should equal Fuel Volume multiplied by Fuel Unit Cost, inclusive
            * of taxes.
            */
           public Builder setGrossAmountDecimal(BigDecimal grossAmountDecimal) {
@@ -1374,7 +1411,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
   public static class MerchantData {
     /**
      * A categorization of the seller's type of business. See our <a
-     * href="https://stripe.com/docs/issuing/merchant-categories">merchant categories guide</a> for
+     * href="https://docs.stripe.com/issuing/merchant-categories">merchant categories guide</a> for
      * a list of possible values.
      */
     @SerializedName("category")
@@ -1489,7 +1526,7 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
       /**
        * A categorization of the seller's type of business. See our <a
-       * href="https://stripe.com/docs/issuing/merchant-categories">merchant categories guide</a>
+       * href="https://docs.stripe.com/issuing/merchant-categories">merchant categories guide</a>
        * for a list of possible values.
        */
       public Builder setCategory(AuthorizationCreateParams.MerchantData.Category category) {
@@ -2561,6 +2598,531 @@ public class AuthorizationCreateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class RiskAssessment {
+    /** Stripe's assessment of this authorization's likelihood of being card testing activity. */
+    @SerializedName("card_testing_risk")
+    CardTestingRisk cardTestingRisk;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    /** Stripe’s assessment of this authorization’s likelihood to be fraudulent. */
+    @SerializedName("fraud_risk")
+    FraudRisk fraudRisk;
+
+    /**
+     * The dispute risk of the merchant (the seller on a purchase) on an authorization based on all
+     * Stripe Issuing activity.
+     */
+    @SerializedName("merchant_dispute_risk")
+    MerchantDisputeRisk merchantDisputeRisk;
+
+    private RiskAssessment(
+        CardTestingRisk cardTestingRisk,
+        Map<String, Object> extraParams,
+        FraudRisk fraudRisk,
+        MerchantDisputeRisk merchantDisputeRisk) {
+      this.cardTestingRisk = cardTestingRisk;
+      this.extraParams = extraParams;
+      this.fraudRisk = fraudRisk;
+      this.merchantDisputeRisk = merchantDisputeRisk;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private CardTestingRisk cardTestingRisk;
+
+      private Map<String, Object> extraParams;
+
+      private FraudRisk fraudRisk;
+
+      private MerchantDisputeRisk merchantDisputeRisk;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public AuthorizationCreateParams.RiskAssessment build() {
+        return new AuthorizationCreateParams.RiskAssessment(
+            this.cardTestingRisk, this.extraParams, this.fraudRisk, this.merchantDisputeRisk);
+      }
+
+      /** Stripe's assessment of this authorization's likelihood of being card testing activity. */
+      public Builder setCardTestingRisk(
+          AuthorizationCreateParams.RiskAssessment.CardTestingRisk cardTestingRisk) {
+        this.cardTestingRisk = cardTestingRisk;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * AuthorizationCreateParams.RiskAssessment#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link AuthorizationCreateParams.RiskAssessment#extraParams} for the field
+       * documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+
+      /** Stripe’s assessment of this authorization’s likelihood to be fraudulent. */
+      public Builder setFraudRisk(AuthorizationCreateParams.RiskAssessment.FraudRisk fraudRisk) {
+        this.fraudRisk = fraudRisk;
+        return this;
+      }
+
+      /**
+       * The dispute risk of the merchant (the seller on a purchase) on an authorization based on
+       * all Stripe Issuing activity.
+       */
+      public Builder setMerchantDisputeRisk(
+          AuthorizationCreateParams.RiskAssessment.MerchantDisputeRisk merchantDisputeRisk) {
+        this.merchantDisputeRisk = merchantDisputeRisk;
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class CardTestingRisk {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * The % of declines due to a card number not existing in the past hour, taking place at the
+       * same merchant. Higher rates correspond to a greater probability of card testing activity,
+       * meaning bad actors may be attempting different card number combinations to guess a correct
+       * one. Takes on values between 0 and 100.
+       */
+      @SerializedName("invalid_account_number_decline_rate_past_hour")
+      Long invalidAccountNumberDeclineRatePastHour;
+
+      /**
+       * The % of declines due to incorrect verification data (like CVV or expiry) in the past hour,
+       * taking place at the same merchant. Higher rates correspond to a greater probability of bad
+       * actors attempting to utilize valid card credentials at merchants with verification
+       * requirements. Takes on values between 0 and 100.
+       */
+      @SerializedName("invalid_credentials_decline_rate_past_hour")
+      Long invalidCredentialsDeclineRatePastHour;
+
+      /**
+       * <strong>Required.</strong> The likelihood that this authorization is associated with card
+       * testing activity. This is assessed by evaluating decline activity over the last hour.
+       */
+      @SerializedName("level")
+      Level level;
+
+      private CardTestingRisk(
+          Map<String, Object> extraParams,
+          Long invalidAccountNumberDeclineRatePastHour,
+          Long invalidCredentialsDeclineRatePastHour,
+          Level level) {
+        this.extraParams = extraParams;
+        this.invalidAccountNumberDeclineRatePastHour = invalidAccountNumberDeclineRatePastHour;
+        this.invalidCredentialsDeclineRatePastHour = invalidCredentialsDeclineRatePastHour;
+        this.level = level;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Long invalidAccountNumberDeclineRatePastHour;
+
+        private Long invalidCredentialsDeclineRatePastHour;
+
+        private Level level;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AuthorizationCreateParams.RiskAssessment.CardTestingRisk build() {
+          return new AuthorizationCreateParams.RiskAssessment.CardTestingRisk(
+              this.extraParams,
+              this.invalidAccountNumberDeclineRatePastHour,
+              this.invalidCredentialsDeclineRatePastHour,
+              this.level);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AuthorizationCreateParams.RiskAssessment.CardTestingRisk#extraParams} for
+         * the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AuthorizationCreateParams.RiskAssessment.CardTestingRisk#extraParams} for
+         * the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * The % of declines due to a card number not existing in the past hour, taking place at the
+         * same merchant. Higher rates correspond to a greater probability of card testing activity,
+         * meaning bad actors may be attempting different card number combinations to guess a
+         * correct one. Takes on values between 0 and 100.
+         */
+        public Builder setInvalidAccountNumberDeclineRatePastHour(
+            Long invalidAccountNumberDeclineRatePastHour) {
+          this.invalidAccountNumberDeclineRatePastHour = invalidAccountNumberDeclineRatePastHour;
+          return this;
+        }
+
+        /**
+         * The % of declines due to incorrect verification data (like CVV or expiry) in the past
+         * hour, taking place at the same merchant. Higher rates correspond to a greater probability
+         * of bad actors attempting to utilize valid card credentials at merchants with verification
+         * requirements. Takes on values between 0 and 100.
+         */
+        public Builder setInvalidCredentialsDeclineRatePastHour(
+            Long invalidCredentialsDeclineRatePastHour) {
+          this.invalidCredentialsDeclineRatePastHour = invalidCredentialsDeclineRatePastHour;
+          return this;
+        }
+
+        /**
+         * <strong>Required.</strong> The likelihood that this authorization is associated with card
+         * testing activity. This is assessed by evaluating decline activity over the last hour.
+         */
+        public Builder setLevel(
+            AuthorizationCreateParams.RiskAssessment.CardTestingRisk.Level level) {
+          this.level = level;
+          return this;
+        }
+      }
+
+      public enum Level implements ApiRequestParams.EnumParam {
+        @SerializedName("elevated")
+        ELEVATED("elevated"),
+
+        @SerializedName("highest")
+        HIGHEST("highest"),
+
+        @SerializedName("low")
+        LOW("low"),
+
+        @SerializedName("normal")
+        NORMAL("normal"),
+
+        @SerializedName("not_assessed")
+        NOT_ASSESSED("not_assessed"),
+
+        @SerializedName("unknown")
+        UNKNOWN("unknown");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Level(String value) {
+          this.value = value;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class FraudRisk {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * <strong>Required.</strong> Stripe’s assessment of the likelihood of fraud on an
+       * authorization.
+       */
+      @SerializedName("level")
+      Level level;
+
+      /**
+       * Stripe’s numerical model score assessing the likelihood of fraudulent activity. A higher
+       * score means a higher likelihood of fraudulent activity, and anything above 25 is considered
+       * high risk.
+       */
+      @SerializedName("score")
+      BigDecimal score;
+
+      private FraudRisk(Map<String, Object> extraParams, Level level, BigDecimal score) {
+        this.extraParams = extraParams;
+        this.level = level;
+        this.score = score;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Level level;
+
+        private BigDecimal score;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AuthorizationCreateParams.RiskAssessment.FraudRisk build() {
+          return new AuthorizationCreateParams.RiskAssessment.FraudRisk(
+              this.extraParams, this.level, this.score);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AuthorizationCreateParams.RiskAssessment.FraudRisk#extraParams} for the
+         * field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AuthorizationCreateParams.RiskAssessment.FraudRisk#extraParams} for the
+         * field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * <strong>Required.</strong> Stripe’s assessment of the likelihood of fraud on an
+         * authorization.
+         */
+        public Builder setLevel(AuthorizationCreateParams.RiskAssessment.FraudRisk.Level level) {
+          this.level = level;
+          return this;
+        }
+
+        /**
+         * Stripe’s numerical model score assessing the likelihood of fraudulent activity. A higher
+         * score means a higher likelihood of fraudulent activity, and anything above 25 is
+         * considered high risk.
+         */
+        public Builder setScore(BigDecimal score) {
+          this.score = score;
+          return this;
+        }
+      }
+
+      public enum Level implements ApiRequestParams.EnumParam {
+        @SerializedName("elevated")
+        ELEVATED("elevated"),
+
+        @SerializedName("highest")
+        HIGHEST("highest"),
+
+        @SerializedName("low")
+        LOW("low"),
+
+        @SerializedName("normal")
+        NORMAL("normal"),
+
+        @SerializedName("not_assessed")
+        NOT_ASSESSED("not_assessed"),
+
+        @SerializedName("unknown")
+        UNKNOWN("unknown");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Level(String value) {
+          this.value = value;
+        }
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class MerchantDisputeRisk {
+      /**
+       * The dispute rate observed across all Stripe Issuing authorizations for this merchant. For
+       * example, a value of 50 means 50% of authorizations from this merchant on Stripe Issuing
+       * have resulted in a dispute. Higher values mean a higher likelihood the authorization is
+       * disputed. Takes on values between 0 and 100.
+       */
+      @SerializedName("dispute_rate")
+      Long disputeRate;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * <strong>Required.</strong> The likelihood that authorizations from this merchant will
+       * result in a dispute based on their history on Stripe Issuing.
+       */
+      @SerializedName("level")
+      Level level;
+
+      private MerchantDisputeRisk(Long disputeRate, Map<String, Object> extraParams, Level level) {
+        this.disputeRate = disputeRate;
+        this.extraParams = extraParams;
+        this.level = level;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Long disputeRate;
+
+        private Map<String, Object> extraParams;
+
+        private Level level;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public AuthorizationCreateParams.RiskAssessment.MerchantDisputeRisk build() {
+          return new AuthorizationCreateParams.RiskAssessment.MerchantDisputeRisk(
+              this.disputeRate, this.extraParams, this.level);
+        }
+
+        /**
+         * The dispute rate observed across all Stripe Issuing authorizations for this merchant. For
+         * example, a value of 50 means 50% of authorizations from this merchant on Stripe Issuing
+         * have resulted in a dispute. Higher values mean a higher likelihood the authorization is
+         * disputed. Takes on values between 0 and 100.
+         */
+        public Builder setDisputeRate(Long disputeRate) {
+          this.disputeRate = disputeRate;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AuthorizationCreateParams.RiskAssessment.MerchantDisputeRisk#extraParams}
+         * for the field documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link AuthorizationCreateParams.RiskAssessment.MerchantDisputeRisk#extraParams}
+         * for the field documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * <strong>Required.</strong> The likelihood that authorizations from this merchant will
+         * result in a dispute based on their history on Stripe Issuing.
+         */
+        public Builder setLevel(
+            AuthorizationCreateParams.RiskAssessment.MerchantDisputeRisk.Level level) {
+          this.level = level;
+          return this;
+        }
+      }
+
+      public enum Level implements ApiRequestParams.EnumParam {
+        @SerializedName("elevated")
+        ELEVATED("elevated"),
+
+        @SerializedName("highest")
+        HIGHEST("highest"),
+
+        @SerializedName("low")
+        LOW("low"),
+
+        @SerializedName("normal")
+        NORMAL("normal"),
+
+        @SerializedName("not_assessed")
+        NOT_ASSESSED("not_assessed"),
+
+        @SerializedName("unknown")
+        UNKNOWN("unknown");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        Level(String value) {
+          this.value = value;
+        }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class VerificationData {
     /**
      * Whether the cardholder provided an address first line and if it matched the cardholder’s
@@ -3043,6 +3605,27 @@ public class AuthorizationCreateParams extends ApiRequestParams {
     private final String value;
 
     AuthorizationMethod(String value) {
+      this.value = value;
+    }
+  }
+
+  public enum FraudDisputabilityLikelihood implements ApiRequestParams.EnumParam {
+    @SerializedName("neutral")
+    NEUTRAL("neutral"),
+
+    @SerializedName("unknown")
+    UNKNOWN("unknown"),
+
+    @SerializedName("very_likely")
+    VERY_LIKELY("very_likely"),
+
+    @SerializedName("very_unlikely")
+    VERY_UNLIKELY("very_unlikely");
+
+    @Getter(onMethod_ = {@Override})
+    private final String value;
+
+    FraudDisputabilityLikelihood(String value) {
       this.value = value;
     }
   }

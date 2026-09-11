@@ -15,7 +15,7 @@ import lombok.Getter;
 @EqualsAndHashCode(callSuper = false)
 public class CardCreateParams extends ApiRequestParams {
   /**
-   * The <a href="https://stripe.com/docs/api#issuing_cardholder_object">Cardholder</a> object with
+   * The <a href="https://docs.stripe.com/api#issuing_cardholder_object">Cardholder</a> object with
    * which the card will be associated.
    */
   @SerializedName("cardholder")
@@ -62,7 +62,15 @@ public class CardCreateParams extends ApiRequestParams {
   String financialAccount;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Rules that control the lifecycle of this card, such as automatic cancellation. Refer to our <a
+   * href="https://stripe.com/issuing/controls/lifecycle-controls">documentation</a> for more
+   * details.
+   */
+  @SerializedName("lifecycle_controls")
+  LifecycleControls lifecycleControls;
+
+  /**
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -98,7 +106,7 @@ public class CardCreateParams extends ApiRequestParams {
 
   /**
    * Rules that control spending for this card. Refer to our <a
-   * href="https://stripe.com/docs/issuing/controls/spending-controls">documentation</a> for more
+   * href="https://docs.stripe.com/issuing/controls/spending-controls">documentation</a> for more
    * details.
    */
   @SerializedName("spending_controls")
@@ -126,6 +134,7 @@ public class CardCreateParams extends ApiRequestParams {
       List<String> expand,
       Map<String, Object> extraParams,
       String financialAccount,
+      LifecycleControls lifecycleControls,
       Map<String, String> metadata,
       String personalizationDesign,
       Pin pin,
@@ -143,6 +152,7 @@ public class CardCreateParams extends ApiRequestParams {
     this.expand = expand;
     this.extraParams = extraParams;
     this.financialAccount = financialAccount;
+    this.lifecycleControls = lifecycleControls;
     this.metadata = metadata;
     this.personalizationDesign = personalizationDesign;
     this.pin = pin;
@@ -174,6 +184,8 @@ public class CardCreateParams extends ApiRequestParams {
 
     private String financialAccount;
 
+    private LifecycleControls lifecycleControls;
+
     private Map<String, String> metadata;
 
     private String personalizationDesign;
@@ -204,6 +216,7 @@ public class CardCreateParams extends ApiRequestParams {
           this.expand,
           this.extraParams,
           this.financialAccount,
+          this.lifecycleControls,
           this.metadata,
           this.personalizationDesign,
           this.pin,
@@ -217,7 +230,7 @@ public class CardCreateParams extends ApiRequestParams {
     }
 
     /**
-     * The <a href="https://stripe.com/docs/api#issuing_cardholder_object">Cardholder</a> object
+     * The <a href="https://docs.stripe.com/api#issuing_cardholder_object">Cardholder</a> object
      * with which the card will be associated.
      */
     public Builder setCardholder(String cardholder) {
@@ -313,6 +326,16 @@ public class CardCreateParams extends ApiRequestParams {
     }
 
     /**
+     * Rules that control the lifecycle of this card, such as automatic cancellation. Refer to our
+     * <a href="https://stripe.com/issuing/controls/lifecycle-controls">documentation</a> for more
+     * details.
+     */
+    public Builder setLifecycleControls(CardCreateParams.LifecycleControls lifecycleControls) {
+      this.lifecycleControls = lifecycleControls;
+      return this;
+    }
+
+    /**
      * Add a key/value pair to `metadata` map. A map is initialized for the first `put/putAll` call,
      * and subsequent calls add additional key/value pairs to the original map. See {@link
      * CardCreateParams#metadata} for the field documentation.
@@ -385,7 +408,7 @@ public class CardCreateParams extends ApiRequestParams {
 
     /**
      * Rules that control spending for this card. Refer to our <a
-     * href="https://stripe.com/docs/issuing/controls/spending-controls">documentation</a> for more
+     * href="https://docs.stripe.com/issuing/controls/spending-controls">documentation</a> for more
      * details.
      */
     public Builder setSpendingControls(CardCreateParams.SpendingControls spendingControls) {
@@ -409,6 +432,155 @@ public class CardCreateParams extends ApiRequestParams {
     public Builder setType(CardCreateParams.Type type) {
       this.type = type;
       return this;
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class LifecycleControls {
+    /** <strong>Required.</strong> Cancels the card after the specified conditions are met. */
+    @SerializedName("cancel_after")
+    CancelAfter cancelAfter;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private LifecycleControls(CancelAfter cancelAfter, Map<String, Object> extraParams) {
+      this.cancelAfter = cancelAfter;
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private CancelAfter cancelAfter;
+
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public CardCreateParams.LifecycleControls build() {
+        return new CardCreateParams.LifecycleControls(this.cancelAfter, this.extraParams);
+      }
+
+      /** <strong>Required.</strong> Cancels the card after the specified conditions are met. */
+      public Builder setCancelAfter(CardCreateParams.LifecycleControls.CancelAfter cancelAfter) {
+        this.cancelAfter = cancelAfter;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * CardCreateParams.LifecycleControls#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link CardCreateParams.LifecycleControls#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class CancelAfter {
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      /**
+       * <strong>Required.</strong> The card is automatically cancelled when it makes this number of
+       * non-zero payment authorizations and transactions. The count includes penny authorizations,
+       * but doesn't include non-payment actions, such as authorization advice.
+       */
+      @SerializedName("payment_count")
+      Long paymentCount;
+
+      private CancelAfter(Map<String, Object> extraParams, Long paymentCount) {
+        this.extraParams = extraParams;
+        this.paymentCount = paymentCount;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Map<String, Object> extraParams;
+
+        private Long paymentCount;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public CardCreateParams.LifecycleControls.CancelAfter build() {
+          return new CardCreateParams.LifecycleControls.CancelAfter(
+              this.extraParams, this.paymentCount);
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CardCreateParams.LifecycleControls.CancelAfter#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link CardCreateParams.LifecycleControls.CancelAfter#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+
+        /**
+         * <strong>Required.</strong> The card is automatically cancelled when it makes this number
+         * of non-zero payment authorizations and transactions. The count includes penny
+         * authorizations, but doesn't include non-payment actions, such as authorization advice.
+         */
+        public Builder setPaymentCount(Long paymentCount) {
+          this.paymentCount = paymentCount;
+          return this;
+        }
+      }
     }
   }
 
@@ -492,6 +664,15 @@ public class CardCreateParams extends ApiRequestParams {
     @SerializedName("address_validation")
     AddressValidation addressValidation;
 
+    /**
+     * The name of the business at the shipping address, used on the shipping label to ensure
+     * delivery when the card is shipped to a cardholder's workplace. Allowed characters: {@code
+     * A-Z}, {@code a-z}, {@code 0-9}, {@code }, {@code .}, {@code -}. All other characters are
+     * stripped or ASCII-normalized when printed.
+     */
+    @SerializedName("business_name")
+    String businessName;
+
     /** Customs information for the shipment. */
     @SerializedName("customs")
     Customs customs;
@@ -528,6 +709,7 @@ public class CardCreateParams extends ApiRequestParams {
     private Shipping(
         Address address,
         AddressValidation addressValidation,
+        String businessName,
         Customs customs,
         Map<String, Object> extraParams,
         String name,
@@ -537,6 +719,7 @@ public class CardCreateParams extends ApiRequestParams {
         Type type) {
       this.address = address;
       this.addressValidation = addressValidation;
+      this.businessName = businessName;
       this.customs = customs;
       this.extraParams = extraParams;
       this.name = name;
@@ -554,6 +737,8 @@ public class CardCreateParams extends ApiRequestParams {
       private Address address;
 
       private AddressValidation addressValidation;
+
+      private String businessName;
 
       private Customs customs;
 
@@ -574,6 +759,7 @@ public class CardCreateParams extends ApiRequestParams {
         return new CardCreateParams.Shipping(
             this.address,
             this.addressValidation,
+            this.businessName,
             this.customs,
             this.extraParams,
             this.name,
@@ -593,6 +779,17 @@ public class CardCreateParams extends ApiRequestParams {
       public Builder setAddressValidation(
           CardCreateParams.Shipping.AddressValidation addressValidation) {
         this.addressValidation = addressValidation;
+        return this;
+      }
+
+      /**
+       * The name of the business at the shipping address, used on the shipping label to ensure
+       * delivery when the card is shipped to a cardholder's workplace. Allowed characters: {@code
+       * A-Z}, {@code a-z}, {@code 0-9}, {@code }, {@code .}, {@code -}. All other characters are
+       * stripped or ASCII-normalized when printed.
+       */
+      public Builder setBusinessName(String businessName) {
+        this.businessName = businessName;
         return this;
       }
 
@@ -684,11 +881,11 @@ public class CardCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** <strong>Required.</strong> Address line 1 (e.g., street, PO Box, or company name). */
+      /** <strong>Required.</strong> Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -696,7 +893,10 @@ public class CardCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -791,13 +991,15 @@ public class CardCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** <strong>Required.</strong> Address line 1 (e.g., street, PO Box, or company name). */
+        /**
+         * <strong>Required.</strong> Address line 1, such as the street, PO Box, or company name.
+         */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -809,7 +1011,10 @@ public class CardCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -1021,8 +1226,16 @@ public class CardCreateParams extends ApiRequestParams {
   @EqualsAndHashCode(callSuper = false)
   public static class SpendingControls {
     /**
+     * Array of card presence statuses from which authorizations will be allowed. Possible options
+     * are {@code present}, {@code not_present}. All other statuses will be blocked. Cannot be set
+     * with {@code blocked_card_presences}. Provide an empty value to unset this control.
+     */
+    @SerializedName("allowed_card_presences")
+    List<CardCreateParams.SpendingControls.AllowedCardPresence> allowedCardPresences;
+
+    /**
      * Array of strings containing <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+     * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
      * of authorizations to allow. All other categories will be blocked. Cannot be set with {@code
      * blocked_categories}.
      */
@@ -1039,8 +1252,16 @@ public class CardCreateParams extends ApiRequestParams {
     List<String> allowedMerchantCountries;
 
     /**
+     * Array of card presence statuses from which authorizations will be declined. Possible options
+     * are {@code present}, {@code not_present}. Cannot be set with {@code allowed_card_presences}.
+     * Provide an empty value to unset this control.
+     */
+    @SerializedName("blocked_card_presences")
+    List<CardCreateParams.SpendingControls.BlockedCardPresence> blockedCardPresences;
+
+    /**
      * Array of strings containing <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+     * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
      * of authorizations to decline. All other categories will be allowed. Cannot be set with {@code
      * allowed_categories}.
      */
@@ -1073,14 +1294,18 @@ public class CardCreateParams extends ApiRequestParams {
     List<CardCreateParams.SpendingControls.SpendingLimit> spendingLimits;
 
     private SpendingControls(
+        List<CardCreateParams.SpendingControls.AllowedCardPresence> allowedCardPresences,
         List<CardCreateParams.SpendingControls.AllowedCategory> allowedCategories,
         List<String> allowedMerchantCountries,
+        List<CardCreateParams.SpendingControls.BlockedCardPresence> blockedCardPresences,
         List<CardCreateParams.SpendingControls.BlockedCategory> blockedCategories,
         List<String> blockedMerchantCountries,
         Map<String, Object> extraParams,
         List<CardCreateParams.SpendingControls.SpendingLimit> spendingLimits) {
+      this.allowedCardPresences = allowedCardPresences;
       this.allowedCategories = allowedCategories;
       this.allowedMerchantCountries = allowedMerchantCountries;
+      this.blockedCardPresences = blockedCardPresences;
       this.blockedCategories = blockedCategories;
       this.blockedMerchantCountries = blockedMerchantCountries;
       this.extraParams = extraParams;
@@ -1092,9 +1317,13 @@ public class CardCreateParams extends ApiRequestParams {
     }
 
     public static class Builder {
+      private List<CardCreateParams.SpendingControls.AllowedCardPresence> allowedCardPresences;
+
       private List<CardCreateParams.SpendingControls.AllowedCategory> allowedCategories;
 
       private List<String> allowedMerchantCountries;
+
+      private List<CardCreateParams.SpendingControls.BlockedCardPresence> blockedCardPresences;
 
       private List<CardCreateParams.SpendingControls.BlockedCategory> blockedCategories;
 
@@ -1107,12 +1336,42 @@ public class CardCreateParams extends ApiRequestParams {
       /** Finalize and obtain parameter instance from this builder. */
       public CardCreateParams.SpendingControls build() {
         return new CardCreateParams.SpendingControls(
+            this.allowedCardPresences,
             this.allowedCategories,
             this.allowedMerchantCountries,
+            this.blockedCardPresences,
             this.blockedCategories,
             this.blockedMerchantCountries,
             this.extraParams,
             this.spendingLimits);
+      }
+
+      /**
+       * Add an element to `allowedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardCreateParams.SpendingControls#allowedCardPresences} for the field documentation.
+       */
+      public Builder addAllowedCardPresence(
+          CardCreateParams.SpendingControls.AllowedCardPresence element) {
+        if (this.allowedCardPresences == null) {
+          this.allowedCardPresences = new ArrayList<>();
+        }
+        this.allowedCardPresences.add(element);
+        return this;
+      }
+
+      /**
+       * Add all elements to `allowedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardCreateParams.SpendingControls#allowedCardPresences} for the field documentation.
+       */
+      public Builder addAllAllowedCardPresence(
+          List<CardCreateParams.SpendingControls.AllowedCardPresence> elements) {
+        if (this.allowedCardPresences == null) {
+          this.allowedCardPresences = new ArrayList<>();
+        }
+        this.allowedCardPresences.addAll(elements);
+        return this;
       }
 
       /**
@@ -1167,6 +1426,34 @@ public class CardCreateParams extends ApiRequestParams {
           this.allowedMerchantCountries = new ArrayList<>();
         }
         this.allowedMerchantCountries.addAll(elements);
+        return this;
+      }
+
+      /**
+       * Add an element to `blockedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardCreateParams.SpendingControls#blockedCardPresences} for the field documentation.
+       */
+      public Builder addBlockedCardPresence(
+          CardCreateParams.SpendingControls.BlockedCardPresence element) {
+        if (this.blockedCardPresences == null) {
+          this.blockedCardPresences = new ArrayList<>();
+        }
+        this.blockedCardPresences.add(element);
+        return this;
+      }
+
+      /**
+       * Add all elements to `blockedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardCreateParams.SpendingControls#blockedCardPresences} for the field documentation.
+       */
+      public Builder addAllBlockedCardPresence(
+          List<CardCreateParams.SpendingControls.BlockedCardPresence> elements) {
+        if (this.blockedCardPresences == null) {
+          this.blockedCardPresences = new ArrayList<>();
+        }
+        this.blockedCardPresences.addAll(elements);
         return this;
       }
 
@@ -1288,7 +1575,7 @@ public class CardCreateParams extends ApiRequestParams {
 
       /**
        * Array of strings containing <a
-       * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+       * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
        * this limit applies to. Omitting this field will apply the limit to all categories.
        */
       @SerializedName("categories")
@@ -2351,6 +2638,21 @@ public class CardCreateParams extends ApiRequestParams {
       }
     }
 
+    public enum AllowedCardPresence implements ApiRequestParams.EnumParam {
+      @SerializedName("not_present")
+      NOT_PRESENT("not_present"),
+
+      @SerializedName("present")
+      PRESENT("present");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      AllowedCardPresence(String value) {
+        this.value = value;
+      }
+    }
+
     public enum AllowedCategory implements ApiRequestParams.EnumParam {
       @SerializedName("ac_refrigeration_repair")
       AC_REFRIGERATION_REPAIR("ac_refrigeration_repair"),
@@ -3263,6 +3565,21 @@ public class CardCreateParams extends ApiRequestParams {
       private final String value;
 
       AllowedCategory(String value) {
+        this.value = value;
+      }
+    }
+
+    public enum BlockedCardPresence implements ApiRequestParams.EnumParam {
+      @SerializedName("not_present")
+      NOT_PRESENT("not_present"),
+
+      @SerializedName("present")
+      PRESENT("present");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      BlockedCardPresence(String value) {
         this.value = value;
       }
     }

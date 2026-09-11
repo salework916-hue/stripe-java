@@ -24,7 +24,7 @@ import lombok.Setter;
 /**
  * A Tax Transaction records the tax collected from or refunded to your customer.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/tax/custom#tax-transaction">Calculate tax in
+ * <p>Related guide: <a href="https://docs.stripe.com/tax/custom#tax-transaction">Calculate tax in
  * your custom payment flow</a>
  */
 @Getter
@@ -43,7 +43,7 @@ public class Transaction extends ApiResource implements HasId {
   String currency;
 
   /**
-   * The ID of an existing <a href="https://stripe.com/docs/api/customers/object">Customer</a> used
+   * The ID of an existing <a href="https://docs.stripe.com/api/customers/object">Customer</a> used
    * for the resource.
    */
   @SerializedName("customer")
@@ -62,14 +62,14 @@ public class Transaction extends ApiResource implements HasId {
   TransactionLineItemCollection lineItems;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -104,7 +104,13 @@ public class Transaction extends ApiResource implements HasId {
   @SerializedName("shipping_cost")
   ShippingCost shippingCost;
 
-  /** Timestamp of date at which the tax rules and rates in effect applies for the calculation. */
+  /**
+   * The calculation uses the tax rules and rates that are in effect at this timestamp. You can use
+   * a date up to 31 days in the past or up to 31 days in the future. If you use a future date,
+   * Stripe doesn't guarantee that the expected tax rules and rate being used match the actual rules
+   * and rate that will be in effect on that date. We deploy tax changes before their effective
+   * date, but not within a fixed window.
+   */
   @SerializedName("tax_date")
   Long taxDate;
 
@@ -335,11 +341,11 @@ public class Transaction extends ApiResource implements HasId {
       @SerializedName("country")
       String country;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -349,7 +355,7 @@ public class Transaction extends ApiResource implements HasId {
 
       /**
        * State/province as an <a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>
-       * subdivision code, without country prefix. Example: &quot;NY&quot; or &quot;TX&quot;.
+       * subdivision code, without country prefix, such as &quot;NY&quot; or &quot;TX&quot;.
        */
       @SerializedName("state")
       String state;
@@ -371,20 +377,22 @@ public class Transaction extends ApiResource implements HasId {
        * {@code gb_vat}, {@code nz_gst}, {@code au_abn}, {@code au_arn}, {@code in_gst}, {@code
        * no_vat}, {@code no_voec}, {@code za_vat}, {@code ch_vat}, {@code mx_rfc}, {@code sg_uen},
        * {@code ru_inn}, {@code ru_kpp}, {@code ca_bn}, {@code hk_br}, {@code es_cif}, {@code
-       * tw_vat}, {@code th_vat}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code li_uid},
-       * {@code li_vat}, {@code my_itn}, {@code us_ein}, {@code kr_brn}, {@code ca_qst}, {@code
-       * ca_gst_hst}, {@code ca_pst_bc}, {@code ca_pst_mb}, {@code ca_pst_sk}, {@code my_sst},
-       * {@code sg_gst}, {@code ae_trn}, {@code cl_tin}, {@code sa_vat}, {@code id_npwp}, {@code
-       * my_frp}, {@code il_vat}, {@code ge_vat}, {@code ua_vat}, {@code is_vat}, {@code bg_uic},
-       * {@code hu_tin}, {@code si_tin}, {@code ke_pin}, {@code tr_tin}, {@code eg_tin}, {@code
-       * ph_tin}, {@code al_tin}, {@code bh_vat}, {@code kz_bin}, {@code ng_tin}, {@code om_vat},
-       * {@code de_stn}, {@code ch_uid}, {@code tz_vat}, {@code uz_vat}, {@code uz_tin}, {@code
-       * md_vat}, {@code ma_vat}, {@code by_tin}, {@code ao_tin}, {@code bs_tin}, {@code bb_tin},
-       * {@code cd_nif}, {@code mr_nif}, {@code me_pib}, {@code zw_tin}, {@code ba_tin}, {@code
-       * gn_nif}, {@code mk_vat}, {@code sr_fin}, {@code sn_ninea}, {@code am_tin}, {@code np_pan},
-       * {@code tj_tin}, {@code ug_tin}, {@code zm_tin}, {@code kh_tin}, {@code aw_tin}, {@code
-       * az_tin}, {@code bd_bin}, {@code bj_ifu}, {@code et_tin}, {@code kg_tin}, {@code la_tin},
-       * {@code cm_niu}, {@code cv_nif}, {@code bf_ifu}, or {@code unknown}.
+       * pl_nip}, {@code it_cf}, {@code fo_vat}, {@code gi_tin}, {@code py_ruc}, {@code tw_vat},
+       * {@code th_vat}, {@code jp_cn}, {@code jp_rn}, {@code jp_trn}, {@code li_uid}, {@code
+       * li_vat}, {@code lk_vat}, {@code my_itn}, {@code us_ein}, {@code kr_brn}, {@code ca_qst},
+       * {@code ca_gst_hst}, {@code ca_pst_bc}, {@code ca_pst_mb}, {@code ca_pst_sk}, {@code
+       * my_sst}, {@code sg_gst}, {@code ae_trn}, {@code cl_tin}, {@code sa_vat}, {@code id_npwp},
+       * {@code my_frp}, {@code il_vat}, {@code ge_vat}, {@code ua_vat}, {@code is_vat}, {@code
+       * bg_uic}, {@code hu_tin}, {@code si_tin}, {@code ke_pin}, {@code tr_tin}, {@code eg_tin},
+       * {@code ph_tin}, {@code al_tin}, {@code bh_vat}, {@code kz_bin}, {@code ng_tin}, {@code
+       * om_vat}, {@code de_stn}, {@code ch_uid}, {@code tz_vat}, {@code uz_vat}, {@code uz_tin},
+       * {@code md_vat}, {@code ma_vat}, {@code by_tin}, {@code ao_tin}, {@code bs_tin}, {@code
+       * bb_tin}, {@code cd_nif}, {@code mr_nif}, {@code me_pib}, {@code zw_tin}, {@code ba_tin},
+       * {@code gn_nif}, {@code mk_vat}, {@code sr_fin}, {@code sn_ninea}, {@code am_tin}, {@code
+       * np_pan}, {@code tj_tin}, {@code ug_tin}, {@code zm_tin}, {@code kh_tin}, {@code aw_tin},
+       * {@code az_tin}, {@code bd_bin}, {@code bj_ifu}, {@code et_tin}, {@code kg_tin}, {@code
+       * la_tin}, {@code cm_niu}, {@code cv_nif}, {@code bf_ifu}, {@code ic_nif}, or {@code
+       * unknown}.
        */
       @SerializedName("type")
       String type;
@@ -438,11 +446,11 @@ public class Transaction extends ApiResource implements HasId {
       @SerializedName("country")
       String country;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -452,7 +460,7 @@ public class Transaction extends ApiResource implements HasId {
 
       /**
        * State/province as an <a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>
-       * subdivision code, without country prefix. Example: &quot;NY&quot; or &quot;TX&quot;.
+       * subdivision code, without country prefix, such as &quot;NY&quot; or &quot;TX&quot;.
        */
       @SerializedName("state")
       String state;
@@ -468,7 +476,7 @@ public class Transaction extends ApiResource implements HasId {
   @EqualsAndHashCode(callSuper = false)
   public static class ShippingCost extends StripeObject {
     /**
-     * The shipping amount in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest
+     * The shipping amount in the <a href="https://docs.stripe.com/currencies#minor-units">smallest
      * currency unit</a>. If {@code tax_behavior=inclusive}, then this amount includes taxes.
      * Otherwise, taxes were calculated on top of this amount.
      */
@@ -477,14 +485,14 @@ public class Transaction extends ApiResource implements HasId {
 
     /**
      * The amount of tax calculated for shipping, in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#minor-units">smallest currency unit</a>.
      */
     @SerializedName("amount_tax")
     Long amountTax;
 
     /**
      * The ID of an existing <a
-     * href="https://stripe.com/docs/api/shipping_rates/object">ShippingRate</a>.
+     * href="https://docs.stripe.com/api/shipping_rates/object">ShippingRate</a>.
      */
     @SerializedName("shipping_rate")
     String shippingRate;
@@ -506,7 +514,7 @@ public class Transaction extends ApiResource implements HasId {
     List<Transaction.ShippingCost.TaxBreakdown> taxBreakdown;
 
     /**
-     * The <a href="https://stripe.com/docs/tax/tax-categories">tax code</a> ID used for shipping.
+     * The <a href="https://docs.stripe.com/tax/tax-categories">tax code</a> ID used for shipping.
      */
     @SerializedName("tax_code")
     String taxCode;
@@ -520,8 +528,8 @@ public class Transaction extends ApiResource implements HasId {
     @EqualsAndHashCode(callSuper = false)
     public static class TaxBreakdown extends StripeObject {
       /**
-       * The amount of tax, in the <a
-       * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+       * The amount of tax, in the <a href="https://docs.stripe.com/currencies#minor-units">smallest
+       * currency unit</a>.
        */
       @SerializedName("amount")
       Long amount;
@@ -560,7 +568,7 @@ public class Transaction extends ApiResource implements HasId {
 
       /**
        * The amount on which tax is calculated, in the <a
-       * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+       * href="https://docs.stripe.com/currencies#minor-units">smallest currency unit</a>.
        */
       @SerializedName("taxable_amount")
       Long taxableAmount;
@@ -627,9 +635,9 @@ public class Transaction extends ApiResource implements HasId {
          * The tax type, such as {@code vat} or {@code sales_tax}.
          *
          * <p>One of {@code amusement_tax}, {@code communications_tax}, {@code gst}, {@code hst},
-         * {@code igst}, {@code jct}, {@code lease_tax}, {@code pst}, {@code qst}, {@code
-         * retail_delivery_fee}, {@code rst}, {@code sales_tax}, {@code service_tax}, or {@code
-         * vat}.
+         * {@code igst}, {@code jct}, {@code lease_tax}, {@code mass_transit_parking_tax}, {@code
+         * parking_tax}, {@code pst}, {@code qst}, {@code retail_delivery_fee}, {@code rst}, {@code
+         * sales_tax}, {@code service_tax}, or {@code vat}.
          */
         @SerializedName("tax_type")
         String taxType;

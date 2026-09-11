@@ -38,6 +38,10 @@ public class Account extends ApiResource implements HasId {
   @SerializedName("account_holder")
   AccountHolder accountHolder;
 
+  /** Details about the account numbers. */
+  @SerializedName("account_numbers")
+  List<Account.AccountNumber> accountNumbers;
+
   /** The most recent information about the account's balance. */
   @SerializedName("balance")
   Balance balance;
@@ -79,8 +83,8 @@ public class Account extends ApiResource implements HasId {
   String last4;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -115,6 +119,9 @@ public class Account extends ApiResource implements HasId {
   @SerializedName("status")
   String status;
 
+  @SerializedName("status_details")
+  StatusDetails statusDetails;
+
   /**
    * If {@code category} is {@code cash}, one of:
    *
@@ -135,7 +142,7 @@ public class Account extends ApiResource implements HasId {
 
   /**
    * The <a
-   * href="https://stripe.com/docs/api/payment_methods/object#payment_method_object-type">PaymentMethod
+   * href="https://docs.stripe.com/api/payment_methods/object#payment_method_object-type">PaymentMethod
    * type</a>(s) that can be created from this account.
    */
   @SerializedName("supported_payment_method_types")
@@ -393,7 +400,7 @@ public class Account extends ApiResource implements HasId {
 
   /**
    * Subscribes to periodic refreshes of data associated with a Financial Connections {@code
-   * Account}.
+   * Account}. When the account status is active, data is typically refreshed once a day.
    */
   public com.stripe.model.financialconnections.Account subscribe(Map<String, Object> params)
       throws StripeException {
@@ -402,7 +409,7 @@ public class Account extends ApiResource implements HasId {
 
   /**
    * Subscribes to periodic refreshes of data associated with a Financial Connections {@code
-   * Account}.
+   * Account}. When the account status is active, data is typically refreshed once a day.
    */
   public com.stripe.model.financialconnections.Account subscribe(
       Map<String, Object> params, RequestOptions options) throws StripeException {
@@ -418,7 +425,7 @@ public class Account extends ApiResource implements HasId {
 
   /**
    * Subscribes to periodic refreshes of data associated with a Financial Connections {@code
-   * Account}.
+   * Account}. When the account status is active, data is typically refreshed once a day.
    */
   public com.stripe.model.financialconnections.Account subscribe(AccountSubscribeParams params)
       throws StripeException {
@@ -427,7 +434,7 @@ public class Account extends ApiResource implements HasId {
 
   /**
    * Subscribes to periodic refreshes of data associated with a Financial Connections {@code
-   * Account}.
+   * Account}. When the account status is active, data is typically refreshed once a day.
    */
   public com.stripe.model.financialconnections.Account subscribe(
       AccountSubscribeParams params, RequestOptions options) throws StripeException {
@@ -512,7 +519,7 @@ public class Account extends ApiResource implements HasId {
   @EqualsAndHashCode(callSuper = false)
   public static class AccountHolder extends StripeObject {
     /**
-     * The ID of the Stripe account this account belongs to. Should only be present if {@code
+     * The ID of the Stripe account that this account belongs to. Only available when {@code
      * account_holder.type} is {@code account}.
      */
     @SerializedName("account")
@@ -521,13 +528,16 @@ public class Account extends ApiResource implements HasId {
     ExpandableField<com.stripe.model.Account> account;
 
     /**
-     * ID of the Stripe customer this account belongs to. Present if and only if {@code
-     * account_holder.type} is {@code customer}.
+     * The ID for an Account representing a customer that this account belongs to. Only available
+     * when {@code account_holder.type} is {@code customer}.
      */
     @SerializedName("customer")
     @Getter(lombok.AccessLevel.NONE)
     @Setter(lombok.AccessLevel.NONE)
     ExpandableField<Customer> customer;
+
+    @SerializedName("customer_account")
+    String customerAccount;
 
     /**
      * Type of account holder that this account belongs to.
@@ -573,6 +583,39 @@ public class Account extends ApiResource implements HasId {
     public void setCustomerObject(Customer expandableObject) {
       this.customer = new ExpandableField<Customer>(expandableObject.getId(), expandableObject);
     }
+  }
+
+  /**
+   * For more details about AccountNumber, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class AccountNumber extends StripeObject {
+    /** When the account number is expected to expire, if applicable. */
+    @SerializedName("expected_expiry_date")
+    Long expectedExpiryDate;
+
+    /**
+     * The type of account number associated with the account.
+     *
+     * <p>One of {@code account_number}, or {@code tokenized_account_number}.
+     */
+    @SerializedName("identifier_type")
+    String identifierType;
+
+    /**
+     * Whether the account number is currently active and usable for transactions.
+     *
+     * <p>One of {@code deactivated}, or {@code transactable}.
+     */
+    @SerializedName("status")
+    String status;
+
+    /** The payment networks that the account number can be used for. */
+    @SerializedName("supported_networks")
+    List<String> supportedNetworks;
   }
 
   /**
@@ -727,6 +770,47 @@ public class Account extends ApiResource implements HasId {
   }
 
   /**
+   * For more details about StatusDetails, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class StatusDetails extends StripeObject {
+    @SerializedName("active")
+    Active active;
+
+    /**
+     * For more details about Active, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Active extends StripeObject {
+      /**
+       * The action (if any) to proactively relink the Account.
+       *
+       * <p>One of {@code none}, or {@code relink_required}.
+       */
+      @SerializedName("action")
+      String action;
+
+      /**
+       * The underlying cause of the Account becoming inactive.
+       *
+       * <p>One of {@code access_expired}, {@code institution_requirement}, or {@code unspecified}.
+       */
+      @SerializedName("cause")
+      String cause;
+
+      /** When the Account is expected to become inactive, if applicable. */
+      @SerializedName("expected_deactivation_date")
+      Long expectedDeactivationDate;
+    }
+  }
+
+  /**
    * For more details about TransactionRefresh, please refer to the <a
    * href="https://docs.stripe.com/api">API Reference.</a>
    */
@@ -770,6 +854,7 @@ public class Account extends ApiResource implements HasId {
     trySetResponseGetter(balanceRefresh, responseGetter);
     trySetResponseGetter(ownership, responseGetter);
     trySetResponseGetter(ownershipRefresh, responseGetter);
+    trySetResponseGetter(statusDetails, responseGetter);
     trySetResponseGetter(transactionRefresh, responseGetter);
   }
 }

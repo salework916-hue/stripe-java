@@ -9,6 +9,11 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * A Meter Event Adjustment is used to cancel or modify previously recorded meter events. Meter
+ * Event Adjustments allow you to correct billing data by canceling individual events or event
+ * ranges, with tracking of adjustment status and creation time.
+ */
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = false)
@@ -25,7 +30,7 @@ public class MeterEventAdjustment extends StripeObject implements HasId {
   @SerializedName("event_name")
   String eventName;
 
-  /** The unique id of this meter event adjustment. */
+  /** The unique ID of this meter event adjustment. */
   @Getter(onMethod_ = {@Override})
   @SerializedName("id")
   String id;
@@ -47,7 +52,7 @@ public class MeterEventAdjustment extends StripeObject implements HasId {
   String object;
 
   /**
-   * Open Enum. The meter event adjustment’s status.
+   * Open Enum. The meter event adjustment's status.
    *
    * <p>One of {@code complete}, or {@code pending}.
    */
@@ -55,25 +60,21 @@ public class MeterEventAdjustment extends StripeObject implements HasId {
   String status;
 
   /**
-   * Open Enum. Specifies whether to cancel a single event or a range of events for a time period.
-   * Time period cancellation is not supported yet.
+   * Open Enum. Specifies the type of cancellation. Currently supports canceling a single event.
    *
    * <p>Equal to {@code cancel}.
    */
   @SerializedName("type")
   String type;
 
-  /**
-   * For more details about Cancel, please refer to the <a href="https://docs.stripe.com/api">API
-   * Reference.</a>
-   */
+  /** Specifies which event to cancel. */
   @Getter
   @Setter
   @EqualsAndHashCode(callSuper = false)
   public static class Cancel extends StripeObject {
     /**
-     * Unique identifier for the event. You can only cancel events within 24 hours of Stripe
-     * receiving them.
+     * The identifier that was originally assigned to the meter event. You can only cancel events
+     * within 24 hours of Stripe receiving them.
      */
     @SerializedName("identifier")
     String identifier;

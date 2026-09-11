@@ -21,12 +21,12 @@ import lombok.Setter;
  * The Report Type resource corresponds to a particular type of report, such as the &quot;Activity
  * summary&quot; or &quot;Itemized payouts&quot; reports. These objects are identified by an ID
  * belonging to a set of enumerated values. See <a
- * href="https://stripe.com/docs/reporting/statements/api">API Access to Reports documentation</a>
+ * href="https://docs.stripe.com/reporting/statements/api">API Access to Reports documentation</a>
  * for those Report Type IDs, along with required and optional parameters.
  *
  * <p>Note that certain report types can only be run based on your live-mode data (not test-mode
  * data), and will error when queried without a <a
- * href="https://stripe.com/docs/keys#test-live-modes">live-mode API key</a>.
+ * href="https://docs.stripe.com/keys#test-live-modes">live-mode API key</a>.
  */
 @Getter
 @Setter
@@ -54,7 +54,7 @@ public class ReportType extends ApiResource implements HasId {
   List<String> defaultColumns;
 
   /**
-   * The <a href="https://stripe.com/docs/reporting/statements/api#available-report-types">ID of the
+   * The <a href="https://docs.stripe.com/reporting/statements/api#available-report-types">ID of the
    * Report Type</a>, such as {@code balance.summary.1}.
    */
   @Getter(onMethod_ = {@Override})
@@ -62,8 +62,8 @@ public class ReportType extends ApiResource implements HasId {
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

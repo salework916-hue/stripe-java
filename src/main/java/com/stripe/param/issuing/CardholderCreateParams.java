@@ -44,7 +44,7 @@ public class CardholderCreateParams extends ApiRequestParams {
   Individual individual;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -64,7 +64,7 @@ public class CardholderCreateParams extends ApiRequestParams {
    * The cardholder's phone number. This will be transformed to <a
    * href="https://en.wikipedia.org/wiki/E.164">E.164</a> if it is not provided in that format
    * already. This is required for all cardholders who will be creating EU cards. See the <a
-   * href="https://stripe.com/docs/issuing/3d-secure#when-is-3d-secure-applied">3D Secure
+   * href="https://docs.stripe.com/issuing/3d-secure#when-is-3d-secure-applied">3D Secure
    * documentation</a> for more details.
    */
   @SerializedName("phone_number")
@@ -73,7 +73,7 @@ public class CardholderCreateParams extends ApiRequestParams {
   /**
    * The cardholder’s preferred locales (languages), ordered by preference. Locales can be {@code
    * de}, {@code en}, {@code es}, {@code fr}, or {@code it}. This changes the language of the <a
-   * href="https://stripe.com/docs/issuing/3d-secure">3D Secure flow</a> and one-time password
+   * href="https://docs.stripe.com/issuing/3d-secure">3D Secure flow</a> and one-time password
    * messages sent to the cardholder.
    */
   @SerializedName("preferred_locales")
@@ -81,7 +81,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
   /**
    * Rules that control spending across this cardholder's cards. Refer to our <a
-   * href="https://stripe.com/docs/issuing/controls/spending-controls">documentation</a> for more
+   * href="https://docs.stripe.com/issuing/controls/spending-controls">documentation</a> for more
    * details.
    */
   @SerializedName("spending_controls")
@@ -96,7 +96,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
   /**
    * One of {@code individual} or {@code company}. See <a
-   * href="https://stripe.com/docs/issuing/other/choose-cardholder">Choose a cardholder type</a> for
+   * href="https://docs.stripe.com/issuing/other/choose-cardholder">Choose a cardholder type</a> for
    * more details.
    */
   @SerializedName("type")
@@ -296,7 +296,7 @@ public class CardholderCreateParams extends ApiRequestParams {
      * The cardholder's phone number. This will be transformed to <a
      * href="https://en.wikipedia.org/wiki/E.164">E.164</a> if it is not provided in that format
      * already. This is required for all cardholders who will be creating EU cards. See the <a
-     * href="https://stripe.com/docs/issuing/3d-secure#when-is-3d-secure-applied">3D Secure
+     * href="https://docs.stripe.com/issuing/3d-secure#when-is-3d-secure-applied">3D Secure
      * documentation</a> for more details.
      */
     public Builder setPhoneNumber(String phoneNumber) {
@@ -332,7 +332,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
     /**
      * Rules that control spending across this cardholder's cards. Refer to our <a
-     * href="https://stripe.com/docs/issuing/controls/spending-controls">documentation</a> for more
+     * href="https://docs.stripe.com/issuing/controls/spending-controls">documentation</a> for more
      * details.
      */
     public Builder setSpendingControls(CardholderCreateParams.SpendingControls spendingControls) {
@@ -351,7 +351,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
     /**
      * One of {@code individual} or {@code company}. See <a
-     * href="https://stripe.com/docs/issuing/other/choose-cardholder">Choose a cardholder type</a>
+     * href="https://docs.stripe.com/issuing/other/choose-cardholder">Choose a cardholder type</a>
      * for more details.
      */
     public Builder setType(CardholderCreateParams.Type type) {
@@ -451,11 +451,11 @@ public class CardholderCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** <strong>Required.</strong> Address line 1 (e.g., street, PO Box, or company name). */
+      /** <strong>Required.</strong> Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -463,7 +463,10 @@ public class CardholderCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -558,13 +561,15 @@ public class CardholderCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** <strong>Required.</strong> Address line 1 (e.g., street, PO Box, or company name). */
+        /**
+         * <strong>Required.</strong> Address line 1, such as the street, PO Box, or company name.
+         */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -576,7 +581,10 @@ public class CardholderCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
@@ -816,7 +824,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
       /**
        * Information about cardholder acceptance of Celtic <a
-       * href="https://stripe.com/docs/issuing/cards#accept-authorized-user-terms">Authorized User
+       * href="https://docs.stripe.com/issuing/compliance-us#issuing-terms">Authorized User
        * Terms</a>. Required for cards backed by a Celtic program.
        */
       @SerializedName("user_terms_acceptance")
@@ -873,7 +881,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
         /**
          * Information about cardholder acceptance of Celtic <a
-         * href="https://stripe.com/docs/issuing/cards#accept-authorized-user-terms">Authorized User
+         * href="https://docs.stripe.com/issuing/compliance-us#issuing-terms">Authorized User
          * Terms</a>. Required for cards backed by a Celtic program.
          */
         public Builder setUserTermsAcceptance(
@@ -886,10 +894,7 @@ public class CardholderCreateParams extends ApiRequestParams {
       @Getter
       @EqualsAndHashCode(callSuper = false)
       public static class UserTermsAcceptance {
-        /**
-         * The Unix timestamp marking when the cardholder accepted the Authorized User Terms.
-         * Required for Celtic Spend Card users.
-         */
+        /** The Unix timestamp marking when the cardholder accepted the Authorized User Terms. */
         @SerializedName("date")
         Long date;
 
@@ -903,10 +908,7 @@ public class CardholderCreateParams extends ApiRequestParams {
         @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
         Map<String, Object> extraParams;
 
-        /**
-         * The IP address from which the cardholder accepted the Authorized User Terms. Required for
-         * Celtic Spend Card users.
-         */
+        /** The IP address from which the cardholder accepted the Authorized User Terms. */
         @SerializedName("ip")
         String ip;
 
@@ -944,10 +946,7 @@ public class CardholderCreateParams extends ApiRequestParams {
                 this.date, this.extraParams, this.ip, this.userAgent);
           }
 
-          /**
-           * The Unix timestamp marking when the cardholder accepted the Authorized User Terms.
-           * Required for Celtic Spend Card users.
-           */
+          /** The Unix timestamp marking when the cardholder accepted the Authorized User Terms. */
           public Builder setDate(Long date) {
             this.date = date;
             return this;
@@ -983,10 +982,7 @@ public class CardholderCreateParams extends ApiRequestParams {
             return this;
           }
 
-          /**
-           * The IP address from which the cardholder accepted the Authorized User Terms. Required
-           * for Celtic Spend Card users.
-           */
+          /** The IP address from which the cardholder accepted the Authorized User Terms. */
           public Builder setIp(String ip) {
             this.ip = ip;
             return this;
@@ -1187,7 +1183,7 @@ public class CardholderCreateParams extends ApiRequestParams {
       @EqualsAndHashCode(callSuper = false)
       public static class Document {
         /**
-         * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+         * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
          * upload</a> with a {@code purpose} value of {@code identity_document}.
          */
         @SerializedName("back")
@@ -1204,7 +1200,7 @@ public class CardholderCreateParams extends ApiRequestParams {
         Map<String, Object> extraParams;
 
         /**
-         * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+         * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
          * upload</a> with a {@code purpose} value of {@code identity_document}.
          */
         @SerializedName("front")
@@ -1234,7 +1230,7 @@ public class CardholderCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The back of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+           * The back of an ID returned by a <a href="https://api.stripe.com#create_file">file
            * upload</a> with a {@code purpose} value of {@code identity_document}.
            */
           public Builder setBack(String back) {
@@ -1271,7 +1267,7 @@ public class CardholderCreateParams extends ApiRequestParams {
           }
 
           /**
-           * The front of an ID returned by a <a href="https://stripe.com/docs/api#create_file">file
+           * The front of an ID returned by a <a href="https://api.stripe.com#create_file">file
            * upload</a> with a {@code purpose} value of {@code identity_document}.
            */
           public Builder setFront(String front) {
@@ -1287,8 +1283,16 @@ public class CardholderCreateParams extends ApiRequestParams {
   @EqualsAndHashCode(callSuper = false)
   public static class SpendingControls {
     /**
+     * Array of card presence statuses from which authorizations will be allowed. Possible options
+     * are {@code present}, {@code not_present}. All other statuses will be blocked. Cannot be set
+     * with {@code blocked_card_presences}. Provide an empty value to unset this control.
+     */
+    @SerializedName("allowed_card_presences")
+    List<CardholderCreateParams.SpendingControls.AllowedCardPresence> allowedCardPresences;
+
+    /**
      * Array of strings containing <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+     * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
      * of authorizations to allow. All other categories will be blocked. Cannot be set with {@code
      * blocked_categories}.
      */
@@ -1305,8 +1309,16 @@ public class CardholderCreateParams extends ApiRequestParams {
     List<String> allowedMerchantCountries;
 
     /**
+     * Array of card presence statuses from which authorizations will be declined. Possible options
+     * are {@code present}, {@code not_present}. Cannot be set with {@code allowed_card_presences}.
+     * Provide an empty value to unset this control.
+     */
+    @SerializedName("blocked_card_presences")
+    List<CardholderCreateParams.SpendingControls.BlockedCardPresence> blockedCardPresences;
+
+    /**
      * Array of strings containing <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+     * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
      * of authorizations to decline. All other categories will be allowed. Cannot be set with {@code
      * allowed_categories}.
      */
@@ -1342,15 +1354,19 @@ public class CardholderCreateParams extends ApiRequestParams {
     String spendingLimitsCurrency;
 
     private SpendingControls(
+        List<CardholderCreateParams.SpendingControls.AllowedCardPresence> allowedCardPresences,
         List<CardholderCreateParams.SpendingControls.AllowedCategory> allowedCategories,
         List<String> allowedMerchantCountries,
+        List<CardholderCreateParams.SpendingControls.BlockedCardPresence> blockedCardPresences,
         List<CardholderCreateParams.SpendingControls.BlockedCategory> blockedCategories,
         List<String> blockedMerchantCountries,
         Map<String, Object> extraParams,
         List<CardholderCreateParams.SpendingControls.SpendingLimit> spendingLimits,
         String spendingLimitsCurrency) {
+      this.allowedCardPresences = allowedCardPresences;
       this.allowedCategories = allowedCategories;
       this.allowedMerchantCountries = allowedMerchantCountries;
+      this.blockedCardPresences = blockedCardPresences;
       this.blockedCategories = blockedCategories;
       this.blockedMerchantCountries = blockedMerchantCountries;
       this.extraParams = extraParams;
@@ -1363,9 +1379,15 @@ public class CardholderCreateParams extends ApiRequestParams {
     }
 
     public static class Builder {
+      private List<CardholderCreateParams.SpendingControls.AllowedCardPresence>
+          allowedCardPresences;
+
       private List<CardholderCreateParams.SpendingControls.AllowedCategory> allowedCategories;
 
       private List<String> allowedMerchantCountries;
+
+      private List<CardholderCreateParams.SpendingControls.BlockedCardPresence>
+          blockedCardPresences;
 
       private List<CardholderCreateParams.SpendingControls.BlockedCategory> blockedCategories;
 
@@ -1380,13 +1402,45 @@ public class CardholderCreateParams extends ApiRequestParams {
       /** Finalize and obtain parameter instance from this builder. */
       public CardholderCreateParams.SpendingControls build() {
         return new CardholderCreateParams.SpendingControls(
+            this.allowedCardPresences,
             this.allowedCategories,
             this.allowedMerchantCountries,
+            this.blockedCardPresences,
             this.blockedCategories,
             this.blockedMerchantCountries,
             this.extraParams,
             this.spendingLimits,
             this.spendingLimitsCurrency);
+      }
+
+      /**
+       * Add an element to `allowedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardholderCreateParams.SpendingControls#allowedCardPresences} for the field
+       * documentation.
+       */
+      public Builder addAllowedCardPresence(
+          CardholderCreateParams.SpendingControls.AllowedCardPresence element) {
+        if (this.allowedCardPresences == null) {
+          this.allowedCardPresences = new ArrayList<>();
+        }
+        this.allowedCardPresences.add(element);
+        return this;
+      }
+
+      /**
+       * Add all elements to `allowedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardholderCreateParams.SpendingControls#allowedCardPresences} for the field
+       * documentation.
+       */
+      public Builder addAllAllowedCardPresence(
+          List<CardholderCreateParams.SpendingControls.AllowedCardPresence> elements) {
+        if (this.allowedCardPresences == null) {
+          this.allowedCardPresences = new ArrayList<>();
+        }
+        this.allowedCardPresences.addAll(elements);
+        return this;
       }
 
       /**
@@ -1444,6 +1498,36 @@ public class CardholderCreateParams extends ApiRequestParams {
           this.allowedMerchantCountries = new ArrayList<>();
         }
         this.allowedMerchantCountries.addAll(elements);
+        return this;
+      }
+
+      /**
+       * Add an element to `blockedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardholderCreateParams.SpendingControls#blockedCardPresences} for the field
+       * documentation.
+       */
+      public Builder addBlockedCardPresence(
+          CardholderCreateParams.SpendingControls.BlockedCardPresence element) {
+        if (this.blockedCardPresences == null) {
+          this.blockedCardPresences = new ArrayList<>();
+        }
+        this.blockedCardPresences.add(element);
+        return this;
+      }
+
+      /**
+       * Add all elements to `blockedCardPresences` list. A list is initialized for the first
+       * `add/addAll` call, and subsequent calls adds additional elements to the original list. See
+       * {@link CardholderCreateParams.SpendingControls#blockedCardPresences} for the field
+       * documentation.
+       */
+      public Builder addAllBlockedCardPresence(
+          List<CardholderCreateParams.SpendingControls.BlockedCardPresence> elements) {
+        if (this.blockedCardPresences == null) {
+          this.blockedCardPresences = new ArrayList<>();
+        }
+        this.blockedCardPresences.addAll(elements);
         return this;
       }
 
@@ -1579,7 +1663,7 @@ public class CardholderCreateParams extends ApiRequestParams {
 
       /**
        * Array of strings containing <a
-       * href="https://stripe.com/docs/api#issuing_authorization_object-merchant_data-category">categories</a>
+       * href="https://docs.stripe.com/api#issuing_authorization_object-merchant_data-category">categories</a>
        * this limit applies to. Omitting this field will apply the limit to all categories.
        */
       @SerializedName("categories")
@@ -2644,6 +2728,21 @@ public class CardholderCreateParams extends ApiRequestParams {
       }
     }
 
+    public enum AllowedCardPresence implements ApiRequestParams.EnumParam {
+      @SerializedName("not_present")
+      NOT_PRESENT("not_present"),
+
+      @SerializedName("present")
+      PRESENT("present");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      AllowedCardPresence(String value) {
+        this.value = value;
+      }
+    }
+
     public enum AllowedCategory implements ApiRequestParams.EnumParam {
       @SerializedName("ac_refrigeration_repair")
       AC_REFRIGERATION_REPAIR("ac_refrigeration_repair"),
@@ -3556,6 +3655,21 @@ public class CardholderCreateParams extends ApiRequestParams {
       private final String value;
 
       AllowedCategory(String value) {
+        this.value = value;
+      }
+    }
+
+    public enum BlockedCardPresence implements ApiRequestParams.EnumParam {
+      @SerializedName("not_present")
+      NOT_PRESENT("not_present"),
+
+      @SerializedName("present")
+      PRESENT("present");
+
+      @Getter(onMethod_ = {@Override})
+      private final String value;
+
+      BlockedCardPresence(String value) {
         this.value = value;
       }
     }

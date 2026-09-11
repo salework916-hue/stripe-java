@@ -4,7 +4,8 @@ package com.stripe.events;
 import com.google.gson.annotations.SerializedName;
 import com.stripe.exception.StripeException;
 import com.stripe.model.billing.Meter;
-import com.stripe.model.v2.Event;
+import com.stripe.model.v2.core.Event;
+import com.stripe.model.v2.core.Event.RelatedObject;
 import java.time.Instant;
 import java.util.List;
 import lombok.Getter;
@@ -35,7 +36,7 @@ public final class V1BillingMeterErrorReportTriggeredEvent extends Event {
     public static final class Reason {
       /** The total error count within this window. */
       @SerializedName("error_count")
-      Integer errorCount;
+      Long errorCount;
       /** The error details. */
       @SerializedName("error_types")
       List<V1BillingMeterErrorReportTriggeredEvent.EventData.Reason.ErrorType> errorTypes;
@@ -46,14 +47,15 @@ public final class V1BillingMeterErrorReportTriggeredEvent extends Event {
          *
          * <p>One of {@code archived_meter}, {@code meter_event_customer_not_found}, {@code
          * meter_event_dimension_count_too_high}, {@code meter_event_invalid_value}, {@code
-         * meter_event_no_customer_defined}, {@code missing_dimension_payload_keys}, {@code
-         * no_meter}, {@code timestamp_in_future}, or {@code timestamp_too_far_in_past}.
+         * meter_event_no_customer_defined}, {@code meter_event_value_too_many_digits}, {@code
+         * missing_dimension_payload_keys}, {@code no_meter}, {@code timestamp_in_future}, or {@code
+         * timestamp_too_far_in_past}.
          */
         @SerializedName("code")
         String code;
         /** The number of errors of this type. */
         @SerializedName("error_count")
-        Integer errorCount;
+        Long errorCount;
         /** A list of sample errors of this type. */
         @SerializedName("sample_errors")
         List<V1BillingMeterErrorReportTriggeredEvent.EventData.Reason.ErrorType.SampleError>

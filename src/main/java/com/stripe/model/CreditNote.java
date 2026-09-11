@@ -25,7 +25,7 @@ import lombok.Setter;
 /**
  * Issue a credit note to adjust an invoice's amount after the invoice is finalized.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/billing/invoices/credit-notes">Credit
+ * <p>Related guide: <a href="https://docs.stripe.com/billing/invoices/credit-notes">Credit
  * notes</a>
  */
 @Getter
@@ -59,6 +59,10 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
   @Getter(lombok.AccessLevel.NONE)
   @Setter(lombok.AccessLevel.NONE)
   ExpandableField<Customer> customer;
+
+  /** ID of the account representing the customer. */
+  @SerializedName("customer_account")
+  String customerAccount;
 
   /** Customer balance transaction related to this credit note. */
   @SerializedName("customer_balance_transaction")
@@ -101,8 +105,8 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
   CreditNoteLineItemCollection lines;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -112,7 +116,7 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
   String memo;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -178,7 +182,7 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
 
   /**
    * Status of this credit note, one of {@code issued} or {@code void}. Learn more about <a
-   * href="https://stripe.com/docs/billing/invoices/credit-notes#voiding">voiding credit notes</a>.
+   * href="https://docs.stripe.com/billing/invoices/credit-notes#voiding">voiding credit notes</a>.
    */
   @SerializedName("status")
   String status;
@@ -311,6 +315,12 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
    * <p>You may issue multiple credit notes for an invoice. Each credit note may increment the
    * invoice’s {@code pre_payment_credit_notes_amount}, {@code post_payment_credit_notes_amount}, or
    * both, depending on the invoice’s {@code amount_remaining} at the time of credit note creation.
+   *
+   * <p>For invoices that also have refunds created through the <a
+   * href="https://stripe.com/docs/api/refunds">Refund API</a>, the credit note API subtracts those
+   * refund amounts from the maximum creditable amount. This prevents the combined credit notes and
+   * refunds from exceeding the invoice amount. If you use both, ensure the combined total does not
+   * exceed the invoice’s paid amount.
    */
   public static CreditNote create(Map<String, Object> params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -340,6 +350,12 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
    * <p>You may issue multiple credit notes for an invoice. Each credit note may increment the
    * invoice’s {@code pre_payment_credit_notes_amount}, {@code post_payment_credit_notes_amount}, or
    * both, depending on the invoice’s {@code amount_remaining} at the time of credit note creation.
+   *
+   * <p>For invoices that also have refunds created through the <a
+   * href="https://stripe.com/docs/api/refunds">Refund API</a>, the credit note API subtracts those
+   * refund amounts from the maximum creditable amount. This prevents the combined credit notes and
+   * refunds from exceeding the invoice amount. If you use both, ensure the combined total does not
+   * exceed the invoice’s paid amount.
    */
   public static CreditNote create(Map<String, Object> params, RequestOptions options)
       throws StripeException {
@@ -373,6 +389,12 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
    * <p>You may issue multiple credit notes for an invoice. Each credit note may increment the
    * invoice’s {@code pre_payment_credit_notes_amount}, {@code post_payment_credit_notes_amount}, or
    * both, depending on the invoice’s {@code amount_remaining} at the time of credit note creation.
+   *
+   * <p>For invoices that also have refunds created through the <a
+   * href="https://stripe.com/docs/api/refunds">Refund API</a>, the credit note API subtracts those
+   * refund amounts from the maximum creditable amount. This prevents the combined credit notes and
+   * refunds from exceeding the invoice amount. If you use both, ensure the combined total does not
+   * exceed the invoice’s paid amount.
    */
   public static CreditNote create(CreditNoteCreateParams params) throws StripeException {
     return create(params, (RequestOptions) null);
@@ -402,6 +424,12 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
    * <p>You may issue multiple credit notes for an invoice. Each credit note may increment the
    * invoice’s {@code pre_payment_credit_notes_amount}, {@code post_payment_credit_notes_amount}, or
    * both, depending on the invoice’s {@code amount_remaining} at the time of credit note creation.
+   *
+   * <p>For invoices that also have refunds created through the <a
+   * href="https://stripe.com/docs/api/refunds">Refund API</a>, the credit note API subtracts those
+   * refund amounts from the maximum creditable amount. This prevents the combined credit notes and
+   * refunds from exceeding the invoice amount. If you use both, ensure the combined total does not
+   * exceed the invoice’s paid amount.
    */
   public static CreditNote create(CreditNoteCreateParams params, RequestOptions options)
       throws StripeException {
@@ -739,11 +767,19 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
     @SerializedName("amount_refunded")
     Long amountRefunded;
 
+    /** The PaymentRecord refund details associated with this credit note refund. */
+    @SerializedName("payment_record_refund")
+    PaymentRecordRefund paymentRecordRefund;
+
     /** ID of the refund. */
     @SerializedName("refund")
     @Getter(lombok.AccessLevel.NONE)
     @Setter(lombok.AccessLevel.NONE)
     ExpandableField<com.stripe.model.Refund> refund;
+
+    /** Type of the refund, one of {@code refund} or {@code payment_record_refund}. */
+    @SerializedName("type")
+    String type;
 
     /** Get ID of expandable {@code refund} object. */
     public String getRefund() {
@@ -762,6 +798,23 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
     public void setRefundObject(com.stripe.model.Refund expandableObject) {
       this.refund =
           new ExpandableField<com.stripe.model.Refund>(expandableObject.getId(), expandableObject);
+    }
+
+    /**
+     * For more details about PaymentRecordRefund, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class PaymentRecordRefund extends StripeObject {
+      /** ID of the payment record. */
+      @SerializedName("payment_record")
+      String paymentRecord;
+
+      /** ID of the refund group. */
+      @SerializedName("refund_group")
+      String refundGroup;
     }
   }
 
@@ -918,8 +971,29 @@ public class CreditNote extends ApiResource implements HasId, MetadataStore<Cred
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class TaxRateDetails extends StripeObject {
+      /** ID of the tax rate. */
       @SerializedName("tax_rate")
-      String taxRate;
+      @Getter(lombok.AccessLevel.NONE)
+      @Setter(lombok.AccessLevel.NONE)
+      ExpandableField<TaxRate> taxRate;
+
+      /** Get ID of expandable {@code taxRate} object. */
+      public String getTaxRate() {
+        return (this.taxRate != null) ? this.taxRate.getId() : null;
+      }
+
+      public void setTaxRate(String id) {
+        this.taxRate = ApiResource.setExpandableFieldId(id, this.taxRate);
+      }
+
+      /** Get expanded {@code taxRate}. */
+      public TaxRate getTaxRateObject() {
+        return (this.taxRate != null) ? this.taxRate.getExpanded() : null;
+      }
+
+      public void setTaxRateObject(TaxRate expandableObject) {
+        this.taxRate = new ExpandableField<TaxRate>(expandableObject.getId(), expandableObject);
+      }
     }
   }
 

@@ -34,12 +34,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * When an <a href="https://stripe.com/docs/issuing">issued card</a> is used to make a purchase, an
+ * When an <a href="https://docs.stripe.com/issuing">issued card</a> is used to make a purchase, an
  * Issuing {@code Authorization} object is created. <a
- * href="https://stripe.com/docs/issuing/purchases/authorizations">Authorizations</a> must be
+ * href="https://docs.stripe.com/issuing/purchases/authorizations">Authorizations</a> must be
  * approved for the purchase to be completed successfully.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/issuing/purchases/authorizations">Issued card
+ * <p>Related guide: <a href="https://docs.stripe.com/issuing/purchases/authorizations">Issued card
  * authorizations</a>
  */
 @Getter
@@ -58,7 +58,7 @@ public class Authorization extends ApiResource
 
   /**
    * Detailed breakdown of amount components. These amounts are denominated in {@code currency} and
-   * in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+   * in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
    */
   @SerializedName("amount_details")
   AmountDetails amountDetails;
@@ -81,11 +81,19 @@ public class Authorization extends ApiResource
   List<BalanceTransaction> balanceTransactions;
 
   /**
-   * You can <a href="https://stripe.com/docs/issuing">create physical or virtual cards</a> that are
+   * You can <a href="https://docs.stripe.com/issuing">create physical or virtual cards</a> that are
    * issued to cardholders.
    */
   @SerializedName("card")
   Card card;
+
+  /**
+   * Whether the card was present at the point of sale for the authorization.
+   *
+   * <p>One of {@code not_present}, or {@code present}.
+   */
+  @SerializedName("card_presence")
+  String cardPresence;
 
   /** The cardholder to whom this authorization belongs. */
   @SerializedName("cardholder")
@@ -130,8 +138,8 @@ public class Authorization extends ApiResource
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
@@ -160,7 +168,7 @@ public class Authorization extends ApiResource
   MerchantData merchantData;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -206,7 +214,7 @@ public class Authorization extends ApiResource
   String status;
 
   /**
-   * <a href="https://stripe.com/docs/api/issuing/tokens/object">Token</a> object used for this
+   * <a href="https://docs.stripe.com/api/issuing/tokens/object">Token</a> object used for this
    * authorization. If a network token was not used for this authorization, this field will be null.
    */
   @SerializedName("token")
@@ -215,16 +223,16 @@ public class Authorization extends ApiResource
   ExpandableField<Token> token;
 
   /**
-   * List of <a href="https://stripe.com/docs/api/issuing/transactions">transactions</a> associated
+   * List of <a href="https://docs.stripe.com/api/issuing/transactions">transactions</a> associated
    * with this authorization.
    */
   @SerializedName("transactions")
   List<Transaction> transactions;
 
   /**
-   * <a href="https://stripe.com/docs/api/treasury">Treasury</a> details related to this
+   * <a href="https://docs.stripe.com/api/treasury">Treasury</a> details related to this
    * authorization if it was created on a <a
-   * href="https://stripe.com/docs/api/treasury/financial_accounts">FinancialAccount</a>.
+   * href="https://docs.stripe.com/api/treasury/financial_accounts">FinancialAccount</a>.
    */
   @SerializedName("treasury")
   Treasury treasury;
@@ -877,7 +885,7 @@ public class Authorization extends ApiResource
   public static class MerchantData extends StripeObject {
     /**
      * A categorization of the seller's type of business. See our <a
-     * href="https://stripe.com/docs/issuing/merchant-categories">merchant categories guide</a> for
+     * href="https://docs.stripe.com/issuing/merchant-categories">merchant categories guide</a> for
      * a list of possible values.
      */
     @SerializedName("category")
@@ -967,8 +975,8 @@ public class Authorization extends ApiResource
   public static class PendingRequest extends StripeObject {
     /**
      * The additional amount Stripe will hold if the authorization is approved, in the card's <a
-     * href="https://stripe.com/docs/api#issuing_authorization_object-pending-request-currency">currency</a>
-     * and in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+     * href="https://docs.stripe.com/api#issuing_authorization_object-pending-request-currency">currency</a>
+     * and in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
      * unit</a>.
      */
     @SerializedName("amount")
@@ -976,7 +984,7 @@ public class Authorization extends ApiResource
 
     /**
      * Detailed breakdown of amount components. These amounts are denominated in {@code currency}
-     * and in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+     * and in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
      * unit</a>.
      */
     @SerializedName("amount_details")
@@ -992,7 +1000,7 @@ public class Authorization extends ApiResource
 
     /**
      * If set {@code true}, you may provide <a
-     * href="https://stripe.com/docs/api/issuing/authorizations/approve#approve_issuing_authorization-amount">amount</a>
+     * href="https://docs.stripe.com/api/issuing/authorizations/approve#approve_issuing_authorization-amount">amount</a>
      * to control how much to hold for the authorization.
      */
     @SerializedName("is_amount_controllable")
@@ -1000,7 +1008,7 @@ public class Authorization extends ApiResource
 
     /**
      * The amount the merchant is requesting to be authorized in the {@code merchant_currency}. The
-     * amount is in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+     * amount is in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
      * unit</a>.
      */
     @SerializedName("merchant_amount")
@@ -1045,7 +1053,7 @@ public class Authorization extends ApiResource
   public static class RequestHistory extends StripeObject {
     /**
      * The {@code pending_request.amount} at the time of the request, presented in your card's
-     * currency and in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest
+     * currency and in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest
      * currency unit</a>. Stripe held this amount from your account to fund the authorization if the
      * request was approved.
      */
@@ -1054,7 +1062,7 @@ public class Authorization extends ApiResource
 
     /**
      * Detailed breakdown of amount components. These amounts are denominated in {@code currency}
-     * and in the <a href="https://stripe.com/docs/currencies#zero-decimal">smallest currency
+     * and in the <a href="https://docs.stripe.com/currencies#zero-decimal">smallest currency
      * unit</a>.
      */
     @SerializedName("amount_details")
@@ -1089,7 +1097,7 @@ public class Authorization extends ApiResource
     /**
      * The {@code pending_request.merchant_amount} at the time of the request, presented in the
      * {@code merchant_currency} and in the <a
-     * href="https://stripe.com/docs/currencies#zero-decimal">smallest currency unit</a>.
+     * href="https://docs.stripe.com/currencies#zero-decimal">smallest currency unit</a>.
      */
     @SerializedName("merchant_amount")
     Long merchantAmount;
@@ -1118,9 +1126,9 @@ public class Authorization extends ApiResource
      * card_expired}, {@code card_inactive}, {@code cardholder_blocked}, {@code
      * cardholder_inactive}, {@code cardholder_verification_required}, {@code
      * insecure_authorization_method}, {@code insufficient_funds}, {@code network_fallback}, {@code
-     * not_allowed}, {@code pin_blocked}, {@code spending_controls}, {@code suspected_fraud}, {@code
-     * verification_failed}, {@code webhook_approved}, {@code webhook_declined}, {@code
-     * webhook_error}, or {@code webhook_timeout}.
+     * not_allowed}, {@code pin_blocked}, {@code spending_controls}, {@code stripe_internal_error},
+     * {@code suspected_fraud}, {@code verification_failed}, {@code webhook_approved}, {@code
+     * webhook_declined}, {@code webhook_error}, or {@code webhook_timeout}.
      */
     @SerializedName("reason")
     String reason;
@@ -1168,7 +1176,7 @@ public class Authorization extends ApiResource
   public static class Treasury extends StripeObject {
     /**
      * The array of <a
-     * href="https://stripe.com/docs/api/treasury/received_credits">ReceivedCredits</a> associated
+     * href="https://docs.stripe.com/api/treasury/received_credits">ReceivedCredits</a> associated
      * with this authorization
      */
     @SerializedName("received_credits")
@@ -1176,14 +1184,14 @@ public class Authorization extends ApiResource
 
     /**
      * The array of <a
-     * href="https://stripe.com/docs/api/treasury/received_debits">ReceivedDebits</a> associated
+     * href="https://docs.stripe.com/api/treasury/received_debits">ReceivedDebits</a> associated
      * with this authorization
      */
     @SerializedName("received_debits")
     List<String> receivedDebits;
 
     /**
-     * The Treasury <a href="https://stripe.com/docs/api/treasury/transactions">Transaction</a>
+     * The Treasury <a href="https://docs.stripe.com/api/treasury/transactions">Transaction</a>
      * associated with this authorization
      */
     @SerializedName("transaction")

@@ -292,9 +292,9 @@ public final class PaymentIntentService extends ApiService {
    * on the PaymentIntent fail with an error. For PaymentIntents with a {@code status} of {@code
    * requires_capture}, the remaining {@code amount_capturable} is automatically refunded.
    *
-   * <p>You can’t cancel the PaymentIntent for a Checkout Session. <a
-   * href="https://stripe.com/docs/api/checkout/sessions/expire">Expire the Checkout Session</a>
-   * instead.
+   * <p>You can directly cancel the PaymentIntent for a Checkout Session only when the PaymentIntent
+   * has a status of {@code requires_capture}. Otherwise, you must <a
+   * href="https://stripe.com/docs/api/checkout/sessions/expire">expire the Checkout Session</a>.
    */
   public PaymentIntent cancel(String intent, PaymentIntentCancelParams params)
       throws StripeException {
@@ -310,9 +310,9 @@ public final class PaymentIntentService extends ApiService {
    * on the PaymentIntent fail with an error. For PaymentIntents with a {@code status} of {@code
    * requires_capture}, the remaining {@code amount_capturable} is automatically refunded.
    *
-   * <p>You can’t cancel the PaymentIntent for a Checkout Session. <a
-   * href="https://stripe.com/docs/api/checkout/sessions/expire">Expire the Checkout Session</a>
-   * instead.
+   * <p>You can directly cancel the PaymentIntent for a Checkout Session only when the PaymentIntent
+   * has a status of {@code requires_capture}. Otherwise, you must <a
+   * href="https://stripe.com/docs/api/checkout/sessions/expire">expire the Checkout Session</a>.
    */
   public PaymentIntent cancel(String intent, RequestOptions options) throws StripeException {
     return cancel(intent, (PaymentIntentCancelParams) null, options);
@@ -327,9 +327,9 @@ public final class PaymentIntentService extends ApiService {
    * on the PaymentIntent fail with an error. For PaymentIntents with a {@code status} of {@code
    * requires_capture}, the remaining {@code amount_capturable} is automatically refunded.
    *
-   * <p>You can’t cancel the PaymentIntent for a Checkout Session. <a
-   * href="https://stripe.com/docs/api/checkout/sessions/expire">Expire the Checkout Session</a>
-   * instead.
+   * <p>You can directly cancel the PaymentIntent for a Checkout Session only when the PaymentIntent
+   * has a status of {@code requires_capture}. Otherwise, you must <a
+   * href="https://stripe.com/docs/api/checkout/sessions/expire">expire the Checkout Session</a>.
    */
   public PaymentIntent cancel(String intent) throws StripeException {
     return cancel(intent, (PaymentIntentCancelParams) null, (RequestOptions) null);
@@ -344,9 +344,9 @@ public final class PaymentIntentService extends ApiService {
    * on the PaymentIntent fail with an error. For PaymentIntents with a {@code status} of {@code
    * requires_capture}, the remaining {@code amount_capturable} is automatically refunded.
    *
-   * <p>You can’t cancel the PaymentIntent for a Checkout Session. <a
-   * href="https://stripe.com/docs/api/checkout/sessions/expire">Expire the Checkout Session</a>
-   * instead.
+   * <p>You can directly cancel the PaymentIntent for a Checkout Session only when the PaymentIntent
+   * has a status of {@code requires_capture}. Otherwise, you must <a
+   * href="https://stripe.com/docs/api/checkout/sessions/expire">expire the Checkout Session</a>.
    */
   public PaymentIntent cancel(
       String intent, PaymentIntentCancelParams params, RequestOptions options)
@@ -586,9 +586,11 @@ public final class PaymentIntentService extends ApiService {
    * <p>Each PaymentIntent can have a maximum of 10 incremental authorization attempts, including
    * declines. After it’s captured, a PaymentIntent can no longer be incremented.
    *
-   * <p>Learn more about <a
-   * href="https://stripe.com/docs/terminal/features/incremental-authorizations">incremental
-   * authorizations</a>.
+   * <p>Learn more about incremental authorizations with <a
+   * href="https://stripe.com/docs/terminal/features/incremental-authorizations">in-person
+   * payments</a> and <a
+   * href="https://stripe.com/docs/payments/incremental-authorization?platform=web&ui=elements">online
+   * payments</a>.
    */
   public PaymentIntent incrementAuthorization(
       String intent, PaymentIntentIncrementAuthorizationParams params) throws StripeException {
@@ -617,9 +619,11 @@ public final class PaymentIntentService extends ApiService {
    * <p>Each PaymentIntent can have a maximum of 10 incremental authorization attempts, including
    * declines. After it’s captured, a PaymentIntent can no longer be incremented.
    *
-   * <p>Learn more about <a
-   * href="https://stripe.com/docs/terminal/features/incremental-authorizations">incremental
-   * authorizations</a>.
+   * <p>Learn more about incremental authorizations with <a
+   * href="https://stripe.com/docs/terminal/features/incremental-authorizations">in-person
+   * payments</a> and <a
+   * href="https://stripe.com/docs/payments/incremental-authorization?platform=web&ui=elements">online
+   * payments</a>.
    */
   public PaymentIntent incrementAuthorization(
       String intent, PaymentIntentIncrementAuthorizationParams params, RequestOptions options)
@@ -666,5 +670,10 @@ public final class PaymentIntentService extends ApiService {
             ApiRequestParams.paramsToMap(params),
             options);
     return this.request(request, PaymentIntent.class);
+  }
+
+  public com.stripe.service.PaymentIntentAmountDetailsLineItemService amountDetailsLineItems() {
+    return new com.stripe.service.PaymentIntentAmountDetailsLineItemService(
+        this.getResponseGetter());
   }
 }

@@ -23,7 +23,7 @@ import lombok.Setter;
  * To top up your Stripe balance, you create a top-up object. You can retrieve individual top-ups,
  * as well as list all top-ups. Top-ups are identified by a unique, random ID.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/connect/top-ups">Topping up your platform
+ * <p>Related guide: <a href="https://docs.stripe.com/connect/top-ups">Topping up your platform
  * account</a>
  */
 @Getter
@@ -67,7 +67,7 @@ public class Topup extends ApiResource implements MetadataStore<Topup>, BalanceT
 
   /**
    * Error code explaining reason for top-up failure if available (see <a
-   * href="https://stripe.com/docs/api#errors">the errors section</a> for a list of codes).
+   * href="https://stripe.com/api/errors">the errors section</a> for a list of codes).
    */
   @SerializedName("failure_code")
   String failureCode;
@@ -82,14 +82,22 @@ public class Topup extends ApiResource implements MetadataStore<Topup>, BalanceT
   String id;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * Indicates whether the top-up was initiated by Stripe or by the user.
+   *
+   * <p>One of {@code stripe}, or {@code user}.
+   */
+  @SerializedName("initiated_by")
+  String initiatedBy;
+
+  /**
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -104,6 +112,19 @@ public class Topup extends ApiResource implements MetadataStore<Topup>, BalanceT
    */
   @SerializedName("object")
   String object;
+
+  /**
+   * The ID of a PaymentMethod representing the payment method used for the top-up. A PaymentMethod
+   * of type {@code us_bank_account} can be used.
+   */
+  @SerializedName("payment_method")
+  @Getter(lombok.AccessLevel.NONE)
+  @Setter(lombok.AccessLevel.NONE)
+  ExpandableField<PaymentMethod> paymentMethod;
+
+  /** Payment-method-specific configuration for this top-up. */
+  @SerializedName("payment_method_options")
+  PaymentMethodOptions paymentMethodOptions;
 
   /** The source field is deprecated. It might not always be present in the API response. */
   @SerializedName("source")
@@ -147,6 +168,25 @@ public class Topup extends ApiResource implements MetadataStore<Topup>, BalanceT
   public void setBalanceTransactionObject(BalanceTransaction expandableObject) {
     this.balanceTransaction =
         new ExpandableField<BalanceTransaction>(expandableObject.getId(), expandableObject);
+  }
+
+  /** Get ID of expandable {@code paymentMethod} object. */
+  public String getPaymentMethod() {
+    return (this.paymentMethod != null) ? this.paymentMethod.getId() : null;
+  }
+
+  public void setPaymentMethod(String id) {
+    this.paymentMethod = ApiResource.setExpandableFieldId(id, this.paymentMethod);
+  }
+
+  /** Get expanded {@code paymentMethod}. */
+  public PaymentMethod getPaymentMethodObject() {
+    return (this.paymentMethod != null) ? this.paymentMethod.getExpanded() : null;
+  }
+
+  public void setPaymentMethodObject(PaymentMethod expandableObject) {
+    this.paymentMethod =
+        new ExpandableField<PaymentMethod>(expandableObject.getId(), expandableObject);
   }
 
   /** Cancels a top-up. Only pending top-ups can be canceled. */
@@ -343,10 +383,45 @@ public class Topup extends ApiResource implements MetadataStore<Topup>, BalanceT
     return getResponseGetter().request(request, Topup.class);
   }
 
+  /**
+   * For more details about PaymentMethodOptions, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class PaymentMethodOptions extends StripeObject {
+    /**
+     * If this top-up is to be used with a {@code us_bank_account} payment method, this sub-hash
+     * contains configuration for it.
+     */
+    @SerializedName("us_bank_account")
+    UsBankAccount usBankAccount;
+
+    /**
+     * For more details about UsBankAccount, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class UsBankAccount extends StripeObject {
+      /**
+       * The US bank transfer network used for this top-up. The default is {@code ach}.
+       *
+       * <p>Equal to {@code ach}.
+       */
+      @SerializedName("network")
+      String network;
+    }
+  }
+
   @Override
   public void setResponseGetter(StripeResponseGetter responseGetter) {
     super.setResponseGetter(responseGetter);
     trySetResponseGetter(balanceTransaction, responseGetter);
+    trySetResponseGetter(paymentMethod, responseGetter);
+    trySetResponseGetter(paymentMethodOptions, responseGetter);
     trySetResponseGetter(source, responseGetter);
   }
 }

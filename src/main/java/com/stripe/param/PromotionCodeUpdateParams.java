@@ -35,7 +35,7 @@ public class PromotionCodeUpdateParams extends ApiRequestParams {
   Map<String, Object> extraParams;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -171,7 +171,7 @@ public class PromotionCodeUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -182,7 +182,7 @@ public class PromotionCodeUpdateParams extends ApiRequestParams {
     }
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
      * to an object. This can be useful for storing additional information about the object in a
      * structured format. Individual keys can be unset by posting an empty value to them. All keys
      * can be unset by posting an empty value to {@code metadata}.
@@ -205,7 +205,8 @@ public class PromotionCodeUpdateParams extends ApiRequestParams {
     /**
      * Promotion codes defined in each available currency option. Each key must be a three-letter <a
      * href="https://www.iso.org/iso-4217-currency-codes.html">ISO currency code</a> and a <a
-     * href="https://stripe.com/docs/currencies">supported currency</a>.
+     * href="https://stripe.com/docs/currencies">supported currency</a>. Each currency must be
+     * different from the {@code minimum_amount_currency} set on the promotion code.
      */
     @SerializedName("currency_options")
     Map<String, PromotionCodeUpdateParams.Restrictions.CurrencyOption> currencyOptions;

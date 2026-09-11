@@ -27,12 +27,12 @@ import lombok.Setter;
  * payment link can be shared and used multiple times.
  *
  * <p>When a customer opens a payment link it will open a new <a
- * href="https://stripe.com/docs/api/checkout/sessions">checkout session</a> to render the payment
+ * href="https://docs.stripe.com/api/checkout/sessions">checkout session</a> to render the payment
  * page. You can use <a
- * href="https://stripe.com/docs/api/events/types#event_types-checkout.session.completed">checkout
+ * href="https://docs.stripe.com/api/events/types#event_types-checkout.session.completed">checkout
  * session events</a> to track payments through payment links.
  *
- * <p>Related guide: <a href="https://stripe.com/docs/payment-links">Payment Links API</a>
+ * <p>Related guide: <a href="https://docs.stripe.com/payment-links">Payment Links API</a>
  */
 @Getter
 @Setter
@@ -96,7 +96,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
 
   /**
    * Collect additional information from your customer using custom fields. Up to 3 fields are
-   * supported.
+   * supported. You can't set this parameter if {@code ui_mode} is {@code custom}.
    */
   @SerializedName("custom_fields")
   List<PaymentLink.CustomField> customFields;
@@ -130,20 +130,33 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
   LineItemCollection lineItems;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Settings for Managed Payments for this Payment Link and resulting <a
+   * href="https://stripe.com/api/checkout/sessions/object">CheckoutSessions</a>, <a
+   * href="https://stripe.com/api/payment_intents/object">PaymentIntents</a>, <a
+   * href="https://stripe.com/api/invoices/object">Invoices</a>, and <a
+   * href="https://stripe.com/api/subscriptions/object">Subscriptions</a>.
+   */
+  @SerializedName("managed_payments")
+  ManagedPayments managedPayments;
+
+  /**
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
   @Getter(onMethod_ = {@Override})
   @SerializedName("metadata")
   Map<String, String> metadata;
+
+  @SerializedName("name_collection")
+  NameCollection nameCollection;
 
   /**
    * String representing the object's type. Objects of the same type share the same value.
@@ -178,6 +191,10 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
    */
   @SerializedName("payment_method_collection")
   String paymentMethodCollection;
+
+  /** Payment-method-specific configuration. */
+  @SerializedName("payment_method_options")
+  PaymentMethodOptions paymentMethodOptions;
 
   /**
    * The list of payment method types that customers can use. When {@code null}, Stripe will
@@ -685,7 +702,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Dropdown extends StripeObject {
-      /** The value that will pre-fill on the payment page. */
+      /** The value that pre-fills on the payment page. */
       @SerializedName("default_value")
       String defaultValue;
 
@@ -744,7 +761,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Numeric extends StripeObject {
-      /** The value that will pre-fill the field on the payment page. */
+      /** The value that pre-fills the field on the payment page. */
       @SerializedName("default_value")
       String defaultValue;
 
@@ -765,7 +782,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Text extends StripeObject {
-      /** The value that will pre-fill the field on the payment page. */
+      /** The value that pre-fills the field on the payment page. */
       @SerializedName("default_value")
       String defaultValue;
 
@@ -813,7 +830,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class AfterSubmit extends StripeObject {
-      /** Text may be up to 1200 characters in length. */
+      /** Text can be up to 1200 characters in length. */
       @SerializedName("message")
       String message;
     }
@@ -826,7 +843,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class ShippingAddress extends StripeObject {
-      /** Text may be up to 1200 characters in length. */
+      /** Text can be up to 1200 characters in length. */
       @SerializedName("message")
       String message;
     }
@@ -839,7 +856,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class Submit extends StripeObject {
-      /** Text may be up to 1200 characters in length. */
+      /** Text can be up to 1200 characters in length. */
       @SerializedName("message")
       String message;
     }
@@ -852,7 +869,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     @Setter
     @EqualsAndHashCode(callSuper = false)
     public static class TermsOfServiceAcceptance extends StripeObject {
-      /** Text may be up to 1200 characters in length. */
+      /** Text can be up to 1200 characters in length. */
       @SerializedName("message")
       String message;
     }
@@ -906,7 +923,7 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
       Issuer issuer;
 
       /**
-       * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can
+       * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can
        * attach to an object. This can be useful for storing additional information about the object
        * in a structured format.
        */
@@ -1041,6 +1058,78 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
   }
 
   /**
+   * For more details about ManagedPayments, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class ManagedPayments extends StripeObject {
+    /**
+     * Set to {@code true} to enable <a
+     * href="https://docs.stripe.com/payments/managed-payments">Managed Payments</a>, Stripe's
+     * merchant of record solution, for this session.
+     */
+    @SerializedName("enabled")
+    Boolean enabled;
+  }
+
+  /**
+   * For more details about NameCollection, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class NameCollection extends StripeObject {
+    @SerializedName("business")
+    Business business;
+
+    @SerializedName("individual")
+    Individual individual;
+
+    /**
+     * For more details about Business, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Business extends StripeObject {
+      /** Indicates whether business name collection is enabled for the payment link. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      /**
+       * Whether the customer is required to complete the field before checking out. Defaults to
+       * {@code false}.
+       */
+      @SerializedName("optional")
+      Boolean optional;
+    }
+
+    /**
+     * For more details about Individual, please refer to the <a
+     * href="https://docs.stripe.com/api">API Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Individual extends StripeObject {
+      /** Indicates whether individual name collection is enabled for the payment link. */
+      @SerializedName("enabled")
+      Boolean enabled;
+
+      /**
+       * Whether the customer is required to complete the field before checking out. Defaults to
+       * {@code false}.
+       */
+      @SerializedName("optional")
+      Boolean optional;
+    }
+  }
+
+  /**
    * For more details about OptionalItem, please refer to the <a
    * href="https://docs.stripe.com/api">API Reference.</a>
    */
@@ -1107,8 +1196,8 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     String description;
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that will set
-     * metadata on <a href="https://stripe.com/docs/api/payment_intents">Payment Intents</a>
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that will set
+     * metadata on <a href="https://docs.stripe.com/api/payment_intents">Payment Intents</a>
      * generated from this payment link.
      */
     @SerializedName("metadata")
@@ -1140,11 +1229,56 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
 
     /**
      * A string that identifies the resulting payment as part of a group. See the PaymentIntents <a
-     * href="https://stripe.com/docs/connect/separate-charges-and-transfers">use case for connected
+     * href="https://docs.stripe.com/connect/separate-charges-and-transfers">use case for connected
      * accounts</a> for details.
      */
     @SerializedName("transfer_group")
     String transferGroup;
+  }
+
+  /**
+   * For more details about PaymentMethodOptions, please refer to the <a
+   * href="https://docs.stripe.com/api">API Reference.</a>
+   */
+  @Getter
+  @Setter
+  @EqualsAndHashCode(callSuper = false)
+  public static class PaymentMethodOptions extends StripeObject {
+    /** Configuration for {@code card} payment methods. */
+    @SerializedName("card")
+    Card card;
+
+    /**
+     * For more details about Card, please refer to the <a href="https://docs.stripe.com/api">API
+     * Reference.</a>
+     */
+    @Getter
+    @Setter
+    @EqualsAndHashCode(callSuper = false)
+    public static class Card extends StripeObject {
+      /**
+       * Restrictions to apply to the card payment method. For example, you can block specific card
+       * brands.
+       */
+      @SerializedName("restrictions")
+      Restrictions restrictions;
+
+      /**
+       * For more details about Restrictions, please refer to the <a
+       * href="https://docs.stripe.com/api">API Reference.</a>
+       */
+      @Getter
+      @Setter
+      @EqualsAndHashCode(callSuper = false)
+      public static class Restrictions extends StripeObject {
+        /**
+         * The card brands to block. If a customer enters or selects a card belonging to a blocked
+         * brand, they can't complete the payment.
+         */
+        @SerializedName("brands_blocked")
+        List<String> brandsBlocked;
+      }
+    }
   }
 
   /**
@@ -1270,8 +1404,8 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     InvoiceSettings invoiceSettings;
 
     /**
-     * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that will set
-     * metadata on <a href="https://stripe.com/docs/api/subscriptions">Subscriptions</a> generated
+     * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that will set
+     * metadata on <a href="https://docs.stripe.com/api/subscriptions">Subscriptions</a> generated
      * from this payment link.
      */
     @SerializedName("metadata")
@@ -1433,8 +1567,11 @@ public class PaymentLink extends ApiResource implements HasId, MetadataStore<Pay
     trySetResponseGetter(customText, responseGetter);
     trySetResponseGetter(invoiceCreation, responseGetter);
     trySetResponseGetter(lineItems, responseGetter);
+    trySetResponseGetter(managedPayments, responseGetter);
+    trySetResponseGetter(nameCollection, responseGetter);
     trySetResponseGetter(onBehalfOf, responseGetter);
     trySetResponseGetter(paymentIntentData, responseGetter);
+    trySetResponseGetter(paymentMethodOptions, responseGetter);
     trySetResponseGetter(phoneNumberCollection, responseGetter);
     trySetResponseGetter(restrictions, responseGetter);
     trySetResponseGetter(shippingAddressCollection, responseGetter);

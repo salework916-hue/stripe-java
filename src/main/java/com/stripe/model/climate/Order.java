@@ -97,7 +97,10 @@ public class Order extends ApiResource implements HasId, MetadataStore<Order> {
   @SerializedName("delivery_details")
   List<Order.DeliveryDetail> deliveryDetails;
 
-  /** The year this order is expected to be delivered. */
+  /**
+   * The year this order is expected to be delivered. If the year is in the past, the order is a
+   * spot purchase and will be delivered within 30 days of purchase.
+   */
   @SerializedName("expected_delivery_year")
   Long expectedDeliveryYear;
 
@@ -114,7 +117,7 @@ public class Order extends ApiResource implements HasId, MetadataStore<Order> {
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */

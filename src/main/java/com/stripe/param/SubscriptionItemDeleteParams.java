@@ -28,8 +28,15 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
   Map<String, Object> extraParams;
 
   /**
+   * Controls how Stripe handles payment when a subscription update requires payment and {@code
+   * collection_method=charge_automatically}.
+   */
+  @SerializedName("payment_behavior")
+  PaymentBehavior paymentBehavior;
+
+  /**
    * Determines how to handle <a
-   * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the billing
+   * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when the billing
    * cycle changes (e.g., when switching plans, resetting {@code billing_cycle_anchor=now}, or
    * starting a trial), or if an item's {@code quantity} changes. The default value is {@code
    * create_prorations}.
@@ -40,7 +47,7 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
   /**
    * If set, the proration will be calculated as though the subscription was updated at the given
    * time. This can be used to apply the same proration that was previewed with the <a
-   * href="https://stripe.com/docs/api#retrieve_customer_invoice">upcoming invoice</a> endpoint.
+   * href="https://stripe.com/api/invoices/create_preview">upcoming invoice</a> endpoint.
    */
   @SerializedName("proration_date")
   Long prorationDate;
@@ -48,10 +55,12 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
   private SubscriptionItemDeleteParams(
       Boolean clearUsage,
       Map<String, Object> extraParams,
+      PaymentBehavior paymentBehavior,
       ProrationBehavior prorationBehavior,
       Long prorationDate) {
     this.clearUsage = clearUsage;
     this.extraParams = extraParams;
+    this.paymentBehavior = paymentBehavior;
     this.prorationBehavior = prorationBehavior;
     this.prorationDate = prorationDate;
   }
@@ -65,6 +74,8 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
 
     private Map<String, Object> extraParams;
 
+    private PaymentBehavior paymentBehavior;
+
     private ProrationBehavior prorationBehavior;
 
     private Long prorationDate;
@@ -72,7 +83,11 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
     /** Finalize and obtain parameter instance from this builder. */
     public SubscriptionItemDeleteParams build() {
       return new SubscriptionItemDeleteParams(
-          this.clearUsage, this.extraParams, this.prorationBehavior, this.prorationDate);
+          this.clearUsage,
+          this.extraParams,
+          this.paymentBehavior,
+          this.prorationBehavior,
+          this.prorationDate);
     }
 
     /**
@@ -111,8 +126,18 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
     }
 
     /**
+     * Controls how Stripe handles payment when a subscription update requires payment and {@code
+     * collection_method=charge_automatically}.
+     */
+    public Builder setPaymentBehavior(
+        SubscriptionItemDeleteParams.PaymentBehavior paymentBehavior) {
+      this.paymentBehavior = paymentBehavior;
+      return this;
+    }
+
+    /**
      * Determines how to handle <a
-     * href="https://stripe.com/docs/billing/subscriptions/prorations">prorations</a> when the
+     * href="https://docs.stripe.com/billing/subscriptions/prorations">prorations</a> when the
      * billing cycle changes (e.g., when switching plans, resetting {@code
      * billing_cycle_anchor=now}, or starting a trial), or if an item's {@code quantity} changes.
      * The default value is {@code create_prorations}.
@@ -126,11 +151,32 @@ public class SubscriptionItemDeleteParams extends ApiRequestParams {
     /**
      * If set, the proration will be calculated as though the subscription was updated at the given
      * time. This can be used to apply the same proration that was previewed with the <a
-     * href="https://stripe.com/docs/api#retrieve_customer_invoice">upcoming invoice</a> endpoint.
+     * href="https://stripe.com/api/invoices/create_preview">upcoming invoice</a> endpoint.
      */
     public Builder setProrationDate(Long prorationDate) {
       this.prorationDate = prorationDate;
       return this;
+    }
+  }
+
+  public enum PaymentBehavior implements ApiRequestParams.EnumParam {
+    @SerializedName("allow_incomplete")
+    ALLOW_INCOMPLETE("allow_incomplete"),
+
+    @SerializedName("default_incomplete")
+    DEFAULT_INCOMPLETE("default_incomplete"),
+
+    @SerializedName("error_if_incomplete")
+    ERROR_IF_INCOMPLETE("error_if_incomplete"),
+
+    @SerializedName("pending_if_incomplete")
+    PENDING_IF_INCOMPLETE("pending_if_incomplete");
+
+    @Getter(onMethod_ = {@Override})
+    private final String value;
+
+    PaymentBehavior(String value) {
+      this.value = value;
     }
   }
 

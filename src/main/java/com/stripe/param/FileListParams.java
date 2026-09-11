@@ -363,6 +363,9 @@ public class FileListParams extends ApiRequestParams {
     @SerializedName("pci_document")
     PCI_DOCUMENT("pci_document"),
 
+    @SerializedName("platform_terms_of_service")
+    PLATFORM_TERMS_OF_SERVICE("platform_terms_of_service"),
+
     @SerializedName("selfie")
     SELFIE("selfie"),
 
@@ -376,7 +379,13 @@ public class FileListParams extends ApiRequestParams {
     TERMINAL_ANDROID_APK("terminal_android_apk"),
 
     @SerializedName("terminal_reader_splashscreen")
-    TERMINAL_READER_SPLASHSCREEN("terminal_reader_splashscreen");
+    TERMINAL_READER_SPLASHSCREEN("terminal_reader_splashscreen"),
+
+    @SerializedName("terminal_wifi_certificate")
+    TERMINAL_WIFI_CERTIFICATE("terminal_wifi_certificate"),
+
+    @SerializedName("terminal_wifi_private_key")
+    TERMINAL_WIFI_PRIVATE_KEY("terminal_wifi_private_key");
 
     @Getter(onMethod_ = {@Override})
     private final String value;

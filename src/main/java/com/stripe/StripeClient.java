@@ -2,12 +2,14 @@ package com.stripe;
 
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Event;
 import com.stripe.model.StripeObject;
-import com.stripe.model.ThinEvent;
+import com.stripe.model.v2.core.EventNotification;
 import com.stripe.net.*;
 import com.stripe.net.Webhook.Signature;
 import java.net.PasswordAuthentication;
 import java.net.Proxy;
+import lombok.Builder;
 import lombok.Getter;
 
 /**
@@ -41,20 +43,60 @@ public class StripeClient {
     return responseGetter;
   }
 
+  /** Gets the current StripeContext from the client's configuration. Used in unit testing. */
+  protected String getContext() {
+    // TODO(major): add getOptions to the StripeResponseGetter interface? that would simplify this
+    if (!(responseGetter instanceof LiveStripeResponseGetter)) {
+      return null;
+    }
+
+    LiveStripeResponseGetter liveGetter = (LiveStripeResponseGetter) responseGetter;
+    StripeResponseGetterOptions options = liveGetter.getOptions();
+
+    return options.getStripeContext();
+  }
+
   /**
-   * Returns an StripeEvent instance using the provided JSON payload. Throws a JsonSyntaxException
-   * if the payload is not valid JSON, and a SignatureVerificationException if the signature
-   * verification fails for any reason.
+   * Creates a new StripeClient with the same configuration as this client but with a custom
+   * StripeContext. This method is useful for creating thread-safe clients with different contexts,
+   * such as when processing webhooks in parallel where each webhook has its own context.
    *
-   * @param payload the payload sent by Stripe.
-   * @param sigHeader the contents of the signature header sent by Stripe.
-   * @param secret secret used to generate the signature.
-   * @return the StripeEvent instance
-   * @throws SignatureVerificationException if the verification fails.
+   * <p>The new client will share the same configuration (API key, timeouts, proxy settings, etc.)
+   * and HTTP client as this client, but will have the specified context. This allows for efficient
+   * parallel processing without reinitializing HTTP connections.
+   *
+   * @param context the custom stripe_context to use for the new client
+   * @return a new StripeClient with the custom context
+   * @throws IllegalStateException if this client doesn't use a LiveStripeResponseGetter
    */
-  public ThinEvent parseThinEvent(String payload, String sigHeader, String secret)
-      throws SignatureVerificationException {
-    return parseThinEvent(payload, sigHeader, secret, Webhook.DEFAULT_TOLERANCE);
+  public StripeClient withStripeContext(StripeContext context) {
+    // Convert StripeContext to String
+    String contextString = (context == null) ? null : context.toString();
+
+    StripeResponseGetter responseGetter = this.getResponseGetter();
+
+    // We can only create a new client for LiveStripeResponseGetter because it's the only class with
+    // `getOptions()`. If we add that method to the interface in a later major, we could remove this
+    // check.
+    if (!(responseGetter instanceof LiveStripeResponseGetter)) {
+      throw new IllegalStateException(
+          "Cannot create a client with custom context for non-Live response getters");
+    }
+
+    LiveStripeResponseGetter liveGetter = (LiveStripeResponseGetter) responseGetter;
+
+    // Create a new LiveStripeResponseGetter with updated context, reusing the HTTP client
+    LiveStripeResponseGetter newResponseGetter =
+        liveGetter.withNewOptions(
+            options -> {
+              ClientStripeResponseGetterOptions existingOptions =
+                  (ClientStripeResponseGetterOptions) options;
+
+              return existingOptions.toBuilder().stripeContext(contextString).build();
+            });
+
+    // Create and return a new StripeClient with the new response getter
+    return new StripeClient(newResponseGetter);
   }
 
   /**
@@ -65,16 +107,34 @@ public class StripeClient {
    * @param payload the payload sent by Stripe.
    * @param sigHeader the contents of the signature header sent by Stripe.
    * @param secret secret used to generate the signature.
+   * @return the StripeEvent instance
+   * @throws SignatureVerificationException if the verification fails.
+   */
+  public EventNotification parseEventNotification(String payload, String sigHeader, String secret)
+      throws SignatureVerificationException {
+    return parseEventNotification(payload, sigHeader, secret, Webhook.DEFAULT_TOLERANCE);
+  }
+
+  /**
+   * Constructs a <a href="https://docs.stripe.com/event-destinations#thin-payload">thin event
+   * notification</a> from an incoming webhook after verifying its authenticity. To work with a
+   * webhook that has already been verified (i.e. one from a cloud provider, an asynchronous queue,
+   * or during testing), see {@code parseEventNotificationWithoutVerification}.
+   *
+   * @param payload the payload sent by Stripe.
+   * @param sigHeader the contents of the signature header sent by Stripe.
+   * @param secret secret used to generate the signature.
    * @param tolerance number of seconds that the event's timestamp can differ from the system time.
    *     Passing `0` will disable the time check entirely and is **strongly discouraged**.
    * @return the StripeEvent instance
    * @throws SignatureVerificationException if the verification fails.
    */
-  public ThinEvent parseThinEvent(String payload, String sigHeader, String secret, long tolerance)
+  public EventNotification parseEventNotification(
+      String payload, String sigHeader, String secret, long tolerance)
       throws SignatureVerificationException {
     Signature.verifyHeader(payload, sigHeader, secret, tolerance);
 
-    return ApiResource.GSON.fromJson(payload, ThinEvent.class);
+    return EventNotification.fromJson(payload, this);
   }
 
   /**
@@ -116,6 +176,45 @@ public class StripeClient {
     return event;
   }
 
+  /**
+   * Constructs a <a href="https://docs.stripe.com/event-destinations#snapshot-payload">snapshot
+   * event</a> from an incoming webhook without first verifying its authenticity. Should be used
+   * after calling {@code Webhook.Signature.verifyHeader(...)} or with input from a trusted source
+   * (such as <a href="https://docs.stripe.com/event-destinations/eventbridge">AWS EventBridge</a>,
+   * or <a href="https://docs.stripe.com/event-destinations/eventgrid">Azure Event Grid</a>
+   * payload). Or, to verify &amp; construct in a single call, use {@code constructEvent(...)}
+   * instead.
+   *
+   * @param payload the JSON payload: a raw Stripe Event or an AWS EventBridge/Azure Event Grid
+   *     envelope.
+   * @return the Event instance.
+   * @throws IllegalArgumentException if the payload is a thin event notification, or if the format
+   *     is not recognized.
+   */
+  public com.stripe.model.Event constructEventWithoutVerification(String payload) {
+    Event event = Webhook.constructEventWithoutVerification(payload);
+    event.setResponseGetter(this.getResponseGetter());
+    return event;
+  }
+
+  /**
+   * Constructs a <a href="https://docs.stripe.com/event-destinations#thin-payload">thin event
+   * notification</a> from an incoming webhook without first verifying its authenticity. Should be
+   * used after calling {@code Webhook.Signature.verifyHeader(...)} or with input from a trusted
+   * source (such as <a href="https://docs.stripe.com/event-destinations/eventbridge">AWS
+   * EventBridge</a>, or <a href="https://docs.stripe.com/event-destinations/eventgrid">Azure Event
+   * Grid</a> payload). Or, to verify &amp; parse in a single call, use {@code
+   * parseEventNotification(...)} instead.
+   *
+   * @param payload the JSON payload: a raw Stripe Event, or an AWS EventBridge/Azure Event Grid
+   *     envelope.
+   * @return the EventNotification instance.
+   * @throws IllegalArgumentException if the payload format is not recognized.
+   */
+  public EventNotification parseEventNotificationWithoutVerification(String payload) {
+    return EventNotification.fromJson(Webhook.maybeExtractFromCloudProviderEnvelope(payload), this);
+  }
+
   // The beginning of the section generated from our OpenAPI spec
   public com.stripe.service.V1Services v1() {
     return new com.stripe.service.V1Services(this.getResponseGetter());
@@ -126,710 +225,835 @@ public class StripeClient {
   }
 
   /**
-   * Deprecation Warning: StripeClient.accountLinks() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().accountLinks(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.accountLinks() is deprecated, use StripeClient.v1().accountLinks()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().accountLinks(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.AccountLinkService accountLinks() {
     return new com.stripe.service.AccountLinkService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.accountSessions() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().accountSessions(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.accountSessions() is deprecated, use
+   *     StripeClient.v1().accountSessions() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().accountSessions(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.AccountSessionService accountSessions() {
     return new com.stripe.service.AccountSessionService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.accounts() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().accounts(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.accounts() is deprecated, use StripeClient.v1().accounts() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().accounts(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.AccountService accounts() {
     return new com.stripe.service.AccountService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.applePayDomains() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().applePayDomains(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.applePayDomains() is deprecated, use
+   *     StripeClient.v1().applePayDomains() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().applePayDomains(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ApplePayDomainService applePayDomains() {
     return new com.stripe.service.ApplePayDomainService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.applicationFees() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().applicationFees(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.applicationFees() is deprecated, use
+   *     StripeClient.v1().applicationFees() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().applicationFees(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ApplicationFeeService applicationFees() {
     return new com.stripe.service.ApplicationFeeService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.apps() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().apps(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.apps() is deprecated, use StripeClient.v1().apps() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().apps(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.AppsService apps() {
     return new com.stripe.service.AppsService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.balance() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().balance(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.balance() is deprecated, use StripeClient.v1().balance() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().balance(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.BalanceService balance() {
     return new com.stripe.service.BalanceService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.balanceTransactions() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().balanceTransactions(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.balanceSettings() is deprecated, use
+   *     StripeClient.v1().balanceSettings() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().balanceSettings(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
+  public com.stripe.service.BalanceSettingsService balanceSettings() {
+    return new com.stripe.service.BalanceSettingsService(this.getResponseGetter());
+  }
+
+  /**
+   * @deprecated StripeClient.balanceTransactions() is deprecated, use
+   *     StripeClient.v1().balanceTransactions() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().balanceTransactions(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
+   */
+  @Deprecated
   public com.stripe.service.BalanceTransactionService balanceTransactions() {
     return new com.stripe.service.BalanceTransactionService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.billing() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().billing(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.billing() is deprecated, use StripeClient.v1().billing() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().billing(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.BillingService billing() {
     return new com.stripe.service.BillingService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.billingPortal() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().billingPortal(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.billingPortal() is deprecated, use StripeClient.v1().billingPortal()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().billingPortal(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.BillingPortalService billingPortal() {
     return new com.stripe.service.BillingPortalService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.charges() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().charges(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.charges() is deprecated, use StripeClient.v1().charges() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().charges(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ChargeService charges() {
     return new com.stripe.service.ChargeService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.checkout() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().checkout(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.checkout() is deprecated, use StripeClient.v1().checkout() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().checkout(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.CheckoutService checkout() {
     return new com.stripe.service.CheckoutService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.climate() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().climate(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.climate() is deprecated, use StripeClient.v1().climate() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().climate(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ClimateService climate() {
     return new com.stripe.service.ClimateService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.confirmationTokens() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().confirmationTokens(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.confirmationTokens() is deprecated, use
+   *     StripeClient.v1().confirmationTokens() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().confirmationTokens(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ConfirmationTokenService confirmationTokens() {
     return new com.stripe.service.ConfirmationTokenService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.countrySpecs() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().countrySpecs(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.countrySpecs() is deprecated, use StripeClient.v1().countrySpecs()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().countrySpecs(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.CountrySpecService countrySpecs() {
     return new com.stripe.service.CountrySpecService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.coupons() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().coupons(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.coupons() is deprecated, use StripeClient.v1().coupons() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().coupons(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.CouponService coupons() {
     return new com.stripe.service.CouponService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.creditNotes() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().creditNotes(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.creditNotes() is deprecated, use StripeClient.v1().creditNotes()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().creditNotes(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.CreditNoteService creditNotes() {
     return new com.stripe.service.CreditNoteService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.customerSessions() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().customerSessions(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.customerSessions() is deprecated, use
+   *     StripeClient.v1().customerSessions() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().customerSessions(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.CustomerSessionService customerSessions() {
     return new com.stripe.service.CustomerSessionService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.customers() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().customers(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.customers() is deprecated, use StripeClient.v1().customers() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().customers(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.CustomerService customers() {
     return new com.stripe.service.CustomerService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.disputes() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().disputes(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.disputes() is deprecated, use StripeClient.v1().disputes() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().disputes(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.DisputeService disputes() {
     return new com.stripe.service.DisputeService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.entitlements() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().entitlements(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.entitlements() is deprecated, use StripeClient.v1().entitlements()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().entitlements(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.EntitlementsService entitlements() {
     return new com.stripe.service.EntitlementsService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.ephemeralKeys() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().ephemeralKeys(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.ephemeralKeys() is deprecated, use StripeClient.v1().ephemeralKeys()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().ephemeralKeys(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.EphemeralKeyService ephemeralKeys() {
     return new com.stripe.service.EphemeralKeyService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.events() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().events(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.events() is deprecated, use StripeClient.v1().events() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().events(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.EventService events() {
     return new com.stripe.service.EventService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.exchangeRates() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().exchangeRates(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.exchangeRates() is deprecated, use StripeClient.v1().exchangeRates()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().exchangeRates(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ExchangeRateService exchangeRates() {
     return new com.stripe.service.ExchangeRateService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.fileLinks() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().fileLinks(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.fileLinks() is deprecated, use StripeClient.v1().fileLinks() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().fileLinks(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.FileLinkService fileLinks() {
     return new com.stripe.service.FileLinkService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.files() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().files(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.files() is deprecated, use StripeClient.v1().files() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().files(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.FileService files() {
     return new com.stripe.service.FileService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.financialConnections() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().financialConnections(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.financialConnections() is deprecated, use
+   *     StripeClient.v1().financialConnections() instead. All functionality under it has been
+   *     copied over to StripeClient.v1().financialConnections(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.FinancialConnectionsService financialConnections() {
     return new com.stripe.service.FinancialConnectionsService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.forwarding() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().forwarding(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.forwarding() is deprecated, use StripeClient.v1().forwarding()
+   *     instead. All functionality under it has been copied over to StripeClient.v1().forwarding().
+   *     See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ForwardingService forwarding() {
     return new com.stripe.service.ForwardingService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.identity() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().identity(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.identity() is deprecated, use StripeClient.v1().identity() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().identity(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.IdentityService identity() {
     return new com.stripe.service.IdentityService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.invoiceItems() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().invoiceItems(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.invoiceItems() is deprecated, use StripeClient.v1().invoiceItems()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().invoiceItems(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.InvoiceItemService invoiceItems() {
     return new com.stripe.service.InvoiceItemService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.invoicePayments() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().invoicePayments(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.invoicePayments() is deprecated, use
+   *     StripeClient.v1().invoicePayments() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().invoicePayments(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.InvoicePaymentService invoicePayments() {
     return new com.stripe.service.InvoicePaymentService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.invoiceRenderingTemplates() will be deprecated in the next
-   * major release. All functionality under it has been copied over to
-   * StripeClient.v1().invoiceRenderingTemplates(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.invoiceRenderingTemplates() is deprecated, use
+   *     StripeClient.v1().invoiceRenderingTemplates() instead. All functionality under it has been
+   *     copied over to StripeClient.v1().invoiceRenderingTemplates(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.InvoiceRenderingTemplateService invoiceRenderingTemplates() {
     return new com.stripe.service.InvoiceRenderingTemplateService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.invoices() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().invoices(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.invoices() is deprecated, use StripeClient.v1().invoices() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().invoices(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.InvoiceService invoices() {
     return new com.stripe.service.InvoiceService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.issuing() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().issuing(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.issuing() is deprecated, use StripeClient.v1().issuing() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().issuing(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.IssuingService issuing() {
     return new com.stripe.service.IssuingService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.mandates() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().mandates(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.mandates() is deprecated, use StripeClient.v1().mandates() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().mandates(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.MandateService mandates() {
     return new com.stripe.service.MandateService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.paymentIntents() will be deprecated in the next major
-   * release. All functionality under it has been copied over to StripeClient.v1().paymentIntents().
-   * See <a href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.paymentAttemptRecords() is deprecated, use
+   *     StripeClient.v1().paymentAttemptRecords() instead. All functionality under it has been
+   *     copied over to StripeClient.v1().paymentAttemptRecords(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
+  public com.stripe.service.PaymentAttemptRecordService paymentAttemptRecords() {
+    return new com.stripe.service.PaymentAttemptRecordService(this.getResponseGetter());
+  }
+
+  /**
+   * @deprecated StripeClient.paymentIntents() is deprecated, use StripeClient.v1().paymentIntents()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().paymentIntents(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
+   */
+  @Deprecated
   public com.stripe.service.PaymentIntentService paymentIntents() {
     return new com.stripe.service.PaymentIntentService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.paymentLinks() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().paymentLinks(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.paymentLinks() is deprecated, use StripeClient.v1().paymentLinks()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().paymentLinks(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PaymentLinkService paymentLinks() {
     return new com.stripe.service.PaymentLinkService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.paymentMethodConfigurations() will be deprecated in the next
-   * major release. All functionality under it has been copied over to
-   * StripeClient.v1().paymentMethodConfigurations(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.paymentMethodConfigurations() is deprecated, use
+   *     StripeClient.v1().paymentMethodConfigurations() instead. All functionality under it has
+   *     been copied over to StripeClient.v1().paymentMethodConfigurations(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PaymentMethodConfigurationService paymentMethodConfigurations() {
     return new com.stripe.service.PaymentMethodConfigurationService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.paymentMethodDomains() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().paymentMethodDomains(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.paymentMethodDomains() is deprecated, use
+   *     StripeClient.v1().paymentMethodDomains() instead. All functionality under it has been
+   *     copied over to StripeClient.v1().paymentMethodDomains(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PaymentMethodDomainService paymentMethodDomains() {
     return new com.stripe.service.PaymentMethodDomainService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.paymentMethods() will be deprecated in the next major
-   * release. All functionality under it has been copied over to StripeClient.v1().paymentMethods().
-   * See <a href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.paymentMethods() is deprecated, use StripeClient.v1().paymentMethods()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().paymentMethods(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PaymentMethodService paymentMethods() {
     return new com.stripe.service.PaymentMethodService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.payouts() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().payouts(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.paymentRecords() is deprecated, use StripeClient.v1().paymentRecords()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().paymentRecords(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
+  public com.stripe.service.PaymentRecordService paymentRecords() {
+    return new com.stripe.service.PaymentRecordService(this.getResponseGetter());
+  }
+
+  /**
+   * @deprecated StripeClient.payouts() is deprecated, use StripeClient.v1().payouts() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().payouts(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
+   */
+  @Deprecated
   public com.stripe.service.PayoutService payouts() {
     return new com.stripe.service.PayoutService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.plans() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().plans(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.plans() is deprecated, use StripeClient.v1().plans() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().plans(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PlanService plans() {
     return new com.stripe.service.PlanService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.prices() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().prices(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.prices() is deprecated, use StripeClient.v1().prices() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().prices(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PriceService prices() {
     return new com.stripe.service.PriceService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.products() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().products(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.products() is deprecated, use StripeClient.v1().products() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().products(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ProductService products() {
     return new com.stripe.service.ProductService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.promotionCodes() will be deprecated in the next major
-   * release. All functionality under it has been copied over to StripeClient.v1().promotionCodes().
-   * See <a href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.promotionCodes() is deprecated, use StripeClient.v1().promotionCodes()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().promotionCodes(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.PromotionCodeService promotionCodes() {
     return new com.stripe.service.PromotionCodeService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.quotes() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().quotes(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.quotes() is deprecated, use StripeClient.v1().quotes() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().quotes(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.QuoteService quotes() {
     return new com.stripe.service.QuoteService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.radar() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().radar(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.radar() is deprecated, use StripeClient.v1().radar() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().radar(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.RadarService radar() {
     return new com.stripe.service.RadarService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.refunds() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().refunds(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.refunds() is deprecated, use StripeClient.v1().refunds() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().refunds(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.RefundService refunds() {
     return new com.stripe.service.RefundService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.reporting() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().reporting(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.reporting() is deprecated, use StripeClient.v1().reporting() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().reporting(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ReportingService reporting() {
     return new com.stripe.service.ReportingService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.reviews() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().reviews(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.reviews() is deprecated, use StripeClient.v1().reviews() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().reviews(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ReviewService reviews() {
     return new com.stripe.service.ReviewService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.setupAttempts() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().setupAttempts(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.setupAttempts() is deprecated, use StripeClient.v1().setupAttempts()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().setupAttempts(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SetupAttemptService setupAttempts() {
     return new com.stripe.service.SetupAttemptService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.setupIntents() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().setupIntents(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.setupIntents() is deprecated, use StripeClient.v1().setupIntents()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().setupIntents(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SetupIntentService setupIntents() {
     return new com.stripe.service.SetupIntentService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.shippingRates() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().shippingRates(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.shippingRates() is deprecated, use StripeClient.v1().shippingRates()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().shippingRates(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.ShippingRateService shippingRates() {
     return new com.stripe.service.ShippingRateService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.sigma() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().sigma(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.sigma() is deprecated, use StripeClient.v1().sigma() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().sigma(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SigmaService sigma() {
     return new com.stripe.service.SigmaService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.sources() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().sources(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.sources() is deprecated, use StripeClient.v1().sources() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().sources(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SourceService sources() {
     return new com.stripe.service.SourceService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.subscriptionItems() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().subscriptionItems(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.subscriptionItems() is deprecated, use
+   *     StripeClient.v1().subscriptionItems() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().subscriptionItems(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SubscriptionItemService subscriptionItems() {
     return new com.stripe.service.SubscriptionItemService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.subscriptionSchedules() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().subscriptionSchedules(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.subscriptionSchedules() is deprecated, use
+   *     StripeClient.v1().subscriptionSchedules() instead. All functionality under it has been
+   *     copied over to StripeClient.v1().subscriptionSchedules(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SubscriptionScheduleService subscriptionSchedules() {
     return new com.stripe.service.SubscriptionScheduleService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.subscriptions() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().subscriptions(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.subscriptions() is deprecated, use StripeClient.v1().subscriptions()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().subscriptions(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.SubscriptionService subscriptions() {
     return new com.stripe.service.SubscriptionService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.tax() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().tax(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.tax() is deprecated, use StripeClient.v1().tax() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().tax(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TaxService tax() {
     return new com.stripe.service.TaxService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.taxCodes() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().taxCodes(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.taxCodes() is deprecated, use StripeClient.v1().taxCodes() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().taxCodes(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TaxCodeService taxCodes() {
     return new com.stripe.service.TaxCodeService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.taxIds() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().taxIds(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.taxIds() is deprecated, use StripeClient.v1().taxIds() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().taxIds(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TaxIdService taxIds() {
     return new com.stripe.service.TaxIdService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.taxRates() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().taxRates(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.taxRates() is deprecated, use StripeClient.v1().taxRates() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().taxRates(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TaxRateService taxRates() {
     return new com.stripe.service.TaxRateService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.terminal() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().terminal(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.terminal() is deprecated, use StripeClient.v1().terminal() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().terminal(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TerminalService terminal() {
     return new com.stripe.service.TerminalService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.testHelpers() will be deprecated in the next major release.
-   * All functionality under it has been copied over to StripeClient.v1().testHelpers(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.testHelpers() is deprecated, use StripeClient.v1().testHelpers()
+   *     instead. All functionality under it has been copied over to
+   *     StripeClient.v1().testHelpers(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TestHelpersService testHelpers() {
     return new com.stripe.service.TestHelpersService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.tokens() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().tokens(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.tokens() is deprecated, use StripeClient.v1().tokens() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().tokens(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TokenService tokens() {
     return new com.stripe.service.TokenService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.topups() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().topups(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.topups() is deprecated, use StripeClient.v1().topups() instead. All
+   *     functionality under it has been copied over to StripeClient.v1().topups(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TopupService topups() {
     return new com.stripe.service.TopupService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.transfers() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().transfers(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.transfers() is deprecated, use StripeClient.v1().transfers() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().transfers(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TransferService transfers() {
     return new com.stripe.service.TransferService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.treasury() will be deprecated in the next major release. All
-   * functionality under it has been copied over to StripeClient.v1().treasury(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.treasury() is deprecated, use StripeClient.v1().treasury() instead.
+   *     All functionality under it has been copied over to StripeClient.v1().treasury(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.TreasuryService treasury() {
     return new com.stripe.service.TreasuryService(this.getResponseGetter());
   }
 
   /**
-   * Deprecation Warning: StripeClient.webhookEndpoints() will be deprecated in the next major
-   * release. All functionality under it has been copied over to
-   * StripeClient.v1().webhookEndpoints(). See <a
-   * href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
-   * guide</a> for more on this and tips on migrating to the new v1 namespace.
+   * @deprecated StripeClient.webhookEndpoints() is deprecated, use
+   *     StripeClient.v1().webhookEndpoints() instead. All functionality under it has been copied
+   *     over to StripeClient.v1().webhookEndpoints(). See <a
+   *     href="https://github.com/stripe/stripe-java/wiki/v1-namespace-in-StripeClient">migration
+   *     guide</a> for more on this and tips on migrating to the new v1 namespace.
    */
+  @Deprecated
   public com.stripe.service.WebhookEndpointService webhookEndpoints() {
     return new com.stripe.service.WebhookEndpointService(this.getResponseGetter());
   }
 
   // The end of the section generated from our OpenAPI spec
+  @SuppressWarnings("ObjectToString")
+  @Builder(toBuilder = true)
   static class ClientStripeResponseGetterOptions extends StripeResponseGetterOptions {
     // When adding setting here keep them in sync with settings in RequestOptions and
     // in the RequestOptions.merge method
@@ -924,6 +1148,7 @@ public class StripeClient {
     private String meterEventsBase = Stripe.METER_EVENTS_API_BASE;
     private String stripeAccount;
     private String stripeContext;
+    private HttpClient httpClient;
 
     /**
      * Constructs a request options builder with the global parameters (API key and client ID) as
@@ -935,19 +1160,29 @@ public class StripeClient {
       return this.authenticator;
     }
 
+    /**
+     * Sets the authenticator used to authorize requests. Use this for custom authentication
+     * strategies. For standard API key authentication, prefer {@link #setApiKey(String)}.
+     *
+     * <p>This shares a backing field with {@link #setApiKey(String)} — calling one overwrites the
+     * other.
+     *
+     * @param authenticator the authenticator to use
+     */
     public StripeClientBuilder setAuthenticator(Authenticator authenticator) {
       this.authenticator = authenticator;
       return this;
     }
 
-    public String getApiKey() {
-      if (authenticator instanceof BearerTokenAuthenticator) {
-        return ((BearerTokenAuthenticator) authenticator).getApiKey();
-      }
-
-      return null;
-    }
-
+    /**
+     * Sets the API key for bearer token authentication. This is a convenience method equivalent to
+     * calling {@code setAuthenticator(new BearerTokenAuthenticator(apiKey))}.
+     *
+     * <p>This shares a backing field with {@link #setAuthenticator(Authenticator)} — calling one
+     * overwrites the other.
+     *
+     * @param apiKey the API key; if null, clears the authenticator
+     */
     public StripeClientBuilder setApiKey(String apiKey) {
       if (apiKey == null) {
         this.authenticator = null;
@@ -1055,7 +1290,8 @@ public class StripeClient {
      * Set the base URL for the Stripe API. By default this is "https://api.stripe.com".
      *
      * <p>This only affects requests made with a {@link com.stripe.net.BaseAddress} of API. Use
-     * {@link setFilesBase} or {@link setConnectBase} to interpect requests with other bases.
+     * {@link #setFilesBase}, {@link #setConnectBase} or {@link #setMeterEventsBase} to interpect
+     * requests with other bases.
      */
     public StripeClientBuilder setApiBase(String address) {
       this.apiBase = address;
@@ -1123,13 +1359,32 @@ public class StripeClient {
       return this;
     }
 
+    public StripeClientBuilder setStripeContext(StripeContext context) {
+      this.stripeContext = context == null ? null : context.toString();
+      return this;
+    }
+
     public String getStripeContext() {
       return this.stripeContext;
     }
 
+    /**
+     * Sets the HTTP client to use for making requests to the Stripe API. If not set, a default
+     * {@link HttpURLConnectionClient} will be created.
+     *
+     * <p>This is useful for providing a custom HTTP client implementation, e.g. for testing or for
+     * using a different HTTP library.
+     *
+     * @param httpClient the HTTP client to use
+     */
+    public StripeClientBuilder setHttpClient(HttpClient httpClient) {
+      this.httpClient = httpClient;
+      return this;
+    }
+
     /** Constructs a {@link StripeResponseGetterOptions} with the specified values. */
     public StripeClient build() {
-      return new StripeClient(new LiveStripeResponseGetter(buildOptions(), null));
+      return new StripeClient(new LiveStripeResponseGetter(buildOptions(), this.httpClient));
     }
 
     StripeResponseGetterOptions buildOptions() {
@@ -1203,5 +1458,15 @@ public class StripeClient {
   /** Deserializes StripeResponse returned by rawRequest into a similar class. */
   public StripeObject deserialize(String rawJson, ApiMode apiMode) throws StripeException {
     return StripeObject.deserializeStripeObject(rawJson, this.getResponseGetter(), apiMode);
+  }
+
+  public StripeEventNotificationHandler notificationHandler(
+      String webhookSecret, EventNotificationFallbackCallback fallbackCallback) {
+    return new StripeEventNotificationHandler(webhookSecret, this, fallbackCallback);
+  }
+
+  public StripeEventNotificationHandlerWithoutVerification notificationHandlerWithoutVerification(
+      EventNotificationFallbackCallback fallbackCallback) {
+    return StripeEventNotificationHandler.withoutVerification(this, fallbackCallback);
   }
 }

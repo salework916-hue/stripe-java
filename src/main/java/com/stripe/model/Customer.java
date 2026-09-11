@@ -29,8 +29,8 @@ import lombok.Setter;
 
 /**
  * This object represents a customer of your business. Use it to <a
- * href="https://stripe.com/docs/invoicing/customer">create recurring charges</a>, <a
- * href="https://stripe.com/docs/payments/save-during-payment">save payment</a> and contact
+ * href="https://docs.stripe.com/invoicing/customer">create recurring charges</a>, <a
+ * href="https://docs.stripe.com/payments/save-during-payment">save payment</a> and contact
  * information, and track payments that belong to the same customer.
  */
 @Getter
@@ -47,10 +47,14 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
    * an amount owed that's added to their next invoice. The balance only considers amounts that
    * Stripe hasn't successfully applied to any invoice. It doesn't reflect unpaid invoices. This
    * balance is only taken into account after invoices finalize. For multi-currency balances, see <a
-   * href="https://stripe.com/docs/api/customers/object#customer_object-invoice_credit_balance">invoice_credit_balance</a>.
+   * href="https://docs.stripe.com/api/customers/object#customer_object-invoice_credit_balance">invoice_credit_balance</a>.
    */
   @SerializedName("balance")
   Long balance;
+
+  /** The customer's business name. */
+  @SerializedName("business_name")
+  String businessName;
 
   /**
    * The current funds being held by Stripe on behalf of the customer. You can apply these funds
@@ -73,10 +77,17 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
   String currency;
 
   /**
+   * The ID of an Account representing a customer. You can use this ID with any v1 API that accepts
+   * a customer_account parameter.
+   */
+  @SerializedName("customer_account")
+  String customerAccount;
+
+  /**
    * ID of the default payment source for the customer.
    *
    * <p>If you use payment methods created through the PaymentMethods API, see the <a
-   * href="https://stripe.com/docs/api/customers/object#customer_object-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
+   * href="https://docs.stripe.com/api/customers/object#customer_object-invoice_settings-default_payment_method">invoice_settings.default_payment_method</a>
    * field instead.
    */
   @SerializedName("default_source")
@@ -94,7 +105,7 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
    * failure or passing the {@code invoice.due_date} will set this field to {@code true}.
    *
    * <p>If an invoice becomes uncollectible by <a
-   * href="https://stripe.com/docs/billing/automatic-collection">dunning</a>, {@code delinquent}
+   * href="https://docs.stripe.com/billing/automatic-collection">dunning</a>, {@code delinquent}
    * doesn't reset to {@code false}.
    *
    * <p>If you care whether the customer has paid their most recent subscription invoice, use {@code
@@ -122,6 +133,10 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
   @SerializedName("id")
   String id;
 
+  /** The customer's individual name. */
+  @SerializedName("individual_name")
+  String individualName;
+
   /**
    * The current multi-currency balances, if any, that's stored on the customer. If positive in a
    * currency, the customer has a credit to apply to their next invoice denominated in that
@@ -142,14 +157,14 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
   InvoiceSettings invoiceSettings;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format.
    */
@@ -772,14 +787,14 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
 
   /**
    * Updates the specified customer by setting the values of the parameters passed. Any parameters
-   * not provided will be left unchanged. For example, if you pass the <strong>source</strong>
-   * parameter, that becomes the customer’s active source (e.g., a card) to be used for all charges
-   * in the future. When you update a customer to a new valid card source by passing the
+   * not provided are left unchanged. For example, if you pass the <strong>source</strong>
+   * parameter, that becomes the customer’s active source (such as a card) to be used for all
+   * charges in the future. When you update a customer to a new valid card source by passing the
    * <strong>source</strong> parameter: for each of the customer’s current subscriptions, if the
    * subscription bills automatically and is in the {@code past_due} state, then the latest open
-   * invoice for the subscription with automatic collection enabled will be retried. This retry will
-   * not count as an automatic retry, and will not affect the next regularly scheduled payment for
-   * the invoice. Changing the <strong>default_source</strong> for a customer will not trigger this
+   * invoice for the subscription with automatic collection enabled is retried. This retry doesn’t
+   * count as an automatic retry, and doesn’t affect the next regularly scheduled payment for the
+   * invoice. Changing the <strong>default_source</strong> for a customer doesn’t trigger this
    * behavior.
    *
    * <p>This request accepts mostly the same arguments as the customer creation call.
@@ -791,14 +806,14 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
 
   /**
    * Updates the specified customer by setting the values of the parameters passed. Any parameters
-   * not provided will be left unchanged. For example, if you pass the <strong>source</strong>
-   * parameter, that becomes the customer’s active source (e.g., a card) to be used for all charges
-   * in the future. When you update a customer to a new valid card source by passing the
+   * not provided are left unchanged. For example, if you pass the <strong>source</strong>
+   * parameter, that becomes the customer’s active source (such as a card) to be used for all
+   * charges in the future. When you update a customer to a new valid card source by passing the
    * <strong>source</strong> parameter: for each of the customer’s current subscriptions, if the
    * subscription bills automatically and is in the {@code past_due} state, then the latest open
-   * invoice for the subscription with automatic collection enabled will be retried. This retry will
-   * not count as an automatic retry, and will not affect the next regularly scheduled payment for
-   * the invoice. Changing the <strong>default_source</strong> for a customer will not trigger this
+   * invoice for the subscription with automatic collection enabled is retried. This retry doesn’t
+   * count as an automatic retry, and doesn’t affect the next regularly scheduled payment for the
+   * invoice. Changing the <strong>default_source</strong> for a customer doesn’t trigger this
    * behavior.
    *
    * <p>This request accepts mostly the same arguments as the customer creation call.
@@ -814,14 +829,14 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
 
   /**
    * Updates the specified customer by setting the values of the parameters passed. Any parameters
-   * not provided will be left unchanged. For example, if you pass the <strong>source</strong>
-   * parameter, that becomes the customer’s active source (e.g., a card) to be used for all charges
-   * in the future. When you update a customer to a new valid card source by passing the
+   * not provided are left unchanged. For example, if you pass the <strong>source</strong>
+   * parameter, that becomes the customer’s active source (such as a card) to be used for all
+   * charges in the future. When you update a customer to a new valid card source by passing the
    * <strong>source</strong> parameter: for each of the customer’s current subscriptions, if the
    * subscription bills automatically and is in the {@code past_due} state, then the latest open
-   * invoice for the subscription with automatic collection enabled will be retried. This retry will
-   * not count as an automatic retry, and will not affect the next regularly scheduled payment for
-   * the invoice. Changing the <strong>default_source</strong> for a customer will not trigger this
+   * invoice for the subscription with automatic collection enabled is retried. This retry doesn’t
+   * count as an automatic retry, and doesn’t affect the next regularly scheduled payment for the
+   * invoice. Changing the <strong>default_source</strong> for a customer doesn’t trigger this
    * behavior.
    *
    * <p>This request accepts mostly the same arguments as the customer creation call.
@@ -832,14 +847,14 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
 
   /**
    * Updates the specified customer by setting the values of the parameters passed. Any parameters
-   * not provided will be left unchanged. For example, if you pass the <strong>source</strong>
-   * parameter, that becomes the customer’s active source (e.g., a card) to be used for all charges
-   * in the future. When you update a customer to a new valid card source by passing the
+   * not provided are left unchanged. For example, if you pass the <strong>source</strong>
+   * parameter, that becomes the customer’s active source (such as a card) to be used for all
+   * charges in the future. When you update a customer to a new valid card source by passing the
    * <strong>source</strong> parameter: for each of the customer’s current subscriptions, if the
    * subscription bills automatically and is in the {@code past_due} state, then the latest open
-   * invoice for the subscription with automatic collection enabled will be retried. This retry will
-   * not count as an automatic retry, and will not affect the next regularly scheduled payment for
-   * the invoice. Changing the <strong>default_source</strong> for a customer will not trigger this
+   * invoice for the subscription with automatic collection enabled is retried. This retry doesn’t
+   * count as an automatic retry, and doesn’t affect the next regularly scheduled payment for the
+   * invoice. Changing the <strong>default_source</strong> for a customer doesn’t trigger this
    * behavior.
    *
    * <p>This request accepts mostly the same arguments as the customer creation call.
@@ -970,6 +985,15 @@ public class Customer extends ApiResource implements HasId, MetadataStore<Custom
     /** The identified tax location of the customer. */
     @SerializedName("location")
     Location location;
+
+    /**
+     * The tax calculation provider used for location resolution. Defaults to {@code stripe} when
+     * not using a <a href="https://stripe.com/tax/third-party-apps">third-party provider</a>.
+     *
+     * <p>One of {@code anrok}, {@code avalara}, {@code sphere}, or {@code stripe}.
+     */
+    @SerializedName("provider")
+    String provider;
 
     /**
      * For more details about Location, please refer to the <a

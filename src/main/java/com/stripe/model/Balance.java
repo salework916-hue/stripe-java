@@ -23,8 +23,8 @@ import lombok.Setter;
  * <p>The top-level {@code available} and {@code pending} comprise your &quot;payments
  * balance.&quot;
  *
- * <p>Related guide: <a href="https://stripe.com/docs/payments/balances">Balances and settlement
- * time</a>, <a href="https://stripe.com/docs/connect/account-balances">Understanding Connect
+ * <p>Related guide: <a href="https://docs.stripe.com/payments/balances">Balances and settlement
+ * time</a>, <a href="https://docs.stripe.com/connect/account-balances">Understanding Connect
  * account balances</a>
  */
 @Getter
@@ -33,9 +33,9 @@ import lombok.Setter;
 public class Balance extends ApiResource {
   /**
    * Available funds that you can transfer or pay out automatically by Stripe or explicitly through
-   * the <a href="https://stripe.com/docs/api#transfers">Transfers API</a> or <a
-   * href="https://stripe.com/docs/api#payouts">Payouts API</a>. You can find the available balance
-   * for each currency and payment type in the {@code source_types} property.
+   * the <a href="https://api.stripe.com#transfers">Transfers API</a> or <a
+   * href="https://api.stripe.com#payouts">Payouts API</a>. You can find the available balance for
+   * each currency and payment type in the {@code source_types} property.
    */
   @SerializedName("available")
   List<Balance.Available> available;
@@ -57,8 +57,8 @@ public class Balance extends ApiResource {
   Issuing issuing;
 
   /**
-   * Has the value {@code true} if the object exists in live mode or the value {@code false} if the
-   * object exists in test mode.
+   * If the object exists in live mode, the value is {@code true}. If the object exists in test
+   * mode, the value is {@code false}.
    */
   @SerializedName("livemode")
   Boolean livemode;

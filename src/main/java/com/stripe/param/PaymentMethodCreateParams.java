@@ -98,6 +98,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
   BillingDetails billingDetails;
 
   /**
+   * If this is a {@code bizum} PaymentMethod, this hash contains details about the Bizum payment
+   * method.
+   */
+  @SerializedName("bizum")
+  Bizum bizum;
+
+  /**
    * If this is a {@code blik} PaymentMethod, this hash contains details about the BLIK payment
    * method.
    */
@@ -134,6 +141,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
    */
   @SerializedName("crypto")
   Crypto crypto;
+
+  /**
+   * If this is a {@code custom} PaymentMethod, this hash contains details about the Custom payment
+   * method.
+   */
+  @SerializedName("custom")
+  Custom custom;
 
   /** The {@code Customer} to whom the original PaymentMethod is attached. */
   @SerializedName("customer")
@@ -231,13 +245,19 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
   /**
    * If this is an {@code Link} PaymentMethod, this hash contains details about the Link payment
-   * method.
+   * method (Link is also known as Onelink in the UK).
    */
   @SerializedName("link")
   Link link;
 
   /**
-   * Set of <a href="https://stripe.com/docs/api/metadata">key-value pairs</a> that you can attach
+   * If this is a MB WAY PaymentMethod, this hash contains details about the MB WAY payment method.
+   */
+  @SerializedName("mb_way")
+  MbWay mbWay;
+
+  /**
+   * Set of <a href="https://docs.stripe.com/api/metadata">key-value pairs</a> that you can attach
    * to an object. This can be useful for storing additional information about the object in a
    * structured format. Individual keys can be unset by posting an empty value to them. All keys can
    * be unset by posting an empty value to {@code metadata}.
@@ -320,6 +340,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
   Paypal paypal;
 
   /**
+   * If this is a {@code payto} PaymentMethod, this hash contains details about the PayTo payment
+   * method.
+   */
+  @SerializedName("payto")
+  Payto payto;
+
+  /**
    * If this is a {@code pix} PaymentMethod, this hash contains details about the Pix payment
    * method.
    */
@@ -334,7 +361,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
   Promptpay promptpay;
 
   /**
-   * Options to configure Radar. See <a href="https://stripe.com/docs/radar/radar-session">Radar
+   * Options to configure Radar. See <a href="https://docs.stripe.com/radar/radar-session">Radar
    * Session</a> for more information.
    */
   @SerializedName("radar_options")
@@ -362,6 +389,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
   Satispay satispay;
 
   /**
+   * If this is a Scalapay PaymentMethod, this hash contains details about the Scalapay payment
+   * method.
+   */
+  @SerializedName("scalapay")
+  Scalapay scalapay;
+
+  /**
    * If this is a {@code sepa_debit} PaymentMethod, this hash contains details about the SEPA debit
    * bank account.
    */
@@ -374,6 +408,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
    */
   @SerializedName("sofort")
   Sofort sofort;
+
+  /**
+   * If this is a {@code sunbit} PaymentMethod, this hash contains details about the Sunbit payment
+   * method.
+   */
+  @SerializedName("sunbit")
+  Sunbit sunbit;
 
   /**
    * If this is a {@code swish} PaymentMethod, this hash contains details about the Swish payment
@@ -394,6 +435,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
    */
   @SerializedName("type")
   Type type;
+
+  /**
+   * If this is a {@code upi} PaymentMethod, this hash contains details about the UPI payment
+   * method.
+   */
+  @SerializedName("upi")
+  Upi upi;
 
   /**
    * If this is an {@code us_bank_account} PaymentMethod, this hash contains details about the US
@@ -429,11 +477,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       Bancontact bancontact,
       Billie billie,
       BillingDetails billingDetails,
+      Bizum bizum,
       Blik blik,
       Boleto boleto,
       Object card,
       Cashapp cashapp,
       Crypto crypto,
+      Custom custom,
       String customer,
       CustomerBalance customerBalance,
       Eps eps,
@@ -449,6 +499,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       Konbini konbini,
       KrCard krCard,
       Link link,
+      MbWay mbWay,
       Map<String, String> metadata,
       Mobilepay mobilepay,
       Multibanco multibanco,
@@ -461,17 +512,21 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       String paymentMethod,
       Paynow paynow,
       Paypal paypal,
+      Payto payto,
       Pix pix,
       Promptpay promptpay,
       RadarOptions radarOptions,
       RevolutPay revolutPay,
       SamsungPay samsungPay,
       Satispay satispay,
+      Scalapay scalapay,
       SepaDebit sepaDebit,
       Sofort sofort,
+      Sunbit sunbit,
       Swish swish,
       Twint twint,
       Type type,
+      Upi upi,
       UsBankAccount usBankAccount,
       WechatPay wechatPay,
       Zip zip) {
@@ -487,11 +542,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     this.bancontact = bancontact;
     this.billie = billie;
     this.billingDetails = billingDetails;
+    this.bizum = bizum;
     this.blik = blik;
     this.boleto = boleto;
     this.card = card;
     this.cashapp = cashapp;
     this.crypto = crypto;
+    this.custom = custom;
     this.customer = customer;
     this.customerBalance = customerBalance;
     this.eps = eps;
@@ -507,6 +564,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     this.konbini = konbini;
     this.krCard = krCard;
     this.link = link;
+    this.mbWay = mbWay;
     this.metadata = metadata;
     this.mobilepay = mobilepay;
     this.multibanco = multibanco;
@@ -519,17 +577,21 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     this.paymentMethod = paymentMethod;
     this.paynow = paynow;
     this.paypal = paypal;
+    this.payto = payto;
     this.pix = pix;
     this.promptpay = promptpay;
     this.radarOptions = radarOptions;
     this.revolutPay = revolutPay;
     this.samsungPay = samsungPay;
     this.satispay = satispay;
+    this.scalapay = scalapay;
     this.sepaDebit = sepaDebit;
     this.sofort = sofort;
+    this.sunbit = sunbit;
     this.swish = swish;
     this.twint = twint;
     this.type = type;
+    this.upi = upi;
     this.usBankAccount = usBankAccount;
     this.wechatPay = wechatPay;
     this.zip = zip;
@@ -564,6 +626,8 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
     private BillingDetails billingDetails;
 
+    private Bizum bizum;
+
     private Blik blik;
 
     private Boleto boleto;
@@ -573,6 +637,8 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     private Cashapp cashapp;
 
     private Crypto crypto;
+
+    private Custom custom;
 
     private String customer;
 
@@ -604,6 +670,8 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
     private Link link;
 
+    private MbWay mbWay;
+
     private Map<String, String> metadata;
 
     private Mobilepay mobilepay;
@@ -628,6 +696,8 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
     private Paypal paypal;
 
+    private Payto payto;
+
     private Pix pix;
 
     private Promptpay promptpay;
@@ -640,15 +710,21 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
     private Satispay satispay;
 
+    private Scalapay scalapay;
+
     private SepaDebit sepaDebit;
 
     private Sofort sofort;
+
+    private Sunbit sunbit;
 
     private Swish swish;
 
     private Twint twint;
 
     private Type type;
+
+    private Upi upi;
 
     private UsBankAccount usBankAccount;
 
@@ -671,11 +747,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
           this.bancontact,
           this.billie,
           this.billingDetails,
+          this.bizum,
           this.blik,
           this.boleto,
           this.card,
           this.cashapp,
           this.crypto,
+          this.custom,
           this.customer,
           this.customerBalance,
           this.eps,
@@ -691,6 +769,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
           this.konbini,
           this.krCard,
           this.link,
+          this.mbWay,
           this.metadata,
           this.mobilepay,
           this.multibanco,
@@ -703,17 +782,21 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
           this.paymentMethod,
           this.paynow,
           this.paypal,
+          this.payto,
           this.pix,
           this.promptpay,
           this.radarOptions,
           this.revolutPay,
           this.samsungPay,
           this.satispay,
+          this.scalapay,
           this.sepaDebit,
           this.sofort,
+          this.sunbit,
           this.swish,
           this.twint,
           this.type,
+          this.upi,
           this.usBankAccount,
           this.wechatPay,
           this.zip);
@@ -830,6 +913,15 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     }
 
     /**
+     * If this is a {@code bizum} PaymentMethod, this hash contains details about the Bizum payment
+     * method.
+     */
+    public Builder setBizum(PaymentMethodCreateParams.Bizum bizum) {
+      this.bizum = bizum;
+      return this;
+    }
+
+    /**
      * If this is a {@code blik} PaymentMethod, this hash contains details about the BLIK payment
      * method.
      */
@@ -888,6 +980,15 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
      */
     public Builder setCrypto(PaymentMethodCreateParams.Crypto crypto) {
       this.crypto = crypto;
+      return this;
+    }
+
+    /**
+     * If this is a {@code custom} PaymentMethod, this hash contains details about the Custom
+     * payment method.
+     */
+    public Builder setCustom(PaymentMethodCreateParams.Custom custom) {
+      this.custom = custom;
       return this;
     }
 
@@ -1050,10 +1151,19 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
     /**
      * If this is an {@code Link} PaymentMethod, this hash contains details about the Link payment
-     * method.
+     * method (Link is also known as Onelink in the UK).
      */
     public Builder setLink(PaymentMethodCreateParams.Link link) {
       this.link = link;
+      return this;
+    }
+
+    /**
+     * If this is a MB WAY PaymentMethod, this hash contains details about the MB WAY payment
+     * method.
+     */
+    public Builder setMbWay(PaymentMethodCreateParams.MbWay mbWay) {
+      this.mbWay = mbWay;
       return this;
     }
 
@@ -1180,6 +1290,15 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     }
 
     /**
+     * If this is a {@code payto} PaymentMethod, this hash contains details about the PayTo payment
+     * method.
+     */
+    public Builder setPayto(PaymentMethodCreateParams.Payto payto) {
+      this.payto = payto;
+      return this;
+    }
+
+    /**
      * If this is a {@code pix} PaymentMethod, this hash contains details about the Pix payment
      * method.
      */
@@ -1198,7 +1317,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     }
 
     /**
-     * Options to configure Radar. See <a href="https://stripe.com/docs/radar/radar-session">Radar
+     * Options to configure Radar. See <a href="https://docs.stripe.com/radar/radar-session">Radar
      * Session</a> for more information.
      */
     public Builder setRadarOptions(PaymentMethodCreateParams.RadarOptions radarOptions) {
@@ -1234,6 +1353,15 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     }
 
     /**
+     * If this is a Scalapay PaymentMethod, this hash contains details about the Scalapay payment
+     * method.
+     */
+    public Builder setScalapay(PaymentMethodCreateParams.Scalapay scalapay) {
+      this.scalapay = scalapay;
+      return this;
+    }
+
+    /**
      * If this is a {@code sepa_debit} PaymentMethod, this hash contains details about the SEPA
      * debit bank account.
      */
@@ -1248,6 +1376,15 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
      */
     public Builder setSofort(PaymentMethodCreateParams.Sofort sofort) {
       this.sofort = sofort;
+      return this;
+    }
+
+    /**
+     * If this is a {@code sunbit} PaymentMethod, this hash contains details about the Sunbit
+     * payment method.
+     */
+    public Builder setSunbit(PaymentMethodCreateParams.Sunbit sunbit) {
+      this.sunbit = sunbit;
       return this;
     }
 
@@ -1275,6 +1412,15 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
      */
     public Builder setType(PaymentMethodCreateParams.Type type) {
       this.type = type;
+      return this;
+    }
+
+    /**
+     * If this is a {@code upi} PaymentMethod, this hash contains details about the UPI payment
+     * method.
+     */
+    public Builder setUpi(PaymentMethodCreateParams.Upi upi) {
+      this.upi = upi;
       return this;
     }
 
@@ -2146,11 +2292,11 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
       Map<String, Object> extraParams;
 
-      /** Address line 1 (e.g., street, PO Box, or company name). */
+      /** Address line 1, such as the street, PO Box, or company name. */
       @SerializedName("line1")
       String line1;
 
-      /** Address line 2 (e.g., apartment, suite, unit, or building). */
+      /** Address line 2, such as the apartment, suite, unit, or building. */
       @SerializedName("line2")
       String line2;
 
@@ -2158,7 +2304,10 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       @SerializedName("postal_code")
       String postalCode;
 
-      /** State, county, province, or region. */
+      /**
+       * State, county, province, or region (<a href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO
+       * 3166-2</a>).
+       */
       @SerializedName("state")
       String state;
 
@@ -2253,13 +2402,13 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** Address line 1 (e.g., street, PO Box, or company name). */
+        /** Address line 1, such as the street, PO Box, or company name. */
         public Builder setLine1(String line1) {
           this.line1 = line1;
           return this;
         }
 
-        /** Address line 2 (e.g., apartment, suite, unit, or building). */
+        /** Address line 2, such as the apartment, suite, unit, or building. */
         public Builder setLine2(String line2) {
           this.line2 = line2;
           return this;
@@ -2271,11 +2420,70 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
           return this;
         }
 
-        /** State, county, province, or region. */
+        /**
+         * State, county, province, or region (<a
+         * href="https://en.wikipedia.org/wiki/ISO_3166-2">ISO 3166-2</a>).
+         */
         public Builder setState(String state) {
           this.state = state;
           return this;
         }
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class Bizum {
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Bizum(Map<String, Object> extraParams) {
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.Bizum build() {
+        return new PaymentMethodCreateParams.Bizum(this.extraParams);
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.Bizum#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.Bizum#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
       }
     }
   }
@@ -2752,6 +2960,81 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Custom {
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    /**
+     * <strong>Required.</strong> ID of the Dashboard-only CustomPaymentMethodType. This field is
+     * used by Stripe products' internal code to support CPMs.
+     */
+    @SerializedName("type")
+    String type;
+
+    private Custom(Map<String, Object> extraParams, String type) {
+      this.extraParams = extraParams;
+      this.type = type;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private Map<String, Object> extraParams;
+
+      private String type;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.Custom build() {
+        return new PaymentMethodCreateParams.Custom(this.extraParams, this.type);
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.Custom#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.Custom#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+
+      /**
+       * <strong>Required.</strong> ID of the Dashboard-only CustomPaymentMethodType. This field is
+       * used by Stripe products' internal code to support CPMs.
+       */
+      public Builder setType(String type) {
+        this.type = type;
+        return this;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class CustomerBalance {
     /**
      * Map of extra parameters for custom features not available in this client library. The content
@@ -3092,11 +3375,17 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       @SerializedName("bank_rakyat")
       BANK_RAKYAT("bank_rakyat"),
 
+      @SerializedName("bnp_paribas")
+      BNP_PARIBAS("bnp_paribas"),
+
       @SerializedName("bsn")
       BSN("bsn"),
 
       @SerializedName("cimb")
       CIMB("cimb"),
+
+      @SerializedName("citibank")
+      CITIBANK("citibank"),
 
       @SerializedName("deutsche_bank")
       DEUTSCHE_BANK("deutsche_bank"),
@@ -3115,6 +3404,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
       @SerializedName("maybank2u")
       MAYBANK2U("maybank2u"),
+
+      @SerializedName("mbsb_bank")
+      MBSB_BANK("mbsb_bank"),
 
       @SerializedName("ocbc")
       OCBC("ocbc"),
@@ -3333,6 +3625,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       @SerializedName("abn_amro")
       ABN_AMRO("abn_amro"),
 
+      @SerializedName("adyen")
+      ADYEN("adyen"),
+
       @SerializedName("asn_bank")
       ASN_BANK("asn_bank"),
 
@@ -3342,6 +3637,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       @SerializedName("buut")
       BUUT("buut"),
 
+      @SerializedName("finom")
+      FINOM("finom"),
+
       @SerializedName("handelsbanken")
       HANDELSBANKEN("handelsbanken"),
 
@@ -3350,6 +3648,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
       @SerializedName("knab")
       KNAB("knab"),
+
+      @SerializedName("mollie")
+      MOLLIE("mollie"),
 
       @SerializedName("moneyou")
       MONEYOU("moneyou"),
@@ -3827,6 +4128,62 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
        * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
        * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
        * See {@link PaymentMethodCreateParams.Link#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class MbWay {
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private MbWay(Map<String, Object> extraParams) {
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.MbWay build() {
+        return new PaymentMethodCreateParams.MbWay(this.extraParams);
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.MbWay#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.MbWay#extraParams} for the field documentation.
        */
       public Builder putAllExtraParam(Map<String, Object> map) {
         if (this.extraParams == null) {
@@ -4631,6 +4988,103 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Payto {
+    /** The account number for the bank account. */
+    @SerializedName("account_number")
+    String accountNumber;
+
+    /** Bank-State-Branch number of the bank account. */
+    @SerializedName("bsb_number")
+    String bsbNumber;
+
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    /** The PayID alias for the bank account. */
+    @SerializedName("pay_id")
+    String payId;
+
+    private Payto(
+        String accountNumber, String bsbNumber, Map<String, Object> extraParams, String payId) {
+      this.accountNumber = accountNumber;
+      this.bsbNumber = bsbNumber;
+      this.extraParams = extraParams;
+      this.payId = payId;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private String accountNumber;
+
+      private String bsbNumber;
+
+      private Map<String, Object> extraParams;
+
+      private String payId;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.Payto build() {
+        return new PaymentMethodCreateParams.Payto(
+            this.accountNumber, this.bsbNumber, this.extraParams, this.payId);
+      }
+
+      /** The account number for the bank account. */
+      public Builder setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+        return this;
+      }
+
+      /** Bank-State-Branch number of the bank account. */
+      public Builder setBsbNumber(String bsbNumber) {
+        this.bsbNumber = bsbNumber;
+        return this;
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.Payto#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.Payto#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+
+      /** The PayID alias for the bank account. */
+      public Builder setPayId(String payId) {
+        this.payId = payId;
+        return this;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class Pix {
     /**
      * Map of extra parameters for custom features not available in this client library. The content
@@ -4754,7 +5208,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     Map<String, Object> extraParams;
 
     /**
-     * A <a href="https://stripe.com/docs/radar/radar-session">Radar Session</a> is a snapshot of
+     * A <a href="https://docs.stripe.com/radar/radar-session">Radar Session</a> is a snapshot of
      * the browser metadata and device details that help Radar make more accurate predictions on
      * your payments.
      */
@@ -4807,7 +5261,7 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
       }
 
       /**
-       * A <a href="https://stripe.com/docs/radar/radar-session">Radar Session</a> is a snapshot of
+       * A <a href="https://docs.stripe.com/radar/radar-session">Radar Session</a> is a snapshot of
        * the browser metadata and device details that help Radar make more accurate predictions on
        * your payments.
        */
@@ -4988,6 +5442,62 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
   @Getter
   @EqualsAndHashCode(callSuper = false)
+  public static class Scalapay {
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Scalapay(Map<String, Object> extraParams) {
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.Scalapay build() {
+        return new PaymentMethodCreateParams.Scalapay(this.extraParams);
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.Scalapay#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.Scalapay#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
   public static class SepaDebit {
     /**
      * Map of extra parameters for custom features not available in this client library. The content
@@ -5153,6 +5663,62 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
       Country(String value) {
         this.value = value;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class Sunbit {
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    private Sunbit(Map<String, Object> extraParams) {
+      this.extraParams = extraParams;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private Map<String, Object> extraParams;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.Sunbit build() {
+        return new PaymentMethodCreateParams.Sunbit(this.extraParams);
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.Sunbit#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.Sunbit#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
       }
     }
   }
@@ -5342,6 +5908,221 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
         }
         this.extraParams.putAll(map);
         return this;
+      }
+    }
+  }
+
+  @Getter
+  @EqualsAndHashCode(callSuper = false)
+  public static class Upi {
+    /**
+     * Map of extra parameters for custom features not available in this client library. The content
+     * in this map is not serialized under this field's {@code @SerializedName} value. Instead, each
+     * key/value pair is serialized as if the key is a root-level field (serialized) name in this
+     * param object. Effectively, this map is flattened to its parent instance.
+     */
+    @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+    Map<String, Object> extraParams;
+
+    /** Configuration options for setting up an eMandate. */
+    @SerializedName("mandate_options")
+    MandateOptions mandateOptions;
+
+    private Upi(Map<String, Object> extraParams, MandateOptions mandateOptions) {
+      this.extraParams = extraParams;
+      this.mandateOptions = mandateOptions;
+    }
+
+    public static Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private Map<String, Object> extraParams;
+
+      private MandateOptions mandateOptions;
+
+      /** Finalize and obtain parameter instance from this builder. */
+      public PaymentMethodCreateParams.Upi build() {
+        return new PaymentMethodCreateParams.Upi(this.extraParams, this.mandateOptions);
+      }
+
+      /**
+       * Add a key/value pair to `extraParams` map. A map is initialized for the first `put/putAll`
+       * call, and subsequent calls add additional key/value pairs to the original map. See {@link
+       * PaymentMethodCreateParams.Upi#extraParams} for the field documentation.
+       */
+      public Builder putExtraParam(String key, Object value) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.put(key, value);
+        return this;
+      }
+
+      /**
+       * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+       * `put/putAll` call, and subsequent calls add additional key/value pairs to the original map.
+       * See {@link PaymentMethodCreateParams.Upi#extraParams} for the field documentation.
+       */
+      public Builder putAllExtraParam(Map<String, Object> map) {
+        if (this.extraParams == null) {
+          this.extraParams = new HashMap<>();
+        }
+        this.extraParams.putAll(map);
+        return this;
+      }
+
+      /** Configuration options for setting up an eMandate. */
+      public Builder setMandateOptions(
+          PaymentMethodCreateParams.Upi.MandateOptions mandateOptions) {
+        this.mandateOptions = mandateOptions;
+        return this;
+      }
+    }
+
+    @Getter
+    @EqualsAndHashCode(callSuper = false)
+    public static class MandateOptions {
+      /** Amount to be charged for future payments. */
+      @SerializedName("amount")
+      Long amount;
+
+      /**
+       * One of {@code fixed} or {@code maximum}. If {@code fixed}, the {@code amount} param refers
+       * to the exact amount to be charged in future payments. If {@code maximum}, the amount
+       * charged can be up to the value passed for the {@code amount} param.
+       */
+      @SerializedName("amount_type")
+      AmountType amountType;
+
+      /**
+       * A description of the mandate or subscription that is meant to be displayed to the customer.
+       */
+      @SerializedName("description")
+      String description;
+
+      /** End date of the mandate or subscription. */
+      @SerializedName("end_date")
+      Long endDate;
+
+      /**
+       * Map of extra parameters for custom features not available in this client library. The
+       * content in this map is not serialized under this field's {@code @SerializedName} value.
+       * Instead, each key/value pair is serialized as if the key is a root-level field (serialized)
+       * name in this param object. Effectively, this map is flattened to its parent instance.
+       */
+      @SerializedName(ApiRequestParams.EXTRA_PARAMS_KEY)
+      Map<String, Object> extraParams;
+
+      private MandateOptions(
+          Long amount,
+          AmountType amountType,
+          String description,
+          Long endDate,
+          Map<String, Object> extraParams) {
+        this.amount = amount;
+        this.amountType = amountType;
+        this.description = description;
+        this.endDate = endDate;
+        this.extraParams = extraParams;
+      }
+
+      public static Builder builder() {
+        return new Builder();
+      }
+
+      public static class Builder {
+        private Long amount;
+
+        private AmountType amountType;
+
+        private String description;
+
+        private Long endDate;
+
+        private Map<String, Object> extraParams;
+
+        /** Finalize and obtain parameter instance from this builder. */
+        public PaymentMethodCreateParams.Upi.MandateOptions build() {
+          return new PaymentMethodCreateParams.Upi.MandateOptions(
+              this.amount, this.amountType, this.description, this.endDate, this.extraParams);
+        }
+
+        /** Amount to be charged for future payments. */
+        public Builder setAmount(Long amount) {
+          this.amount = amount;
+          return this;
+        }
+
+        /**
+         * One of {@code fixed} or {@code maximum}. If {@code fixed}, the {@code amount} param
+         * refers to the exact amount to be charged in future payments. If {@code maximum}, the
+         * amount charged can be up to the value passed for the {@code amount} param.
+         */
+        public Builder setAmountType(
+            PaymentMethodCreateParams.Upi.MandateOptions.AmountType amountType) {
+          this.amountType = amountType;
+          return this;
+        }
+
+        /**
+         * A description of the mandate or subscription that is meant to be displayed to the
+         * customer.
+         */
+        public Builder setDescription(String description) {
+          this.description = description;
+          return this;
+        }
+
+        /** End date of the mandate or subscription. */
+        public Builder setEndDate(Long endDate) {
+          this.endDate = endDate;
+          return this;
+        }
+
+        /**
+         * Add a key/value pair to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link PaymentMethodCreateParams.Upi.MandateOptions#extraParams} for the field
+         * documentation.
+         */
+        public Builder putExtraParam(String key, Object value) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.put(key, value);
+          return this;
+        }
+
+        /**
+         * Add all map key/value pairs to `extraParams` map. A map is initialized for the first
+         * `put/putAll` call, and subsequent calls add additional key/value pairs to the original
+         * map. See {@link PaymentMethodCreateParams.Upi.MandateOptions#extraParams} for the field
+         * documentation.
+         */
+        public Builder putAllExtraParam(Map<String, Object> map) {
+          if (this.extraParams == null) {
+            this.extraParams = new HashMap<>();
+          }
+          this.extraParams.putAll(map);
+          return this;
+        }
+      }
+
+      public enum AmountType implements ApiRequestParams.EnumParam {
+        @SerializedName("fixed")
+        FIXED("fixed"),
+
+        @SerializedName("maximum")
+        MAXIMUM("maximum");
+
+        @Getter(onMethod_ = {@Override})
+        private final String value;
+
+        AmountType(String value) {
+          this.value = value;
+        }
       }
     }
   }
@@ -5673,6 +6454,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     @SerializedName("billie")
     BILLIE("billie"),
 
+    @SerializedName("bizum")
+    BIZUM("bizum"),
+
     @SerializedName("blik")
     BLIK("blik"),
 
@@ -5687,6 +6471,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
 
     @SerializedName("crypto")
     CRYPTO("crypto"),
+
+    @SerializedName("custom")
+    CUSTOM("custom"),
 
     @SerializedName("customer_balance")
     CUSTOMER_BALANCE("customer_balance"),
@@ -5721,6 +6508,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     @SerializedName("link")
     LINK("link"),
 
+    @SerializedName("mb_way")
+    MB_WAY("mb_way"),
+
     @SerializedName("mobilepay")
     MOBILEPAY("mobilepay"),
 
@@ -5751,6 +6541,9 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     @SerializedName("paypal")
     PAYPAL("paypal"),
 
+    @SerializedName("payto")
+    PAYTO("payto"),
+
     @SerializedName("pix")
     PIX("pix"),
 
@@ -5766,17 +6559,26 @@ public class PaymentMethodCreateParams extends ApiRequestParams {
     @SerializedName("satispay")
     SATISPAY("satispay"),
 
+    @SerializedName("scalapay")
+    SCALAPAY("scalapay"),
+
     @SerializedName("sepa_debit")
     SEPA_DEBIT("sepa_debit"),
 
     @SerializedName("sofort")
     SOFORT("sofort"),
 
+    @SerializedName("sunbit")
+    SUNBIT("sunbit"),
+
     @SerializedName("swish")
     SWISH("swish"),
 
     @SerializedName("twint")
     TWINT("twint"),
+
+    @SerializedName("upi")
+    UPI("upi"),
 
     @SerializedName("us_bank_account")
     US_BANK_ACCOUNT("us_bank_account"),
